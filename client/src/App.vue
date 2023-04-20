@@ -1,10 +1,17 @@
 <template>
     <v-app>
         <v-app-bar flat>
-            <v-btn color="white" icon="mdi-menu" variant="outlined" />
+            <v-btn
+                @click="state.navDrawer = !state.navDrawer"
+                color="white"
+                icon="mdi-menu"
+                variant="text"
+            />
+
+            <v-switch @click="toggleTheme" class="d-flex justify-end" />
         </v-app-bar>
 
-        <v-navigation-drawer>
+        <v-navigation-drawer v-model="state.navDrawer">
             <v-list>
                 <v-list-item></v-list-item>
             </v-list>
@@ -18,4 +25,17 @@
     </v-app>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+    import { useTheme } from "vuetify";
+    import { reactive } from "vue";
+
+    const theme = useTheme();
+
+    function toggleTheme() {
+        theme.global.name.value = theme.global.current.value.dark ? "light" : "dark";
+    }
+
+    const state = reactive({
+        navDrawer: false,
+    });
+</script>
