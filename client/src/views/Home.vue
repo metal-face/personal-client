@@ -1,7 +1,13 @@
 <template>
-  <HelloWorld />
+    <v-card>
+        <v-card-text> YEs </v-card-text>
+    </v-card>
 </template>
 
-<script lang="ts" setup>
-  import HelloWorld from '@/components/HelloWorld.vue'
+<script>
+export default {
+    name: "UserHome",
+};
 </script>
+
+<style scoped></style>
