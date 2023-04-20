@@ -7,8 +7,13 @@
                 icon="mdi-menu"
                 variant="text"
             />
-
-            <v-switch @click="toggleTheme" class="d-flex justify-end" />
+            <v-spacer />
+            <v-btn
+                @click="toggleTheme"
+                :color="isDark ? 'yellow' : 'purple'"
+                :icon="isDark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'"
+                variant="text"
+            />
         </v-app-bar>
 
         <v-navigation-drawer v-model="state.navDrawer">
@@ -28,6 +33,7 @@
 <script setup lang="ts">
     import { useTheme } from "vuetify";
     import { reactive } from "vue";
+    import { computed } from "vue";
 
     const theme = useTheme();
 
@@ -37,5 +43,9 @@
 
     const state = reactive({
         navDrawer: false,
+    });
+
+    const isDark = computed<boolean>(() => {
+        return theme.global.current.value.dark;
     });
 </script>
