@@ -1,29 +1,27 @@
 <template>
     <v-app>
-        <v-app-bar flat>
+        <v-app-bar flat color="primary">
             <v-btn
-                @click="state.navDrawer = !state.navDrawer"
-                color="white"
+                @click="navDrawer = !navDrawer"
+                :color="isDark ? 'white' : 'black'"
                 icon="mdi-menu"
-                variant="text"
-            />
+                variant="text" />
             <v-spacer />
             <v-btn
                 @click="toggleTheme"
                 :color="isDark ? 'yellow' : 'purple'"
                 :icon="isDark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'"
-                variant="text"
-            />
+                variant="text" />
         </v-app-bar>
 
-        <v-navigation-drawer v-model="state.navDrawer">
+        <v-navigation-drawer v-model="navDrawer" color="secondary">
             <v-list>
                 <v-list-item></v-list-item>
             </v-list>
         </v-navigation-drawer>
 
         <v-main>
-            <v-container fluid>
+            <v-container fluid class="fill-height">
                 <router-view />
             </v-container>
         </v-main>
@@ -31,21 +29,19 @@
 </template>
 
 <script setup lang="ts">
-    import { useTheme } from "vuetify";
-    import { reactive } from "vue";
-    import { computed } from "vue";
+import { useTheme } from "vuetify";
+import { ref } from "vue";
+import { computed } from "vue";
 
-    const theme = useTheme();
+const theme = useTheme();
 
-    function toggleTheme() {
-        theme.global.name.value = theme.global.current.value.dark ? "light" : "dark";
-    }
+function toggleTheme(): void {
+    theme.global.name.value = theme.global.current.value.dark ? "light" : "dark";
+}
 
-    const state = reactive({
-        navDrawer: false,
-    });
+const navDrawer = ref<boolean>(false);
 
-    const isDark = computed<boolean>(() => {
-        return theme.global.current.value.dark;
-    });
+const isDark = computed<boolean>(() => {
+    return theme.global.current.value.dark;
+});
 </script>
