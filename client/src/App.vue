@@ -45,3 +45,7 @@ const isDark = computed<boolean>(() => {
     return theme.global.current.value.dark;
 });
 </script>
+
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display&family=Source+Code+Pro&display=swap");
+</style>
