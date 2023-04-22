@@ -4,7 +4,32 @@ import { createRouter, createWebHistory } from "vue-router";
 const routes = [
     {
         path: "/",
-        component: () => import("@/views/Home.vue"),
+        children: [
+            {
+                path: "",
+                component: () => import("@/views/Home.vue"),
+                meta: {
+                    title: "Home",
+                    restricted: false,
+                },
+            },
+            {
+                path: "login",
+                component: () => import("@/views/Login.vue"),
+                meta: {
+                    title: "Login",
+                    restricted: false,
+                },
+            },
+            {
+                path: "signup",
+                component: () => import("@/views/Signup.vue"),
+                meta: {
+                    title: "Signup",
+                    restricted: false,
+                },
+            },
+        ],
     },
 ];
 
