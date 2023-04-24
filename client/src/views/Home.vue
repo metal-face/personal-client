@@ -1,24 +1,25 @@
 <template>
     <v-row class="fill-height">
+        <CircleLoader :loading="loading" circleColor="blue" />
         <v-col cols="12">
             <v-card
                 flat
                 color="transparent"
                 class="fill-height d-flex align-center justify-center"
                 width="100%">
-                <v-card
-                    flat
-                    color="transparent"
-                    class="d-flex flex-column justify-center align-center"
-                    height="100%"
-                    width="50%">
-                    <v-card flat color="transparent" class="text-center">
-                        <v-card-title class="page-title text-xl-h1"> Bryan Hughes </v-card-title>
-                        <v-card-subtitle class="page-title">
-                            Full-Stack Software Developer
-                        </v-card-subtitle>
-                        <v-card-text class="page-clock"> {{ templateDate }} </v-card-text>
-                    </v-card>
+                <v-card flat color="transparent" class="text-center">
+                    <v-card-title class="page-title">
+                        <h1>Bryan Hughes</h1>
+                    </v-card-title>
+                    <v-card-subtitle class="page-title">
+                        <h2>Full-Stack Software Developer</h2>
+                    </v-card-subtitle>
+
+                    <v-card-text class="page-clock">
+                        <h3>
+                            {{ templateDate }}
+                        </h3>
+                    </v-card-text>
                 </v-card>
             </v-card>
         </v-col>
@@ -26,28 +27,30 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onUnmounted } from "vue";
 import { format } from "date-fns";
+import CircleLoader from "@/components/CircleLoader.vue";
 
-onMounted(() => {
-    createClock();
-});
+let loading: boolean = true;
 
-let templateDate = ref<string>("");
-
-function updateCurrentTime(): void {
-    templateDate.value = formatHumanReadableDate(Date.now());
-}
+const templateDate = ref<string>("");
+const intervalID: number = createClock();
 
 function createClock(): number {
     return window.setInterval(() => {
         updateCurrentTime();
     }, 1000);
 }
-
-function formatHumanReadableDate(current: number): string {
-    return format(current, "PPPPpp");
+function updateCurrentTime(): void {
+    templateDate.value = formatHumanReadableDate(Date.now());
 }
+function formatHumanReadableDate(current: number): string {
+    return format(current, "PPPpp");
+}
+
+onUnmounted(() => {
+    window.clearInterval(intervalID);
+});
 </script>
 
 <style scoped>
