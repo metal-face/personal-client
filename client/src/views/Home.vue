@@ -30,14 +30,18 @@ import CircleLoader from "@/components/CircleLoader.vue";
 
 const intervalID = ref<number>(createClock());
 const templateDate = ref<string>("");
-const loading = ref<boolean>();
+const loading = ref<boolean>(false);
+
 
 function createClock(): number {
     return window.setInterval(() => {
-        updateCurrentTime();
+        loading.value = true;
+        updateCurrentTime().then(() => {
+            loading.value = false;
+        });
     }, 1000);
 }
-function updateCurrentTime(): void {
+async function updateCurrentTime(): Promise<void> {
     templateDate.value = formatHumanReadableDate(Date.now());
 }
 function formatHumanReadableDate(current: number): string {
