@@ -5,22 +5,19 @@
             <v-card
                 flat
                 color="transparent"
-                class="fill-height d-flex align-center justify-center"
+                class="fill-height d-flex flex-column justify-center align-center"
                 width="100%">
-                <v-card flat color="transparent" class="text-center">
-                    <v-card-title class="page-title">
-                        <h1>Bryan Hughes</h1>
+                    <v-card-title class="page-title ma-1">
+                        <h1>
+                            Bryan Hughes
+                        </h1>
                     </v-card-title>
-                    <v-card-subtitle class="page-title">
-                        <h2>Full-Stack Software Developer</h2>
-                    </v-card-subtitle>
-
-                    <v-card-text class="page-clock">
+                    <v-card-subtitle class="page-title ma-1">
                         <h3>
-                            {{ templateDate }}
+                            Full-Stack Software Developer
                         </h3>
-                    </v-card-text>
-                </v-card>
+                    </v-card-subtitle>
+                    <h4 class="page-clock ma-1">{{ templateDate }}</h4>
             </v-card>
         </v-col>
     </v-row>
@@ -31,10 +28,9 @@ import { ref, onUnmounted } from "vue";
 import { format } from "date-fns";
 import CircleLoader from "@/components/CircleLoader.vue";
 
-let loading: boolean = true;
-
+const intervalID = ref<number>(createClock());
 const templateDate = ref<string>("");
-const intervalID: number = createClock();
+const loading = ref<boolean>();
 
 function createClock(): number {
     return window.setInterval(() => {
@@ -49,7 +45,7 @@ function formatHumanReadableDate(current: number): string {
 }
 
 onUnmounted(() => {
-    window.clearInterval(intervalID);
+    window.clearInterval(intervalID.value);
 });
 </script>
 
