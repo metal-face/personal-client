@@ -5,8 +5,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from "vue";
-
 interface Props {
     loading: boolean;
     circleColor?: string;
@@ -18,4 +16,3 @@ const props = withDefaults(defineProps<Props>(), {
 });
 </script>
 
-<style scoped></style>
