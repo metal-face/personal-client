@@ -5,9 +5,9 @@
 </template>
 
 <script setup lang="ts">
-interface Props {
+ interface Props {
     loading: boolean;
-    circleColor?: string;
+    circleColor: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
