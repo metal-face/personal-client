@@ -1,7 +1,36 @@
+<script setup lang="ts">
+import { ref, onUnmounted, onMounted } from "vue";
+import { format } from "date-fns";
+import CircleLoader from "@/components/CircleLoader.vue";
+
+const intervalID = ref<number>(0);
+const templateDate = ref<string>("");
+const loading = ref<boolean>(false);
+
+async function createClock(): Promise<void> {
+    intervalID.value = window.setInterval(() => {
+        templateDate.value = format(Date.now(), "PPPpp");
+    }, 1000);
+}
+
+onMounted(() => {
+    loading.value = true;
+
+    createClock().then(() => {
+        loading.value = false;
+    });
+
+});
+
+onUnmounted(() => {
+    window.clearInterval(intervalID.value);
+});
+</script>
+
 <template>
     <v-row class="fill-height">
-        <CircleLoader :loading="loading" circleColor="blue" />
         <v-col cols="12">
+            <CircleLoader :loading="loading" circleColor="gold"></CircleLoader>
             <v-card
                 flat
                 color="transparent"
@@ -22,37 +51,6 @@
         </v-col>
     </v-row>
 </template>
-
-<script setup lang="ts">
-import { ref, onUnmounted } from "vue";
-import { format } from "date-fns";
-import CircleLoader from "@/components/CircleLoader.vue";
-
-const intervalID = ref<number>(createClock());
-const templateDate = ref<string>("");
-const loading = ref<boolean>(false);
-
-
-function createClock(): number {
-    return window.setInterval(() => {
-        loading.value = true;
-        updateCurrentTime().then(() => {
-            loading.value = false;
-        });
-    }, 1000);
-}
-async function updateCurrentTime(): Promise<void> {
-    templateDate.value = formatHumanReadableDate(Date.now());
-}
-function formatHumanReadableDate(current: number): string {
-    return format(current, "PPPpp");
-}
-
-onUnmounted(() => {
-    window.clearInterval(intervalID.value);
-});
-</script>
-
 <style scoped>
 .page-clock {
     font-family: "Source Code Pro", monospace !important;
