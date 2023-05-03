@@ -4,22 +4,20 @@ import { format } from "date-fns";
 import CircleLoader from "@/components/CircleLoader.vue";
 
 const intervalID = ref<number>(0);
-const templateDate = ref<string>("");
-const loading = ref<boolean>(false);
+const templateDate = ref<string>(format(Date.now(), "PPPpp"));
+const loading = ref<boolean>(true);
 
-async function createClock(): Promise<void> {
+function createClock() {
     intervalID.value = window.setInterval(() => {
         templateDate.value = format(Date.now(), "PPPpp");
+    }, 1000);
+    window.setTimeout(() => {
+        loading.value = false;
     }, 1000);
 }
 
 onMounted(() => {
-    loading.value = true;
-
-    createClock().then(() => {
-        loading.value = false;
-    });
-
+    createClock();
 });
 
 onUnmounted(() => {
@@ -29,13 +27,13 @@ onUnmounted(() => {
 
 <template>
     <v-row class="fill-height">
+        <CircleLoader v-model:loading="loading" />
         <v-col cols="12">
-            <CircleLoader :loading="loading" circleColor="gold"></CircleLoader>
             <v-card
-                flat
-                color="transparent"
-                class="fill-height d-flex flex-column justify-center align-center"
-                width="100%">
+            flat
+            color="transparent"
+            class="fill-height d-flex flex-column justify-center align-center"
+            width="100%">
                     <v-card-title class="page-title ma-1">
                         <h1>
                             Bryan Hughes
