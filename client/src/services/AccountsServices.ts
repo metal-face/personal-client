@@ -17,13 +17,13 @@ export default {
             },
         });
     },
-    fetchAccountById(accountId: string): Promise<AxiosResponse<any, any>> {
+    getAccountById(accountId: string): Promise<AxiosResponse<any, any>> {
         return ApiClient({
             method: "GET",
             url: `/accounts/${accountId}`,
         });
     },
-    fetchManyAccounts(page: number, pageSize: number): Promise<AxiosResponse<any, any>> {
+    getManyAccounts(page: number, pageSize: number): Promise<AxiosResponse<any, any>> {
         return ApiClient({
             method: "GET",
             url: `/accounts?page=${page}&page_size=${pageSize}`,
