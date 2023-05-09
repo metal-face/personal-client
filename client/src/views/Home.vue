@@ -1,12 +1,22 @@
 <script setup lang="ts">
-import { ref, onUnmounted, onMounted } from "vue";
+import { ref, onUnmounted, onMounted, reactive } from "vue";
 import { format } from "date-fns";
+import { useVuelidate } from "@vuelidate/core";
+import { email, required } from "@vuelidate/validators";
 // import CircleLoader from "@/components/CircleLoader.vue";
 
 const intervalID = ref<number>(0);
 const templateDate = ref<string>(format(Date.now(), "PPPpp"));
 const loading = ref<boolean>(true);
-const userEmail = ref<string>("");
+const state = reactive({
+    userEmail: "",
+});
+
+const rules = {
+    userEmail: { required, email },
+};
+
+const v$ = useVuelidate(rules, state);
 
 function createClock() {
     intervalID.value = window.setInterval(() => {
@@ -51,19 +61,15 @@ onUnmounted(() => {
                         <label for="email" class="page-clock d-flex justify-center">
                             Enter your email
                         </label>
+                        <!-- #TODO VALIDATE USER INPUT -->
                         <v-text-field
                             id="email"
                             v-model="userEmail"
-                            variant="underlined"
+                            variant="outlined"
                             class="page-clock"
                             append-inner-icon="mdi-email" />
                     </v-card>
                 </v-card>
-            </v-card>
-            <v-card height="auto" flat color="transparent" width="100%">
-                <v-card-subtitle class="text-center">
-                    <h4 class="text-center page-clock">Made with 🖤 by Metal-Face</h4>
-                </v-card-subtitle>
             </v-card>
         </v-col>
     </v-row>
