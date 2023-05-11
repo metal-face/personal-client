@@ -3,19 +3,24 @@ import { ref, onUnmounted, onMounted, reactive } from "vue";
 import { format } from "date-fns";
 import { useVuelidate } from "@vuelidate/core";
 import { email, required } from "@vuelidate/validators";
+import AccountsServices from "@/services/AccountsServices";
 // import CircleLoader from "@/components/CircleLoader.vue";
+
+interface State {
+    userEmail: string;
+}
+
+const state: State = reactive({
+    userEmail: "",
+});
 
 const intervalID = ref<number>(0);
 const templateDate = ref<string>(format(Date.now(), "PPPpp"));
 const loading = ref<boolean>(true);
-const state = reactive({
-    userEmail: "",
-});
 
 const rules = {
     userEmail: { required, email },
 };
-
 const v$ = useVuelidate(rules, state);
 
 function createClock() {
@@ -25,6 +30,12 @@ function createClock() {
     window.setTimeout(() => {
         loading.value = false;
     }, 1000);
+}
+
+function dispatchFetchUser() {
+    AccountsServices.fetchAccountByEmail(state.userEmail).then((res) => {
+        console.log(res);
+    });
 }
 
 onMounted(() => {
@@ -58,16 +69,18 @@ onUnmounted(() => {
                         <h3 class="text-center page-clock ma-1">{{ templateDate }}</h3>
                     </v-card-subtitle>
                     <v-card color="transparent" flat class="mt-12">
-                        <label for="email" class="page-clock d-flex justify-center">
+                        <label for="email" class="page-clock mb-3 d-flex justify-center">
                             Enter your email
                         </label>
                         <!-- #TODO VALIDATE USER INPUT -->
                         <v-text-field
+                            v-model="state.userEmail"
+                            @click:append-inner="dispatchFetchUser"
                             id="email"
-                            v-model="userEmail"
                             variant="outlined"
                             class="page-clock"
-                            append-inner-icon="mdi-email" />
+                            prepend-inner-icon="mdi-email"
+                            append-inner-icon="mdi-send" />
                     </v-card>
                 </v-card>
             </v-card>
