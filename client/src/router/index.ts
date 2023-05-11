@@ -38,4 +38,14 @@ const router: Router = createRouter({
     routes,
 });
 
+router.beforeEach((to, from, next) => {
+    const pageTitle: string = String(to.meta.title);
+    
+    if (pageTitle) {
+        document.title = pageTitle;
+    }
+
+    next();
+});
+
 export default router;
