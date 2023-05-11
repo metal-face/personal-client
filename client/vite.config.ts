@@ -25,6 +25,15 @@ export default defineConfig({
         extensions: [".js", ".json", ".jsx", ".mjs", ".ts", ".tsx", ".vue"],
     },
     server: {
+        cors: { origin: true},
         port: 3000,
+        proxy: {
+            '/api': {
+                target: 'https://localhost:10000',
+                changeOrigin: true,
+                secure: false,      
+                ws: true,
+            }
+        },
     },
 });
