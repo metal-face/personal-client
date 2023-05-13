@@ -7,6 +7,7 @@ const routes = [
         children: [
             {
                 path: "",
+                name: "Home",
                 component: () => import("@/views/Home.vue"),
                 meta: {
                     title: "Home",
@@ -15,6 +16,8 @@ const routes = [
             },
             {
                 path: "login",
+                name: "Login",
+                props: true,
                 component: () => import("@/views/Login.vue"),
                 meta: {
                     title: "Login",
@@ -23,6 +26,8 @@ const routes = [
             },
             {
                 path: "signup",
+                name: "Signup",
+                props: true,
                 component: () => import("@/views/Signup.vue"),
                 meta: {
                     title: "Signup",
