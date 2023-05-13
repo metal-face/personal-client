@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, onUnmounted, onMounted, reactive } from "vue";
+import { useRouter } from "vue-router";
 import { format } from "date-fns";
 import { useVuelidate } from "@vuelidate/core";
 import { email, required } from "@vuelidate/validators";
 import AccountsServices from "@/services/AccountsServices";
-// import CircleLoader from "@/components/CircleLoader.vue";
+
+const router = useRouter();
 
 interface State {
     userEmail: string;
@@ -14,14 +16,14 @@ const state: State = reactive({
     userEmail: "",
 });
 
-const intervalID = ref<number>(0);
-const templateDate = ref<string>(format(Date.now(), "PPPpp"));
-const loading = ref<boolean>(true);
-
 const rules = {
     userEmail: { required, email },
 };
+
 const v$ = useVuelidate(rules, state);
+const intervalID = ref<number>(0);
+const templateDate = ref<string>(format(Date.now(), "PPPpp"));
+const loading = ref<boolean>(true);
 
 function createClock() {
     intervalID.value = window.setInterval(() => {
@@ -33,9 +35,28 @@ function createClock() {
 }
 
 function dispatchFetchUser() {
-    AccountsServices.fetchAccountByEmail(state.userEmail).then((res) => {
-        console.log(res);
-    });
+    toggleLoadingState(true);
+    AccountsServices.fetchAccountByEmail(state.userEmail)
+        .then((res) => {
+            if (res.data) {
+                router.push({
+                    name: "Signup",
+                    state: { email: state.userEmail },
+                });
+            } else if (res.data.length > 0) {
+                router.push({
+                    name: "Login",
+                    state: { email: state.userEmail },
+                });
+            }
+        })
+        .finally(() => {
+            toggleLoadingState(false);
+        });
+}
+
+function toggleLoadingState(state: boolean): void {
+    loading.value = state;
 }
 
 onMounted(() => {
@@ -76,6 +97,7 @@ onUnmounted(() => {
                         <v-text-field
                             v-model="state.userEmail"
                             @click:append-inner="dispatchFetchUser"
+                            :loading="loading"
                             id="email"
                             variant="outlined"
                             class="page-clock"
