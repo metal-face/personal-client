@@ -77,10 +77,6 @@ onUnmounted(() => {
                 class="d-flex flex-column justify-center align-center"
                 height="90%"
                 width="100%">
-                <!-- <CircleLoader
-                    :loading="true"
-                    circleColor="pink"
-                    class="d-flex justify-center align-center" /> -->
                 <v-card color="transparent" flat>
                     <v-card-title class="page-title ma-1">
                         <h1 class="text-center">Bryan Hughes</h1>
