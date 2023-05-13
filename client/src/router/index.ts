@@ -1,4 +1,3 @@
-// Composables
 import { createRouter, createWebHistory, Router } from "vue-router";
 
 const routes = [
