@@ -2,10 +2,12 @@
 import { ref, onUnmounted, onMounted, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { format } from "date-fns";
-import { useVuelidate } from "@vuelidate/core";
-import { email, required } from "@vuelidate/validators";
+// import { useVuelidate } from "@vuelidate/core";
+// import { email, required } from "@vuelidate/validators";
 import AccountsServices from "@/services/AccountsServices";
+import { useAppStore } from "@/store/app";
 
+const store = useAppStore();
 const router = useRouter();
 
 interface State {
@@ -16,11 +18,11 @@ const state: State = reactive({
     userEmail: "",
 });
 
-const rules = {
-    userEmail: { required, email },
-};
+// const rules = {
+//     userEmail: { required, email },
+// };
 
-const v$ = useVuelidate(rules, state);
+// const v$ = useVuelidate(rules, state);
 const intervalID = ref<number>(0);
 const templateDate = ref<string>(format(Date.now(), "PPPpp"));
 const loading = ref<boolean>(true);
@@ -36,18 +38,15 @@ function createClock() {
 
 function dispatchFetchUser() {
     toggleLoadingState(true);
+
+    store.setUserEmail(state.userEmail);
+
     AccountsServices.fetchAccountByEmail(state.userEmail)
         .then((res) => {
-            if (res.data) {
-                router.push({
-                    name: "Signup",
-                    state: { email: state.userEmail },
-                });
-            } else if (res.data.length > 0) {
-                router.push({
-                    name: "Login",
-                    state: { email: state.userEmail },
-                });
+            if (res.data.data.length === 0) {
+                router.push({ name: "Register" });
+            } else if (res.data.data.length > 0) {
+                router.push({ name: "Login", params: { email: state.userEmail } });
             }
         })
         .finally(() => {
@@ -61,6 +60,7 @@ function toggleLoadingState(state: boolean): void {
 
 onMounted(() => {
     createClock();
+    state.userEmail = store.userEmail;
 });
 
 onUnmounted(() => {
