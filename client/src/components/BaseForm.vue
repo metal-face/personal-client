@@ -2,7 +2,11 @@
     <v-container fluid>
         <v-row dense>
             <v-col cols="12">
-                <v-form> </v-form>
+                <v-card height="100%">
+                    <v-form>
+                        <slot></slot>
+                    </v-form>
+                </v-card>
             </v-col>
         </v-row>
     </v-container>
