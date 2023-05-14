@@ -24,12 +24,11 @@ const routes = [
                 },
             },
             {
-                path: "signup",
-                name: "Signup",
-                props: true,
-                component: () => import("@/views/Signup.vue"),
+                path: "register",
+                name: "Register",
+                component: () => import("@/views/Register.vue"),
                 meta: {
-                    title: "Signup",
+                    title: "Register",
                     restricted: false,
                 },
             },
