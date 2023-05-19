@@ -19,7 +19,7 @@ import { onMounted } from "vue";
 const store = useAppStore();
 
 onMounted(() => {
-    email.value = store.userEmail;
+    email.value = store.getUserEmail;
 });
 
 const email = ref<string>("");
