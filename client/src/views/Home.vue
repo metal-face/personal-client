@@ -46,7 +46,7 @@ function dispatchFetchUser() {
             if (res.data.data.length === 0) {
                 router.push({ name: "Register" });
             } else if (res.data.data.length > 0) {
-                router.push({ name: "Login", params: { email: state.userEmail } });
+                router.push({ name: "Login" });
             }
         })
         .finally(() => {
