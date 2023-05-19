@@ -1,20 +1,25 @@
 // Utilities
 import { defineStore } from "pinia";
+import { RemovableRef, useLocalStorage } from "@vueuse/core"
 
 interface State {
-    userEmail: string
+    email: RemovableRef<string> | string,
+    username: RemovableRef<string> | string,
+    password: string
 }
 
 export const useAppStore = defineStore("app", {
-    state: (): State => ({
-        userEmail: "",
+    state: (): State  => ({
+        email: useLocalStorage("email", ""),
+        username: useLocalStorage("username", ""),
+        password: "",
     }),
     getters: {
-        getUserEmail: (state: State) => state.userEmail,
+        getUserEmail: (state: State) => state.email,
     },
     actions: {
         setUserEmail(email: string): void {
-            this.userEmail = email;
+            this.email = email;
         }
     }
 });
