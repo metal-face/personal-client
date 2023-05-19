@@ -10,7 +10,7 @@ export const useAppStore = defineStore("app", {
         userEmail: "",
     }),
     getters: {
-        userEmail: (state: State) => state.userEmail,
+        getUserEmail: (state: State) => state.userEmail,
     },
     actions: {
         setUserEmail(email: string): void {
