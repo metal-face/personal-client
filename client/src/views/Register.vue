@@ -1,8 +1,8 @@
 <template>
-    <v-row justify="center">
+    <v-row dense no-gutters justify="center">
         <CircleLoader :loading="loading" circleColor="black" />
         <v-col cols="6">
-            <v-card height="100%" flat>
+            <v-card height="100%" flat variant="outlined">
                 <v-card-title class="text-center">
                     <h2 class="form-title ma-3">Register</h2>
                 </v-card-title>
@@ -12,14 +12,25 @@
                             <v-col cols="12">
                                 <v-text-field
                                     v-model="state.email"
+                                    @input="v$.email.$touch"
+                                    @blur="v$.email.$touch"
+                                    :error-messages="
+                                        v$.email.$errors.map((e) => e.$message.toString())
+                                    "
                                     required
                                     variant="outlined"
-                                    label="Email"
-                                    :disabled="state.email ? true : false" />
+                                    label="Email" />
                             </v-col>
                             <v-col cols="12">
                                 <v-text-field
                                     v-model="state.username"
+                                    @input="v$.username.$touch"
+                                    @blur="v$.username.$touch"
+                                    :error-messages="
+                                        v$.username.$errors.map((e) => e.$message.toString())
+                                    "
+                                    required
+                                    type="text"
                                     label="Username"
                                     variant="outlined" />
                             </v-col>
@@ -27,16 +38,34 @@
                                 <v-text-field
                                     v-model="state.password"
                                     @click:append-inner="toggleVisibility"
-                                    append-inner-icon="mdi-eye"
+                                    @input="v$.password.$touch"
+                                    @blur="v$.password.$touch"
+                                    :error-messages="
+                                        v$.password.$errors.map((e) => e.$message.toString())
+                                    "
+                                    :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
                                     :type="visible ? 'text' : 'password'"
+                                    required
                                     variant="outlined"
                                     label="Password" />
                             </v-col>
                         </v-row>
                     </v-container>
                 </v-form>
-                <v-card-actions>
-                    <v-btn> Submit </v-btn>
+                <v-card-actions class="d-flex align-center justify-end">
+                    <v-btn @click="$router.go(-1)" variant="elevated" rounded="false" class="ma-1">
+                        Back
+                    </v-btn>
+                    <v-btn @click="clearForm" variant="elevated" rounded="false" class="ma-1">
+                        Reset
+                    </v-btn>
+                    <v-btn
+                        @click="dispatchRegistration"
+                        variant="elevated"
+                        rounded="false"
+                        class="ma-1">
+                        Submit
+                    </v-btn>
                 </v-card-actions>
             </v-card>
         </v-col>
@@ -45,12 +74,10 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
 import { useAppStore } from "@/store/app";
+import { useVuelidate } from "@vuelidate/core";
+import { email, required, minLength, maxLength } from "@vuelidate/validators";
 import AccountsServices from "@/services/AccountsServices";
 import CircleLoader from "@/components/CircleLoader.vue";
-
-onMounted(() => {
-    state.email = String(store.getEmail);
-});
 
 const store = useAppStore();
 
@@ -59,17 +86,37 @@ interface RegistrationForm {
     username: string;
     password: string;
 }
+
 const state: RegistrationForm = reactive({ email: "", username: "", password: "" });
 
+const rules = {
+    email: { required, email },
+    username: { required, minLength: minLength(3), maxLength: maxLength(16) },
+    password: { required, minLength: minLength(8), maxLength: maxLength(128) },
+};
+
+const v$ = useVuelidate(rules, state);
+
 const visible = ref<boolean>();
+
 const loading = ref<boolean>();
 
 function toggleVisibility() {
     visible.value = !visible.value;
 }
 
+function clearForm(): void {
+    v$.value.$reset();
+
+    state.email = "";
+    state.username = "";
+    state.password = "";
+}
+
 function dispatchRegistration() {
     loading.value = true;
+
+    v$.value.$validate();
 
     AccountsServices.createAccount(state.username, state.email, state.password)
         .catch((err) => {
@@ -82,7 +129,12 @@ function dispatchRegistration() {
             loading.value = false;
         });
 }
+
+onMounted(() => {
+    state.email = store.getEmail;
+});
 </script>
+
 <style scoped>
 .form-title {
     font-family: "Playfair Display", serif;
