@@ -1,5 +1,6 @@
 <template>
     <v-row justify="center">
+        <CircleLoader :loading="loading" circleColor="black" />
         <v-col cols="6">
             <v-card height="100%" flat>
                 <v-card-title class="text-center">
@@ -10,20 +11,21 @@
                         <v-row dense>
                             <v-col cols="12">
                                 <v-text-field
-                                    v-model="email"
+                                    v-model="state.email"
+                                    required
                                     variant="outlined"
                                     label="Email"
-                                    :disabled="email ? true : false" />
+                                    :disabled="state.email ? true : false" />
                             </v-col>
                             <v-col cols="12">
                                 <v-text-field
-                                    v-model="username"
+                                    v-model="state.username"
                                     label="Username"
                                     variant="outlined" />
                             </v-col>
                             <v-col cols="12">
                                 <v-text-field
-                                    v-model="password"
+                                    v-model="state.password"
                                     @click:append-inner="toggleVisibility"
                                     append-inner-icon="mdi-eye"
                                     :type="visible ? 'text' : 'password'"
@@ -33,28 +35,52 @@
                         </v-row>
                     </v-container>
                 </v-form>
+                <v-card-actions>
+                    <v-btn> Submit </v-btn>
+                </v-card-actions>
             </v-card>
         </v-col>
     </v-row>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { useAppStore } from "@/store/app";
-import { onMounted } from "vue";
+import AccountsServices from "@/services/AccountsServices";
+import CircleLoader from "@/components/CircleLoader.vue";
+
+onMounted(() => {
+    state.email = String(store.getEmail);
+});
 
 const store = useAppStore();
 
-onMounted(() => {
-    email.value = store.getUserEmail;
-});
+interface RegistrationForm {
+    email: string;
+    username: string;
+    password: string;
+}
+const state: RegistrationForm = reactive({ email: "", username: "", password: "" });
 
-const email = ref<string>("");
-const password = ref<string>("");
-const username = ref<string>("");
 const visible = ref<boolean>();
+const loading = ref<boolean>();
 
 function toggleVisibility() {
     visible.value = !visible.value;
+}
+
+function dispatchRegistration() {
+    loading.value = true;
+
+    AccountsServices.createAccount(state.username, state.email, state.password)
+        .catch((err) => {
+            console.error(err);
+        })
+        .then((res) => {
+            console.log(res);
+        })
+        .finally(() => {
+            loading.value = false;
+        });
 }
 </script>
 <style scoped>
