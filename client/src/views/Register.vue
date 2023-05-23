@@ -122,8 +122,10 @@ function dispatchRegistration() {
         .catch((err) => {
             console.error(err);
         })
-        .then((res) => {
-            console.log(res);
+        .then(() => {
+            store.setUserEmail(state.email);
+            store.setPassword(state.password);
+            store.setUsername(state.username);
         })
         .finally(() => {
             loading.value = false;
