@@ -57,11 +57,7 @@ function dispatchFetchUser() {
         });
 }
 
-function clearForm(): void {
-    v$.value.$reset();
 
-    state.userEmail = "";
-}
 
 function toggleLoadingState(state: boolean): void {
     loading.value = state;
