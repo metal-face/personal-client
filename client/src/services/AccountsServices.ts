@@ -14,6 +14,7 @@ export default {
                 username: username,
                 email: email,
                 password: password,
+                role: "REGULAR"
             },
         });
     },
