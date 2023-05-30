@@ -5,9 +5,9 @@ import { format } from "date-fns";
 import { useVuelidate } from "@vuelidate/core";
 import { email, required } from "@vuelidate/validators";
 import AccountsServices from "@/services/AccountsServices";
-import { useAppStore } from "@/store/app";
+import { useAuthStore } from "@/store/app";
 
-const store = useAppStore();
+const store = useAuthStore();
 const router = useRouter();
 
 interface State {
@@ -37,18 +37,22 @@ function createClock() {
     }, 1000);
 }
 
-function dispatchFetchUser() {
+async function dispatchFetchUser() {
     toggleLoadingState(true);
 
-    v$.value.$validate;
+    const result = await v$.value.$validate();
 
-    store.setUserEmail(state.userEmail);
+    if (!result) {
+        toggleLoadingState(false);
+        return;
+    }
 
     AccountsServices.fetchAccountByEmail(state.userEmail)
         .then((res) => {
-            if (res.data.data.length === 0) {
+            store.setUserEmail(state.userEmail);
+            if (res.status === 204) {
                 router.push({ name: "Register" });
-            } else if (res.data.data.length > 0) {
+            } else if (res.status === 200) {
                 router.push({ name: "Login" });
             }
         })
@@ -56,8 +60,6 @@ function dispatchFetchUser() {
             toggleLoadingState(false);
         });
 }
-
-
 
 function toggleLoadingState(state: boolean): void {
     loading.value = state;
@@ -83,7 +85,7 @@ onUnmounted(() => {
                 width="100%">
                 <v-card color="transparent" flat>
                     <v-card-title class="page-title ma-1">
-                        <h1 class="text-center">Bryan Hughes</h1>
+                        <h1 class="page-title text-center">Bryan Hughes</h1>
                     </v-card-title>
                     <v-card-subtitle class="page-clock ma-1">
                         <h3 class="text-center">Full-Stack Software Developer</h3>
@@ -93,16 +95,16 @@ onUnmounted(() => {
                         <label for="email" class="page-clock mb-3 d-flex justify-center">
                             Enter your email
                         </label>
-                        <!-- #TODO VALIDATE USER INPUT -->
                         <v-text-field
                             v-model="state.userEmail"
                             @click:append-inner="dispatchFetchUser"
                             @input="v$.userEmail.$touch"
                             @blur="v$.userEmail.$touch"
-                            :loading="loading"
                             :error-messages="v$.userEmail.$errors.map((e) => e.$message.toString())"
+                            :loading="loading"
+                            variant="solo"
+                            required
                             id="email"
-                            variant="outlined"
                             class="page-clock"
                             prepend-inner-icon="mdi-email"
                             append-inner-icon="mdi-send" />
@@ -118,6 +120,6 @@ onUnmounted(() => {
 }
 
 .page-title {
-    font-family: "Calistoga", cursive !important;
+    font-family: "Prata", serif !important;
 }
 </style>
