@@ -1,34 +1,52 @@
 // Utilities
 import { defineStore } from "pinia";
-import { useLocalStorage } from "@vueuse/core"
+import { RemovableRef, useSessionStorage } from "@vueuse/core";
 
 interface State {
-    email: string
-    username: string
-    password: string
+    accountId: string | RemovableRef<string>
+    email: string | RemovableRef<string>
+    username: string | RemovableRef<string>
+    password: string | RemovableRef<string>
+    role: string | RemovableRef<string>
 }
 
-export const useAppStore = defineStore("app", {
-    state: (): State  => ({
-        email: useLocalStorage("email", "").value,
-        username: "",
-        password: "",
+enum Role {
+    ADMIN = "ADMIN",
+    SUPER = "SUPER",
+    REGULAR = "REGULAR",
+}
+
+export const useAuthStore = defineStore("auth", {
+    state: (): State => ({
+        accountId: useSessionStorage("email", ""),
+        email: useSessionStorage("email", ""),
+        username: useSessionStorage("username", ""),
+        password: useSessionStorage("password", ""),
+        role: useSessionStorage("role", Role.REGULAR),
     }),
     getters: {
+        getAccountId: (state: State) => state.accountId,
         getEmail: (state: State) => state.email,
         getUsername: (state: State) => state.username,
         getPassword: (state: State) => state.password,
+        getRole: (state: State) => state.role,
     },
     actions: {
+        setAccountId(userId: string): void {
+            this.accountId = userId;
+        },
         setUserEmail(email: string): void {
-            this.email = useLocalStorage("email", email).value;
+            this.email = email;
         },
         setUsername(username: string): void {
             this.username = username;
         },
         setPassword(password: string): void {
+            // #TODO: Salt and Hash password
             this.password = password;
         },
-        
-    }
+        setRole(role: Role.ADMIN | Role.REGULAR | Role.SUPER) {
+            this.role = role;
+        },
+    },
 });
