@@ -73,13 +73,15 @@
 </template>
 <script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
-import { useAppStore } from "@/store/app";
+import { Router, useRouter } from "vue-router";
+import { useAuthStore } from "@/store/app";
 import { useVuelidate } from "@vuelidate/core";
 import { email, required, minLength, maxLength } from "@vuelidate/validators";
 import AccountsServices from "@/services/AccountsServices";
 import CircleLoader from "@/components/CircleLoader.vue";
 
-const store = useAppStore();
+const store = useAuthStore();
+const router: Router = useRouter();
 
 interface RegistrationForm {
     email: string;
@@ -97,9 +99,9 @@ const rules = {
 
 const v$ = useVuelidate(rules, state);
 
-const visible = ref<boolean>();
+const visible = ref<boolean>(false);
 
-const loading = ref<boolean>();
+const loading = ref<boolean>(false);
 
 function toggleVisibility() {
     visible.value = !visible.value;
@@ -120,12 +122,15 @@ function dispatchRegistration() {
 
     AccountsServices.createAccount(state.username, state.email, state.password)
         .catch((err) => {
-            console.error(err);
+            // TODO: handle error with snackbar to inform user
+            console.error(err.request);
+            console.error(err.response);
         })
         .then(() => {
             store.setUserEmail(state.email);
             store.setPassword(state.password);
             store.setUsername(state.username);
+            router.push({ name: "UserProfile" });
         })
         .finally(() => {
             loading.value = false;
@@ -133,12 +138,12 @@ function dispatchRegistration() {
 }
 
 onMounted(() => {
-    state.email = store.getEmail;
+    state.email = String(store.getEmail);
 });
 </script>
 
 <style scoped>
 .form-title {
-    font-family: "Playfair Display", serif;
+    font-family: "Prata", serif;
 }
 </style>
