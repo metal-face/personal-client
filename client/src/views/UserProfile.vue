@@ -11,15 +11,15 @@
 </template>
 
 <script setup lang="ts">
-import { useAppStore } from "@/store/app";
+import { useAuthStore } from "@/store/app";
 import { onMounted, ref } from "vue";
 
-const store = useAppStore();
+const store = useAuthStore();
 
 const username = ref<string>("");
 
 onMounted(() => {
-    username.value = store.getUsername;
+    username.value = String(store.getUsername);
 });
 </script>
 
