@@ -56,9 +56,6 @@
                     <v-btn @click="$router.go(-1)" variant="elevated" rounded="false" class="ma-1">
                         Back
                     </v-btn>
-                    <v-btn @click="clearForm" variant="elevated" rounded="false" class="ma-1">
-                        Reset
-                    </v-btn>
                     <v-btn
                         @click="dispatchRegistration"
                         variant="elevated"
