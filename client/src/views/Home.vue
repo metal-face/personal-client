@@ -48,7 +48,12 @@ async function dispatchFetchUser() {
     }
 
     AccountsServices.fetchAccountByEmail(state.userEmail)
+        .catch((err) => {
+            console.log(err);
+        })
         .then((res) => {
+            if (!res) return;
+
             store.setUserEmail(state.userEmail);
             if (res.status === 204) {
                 router.push({ name: "Register" });
