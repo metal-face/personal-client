@@ -30,7 +30,7 @@ export default {
             url: `/accounts/${accountId}`,
         });
     },
-    fetchManyAccounts(page: number, pageSize: number): Promise<AxiosResponse<any, any>> {
+    fetchManyAccounts(page?: number, pageSize?: Number): Promise<AxiosResponse<any, any>> {
         return ApiClient({
             method: "GET",
             url: `/accounts?page=${page}&page_size=${pageSize}`,
