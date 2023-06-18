@@ -55,9 +55,11 @@ async function dispatchFetchUser() {
             if (!res) return;
 
             store.setUserEmail(state.userEmail);
-            if (res.status === 204) {
-                router.push({ name: "Register" });
-            } else if (res.status === 200) {
+            if (!res.data.data ) {
+                router.push({ name: "Register"});
+            }
+
+            if (res.data.data && res.data.data.length > 0) {
                 router.push({ name: "Login" });
             }
         })
