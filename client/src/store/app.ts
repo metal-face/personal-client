@@ -8,6 +8,8 @@ interface State {
     username: string | RemovableRef<string>
     password: string | RemovableRef<string>
     role: string | RemovableRef<string>
+    createdAt: string | RemovableRef<string>
+    updatedAt: string | RemovableRef<string>
 }
 
 enum Role {
@@ -23,6 +25,8 @@ export const useAuthStore = defineStore("auth", {
         username: useSessionStorage("username", ""),
         password: useSessionStorage("password", ""),
         role: useSessionStorage("role", Role.REGULAR),
+        createdAt: useSessionStorage("created_at", ""),
+        updatedAt: useSessionStorage("updated_at", ""),
     }),
     getters: {
         getAccountId: (state: State) => state.accountId,
@@ -30,6 +34,8 @@ export const useAuthStore = defineStore("auth", {
         getUsername: (state: State) => state.username,
         getPassword: (state: State) => state.password,
         getRole: (state: State) => state.role,
+        getCreatedAt: (state: State) => state.createdAt,
+        getUpdatedAt: (state: State) => state.updatedAt,
     },
     actions: {
         setAccountId(userId: string): void {
@@ -48,5 +54,11 @@ export const useAuthStore = defineStore("auth", {
         setRole(role: Role.ADMIN | Role.REGULAR | Role.SUPER) {
             this.role = role;
         },
+        setCreatedAt(createdAt: string): void {
+            this.createdAt = createdAt;
+        },
+        setUpdatedAt(updatedAt: string): void {
+            this.updatedAt = updatedAt;
+        }
     },
 });
