@@ -20,8 +20,11 @@ export default {
     },
     fetchAccountByEmail(email: string): Promise<AxiosResponse<any, any>> {
         return ApiClient({
-            method: "GET",
-            url: `/search?email=${email}`
+            method: "POST",
+            url: "/search",
+            data: {
+                email: email
+            }
         });
     },
     fetchAccountById(accountId: string): Promise<AxiosResponse<any, any>> {
