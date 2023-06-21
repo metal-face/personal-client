@@ -14,8 +14,20 @@ interface State {
     userEmail: string;
 }
 
+interface Snackbar {
+    message: string;
+    visible: boolean;
+    timeout: number;
+}
+
 const state: State = reactive({
     userEmail: "",
+});
+
+const snackbar: Snackbar = reactive({
+    message: "",
+    visible: false,
+    timeout: 3000
 });
 
 const rules = {
@@ -49,17 +61,21 @@ async function dispatchFetchUser() {
 
     AccountsServices.fetchAccountByEmail(state.userEmail)
         .catch((err) => {
-            console.log(err);
+            if (err.response.status === 500) {
+                snackbar.visible = true;
+                snackbar.message = "Oops! Something went wrong!"
+            }
         })
         .then((res) => {
             if (!res) return;
 
-            store.setUserEmail(state.userEmail);
-            if (!res.data.data ) {
+            if (!res.data.data) {
+                store.setUserEmail(state.userEmail);
                 router.push({ name: "Register"});
             }
 
             if (res.data.data && res.data.data.length > 0) {
+                store.setUserEmail(state.userEmail);
                 router.push({ name: "Login" });
             }
         })
@@ -118,6 +134,9 @@ onUnmounted(() => {
                     </v-card>
                 </v-card>
             </v-card>
+            <v-snackbar v-model="snackbar.visible" :timeout="snackbar.timeout">
+                {{ snackbar.message }}
+            </v-snackbar>
         </v-col>
     </v-row>
 </template>
