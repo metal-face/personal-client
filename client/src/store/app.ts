@@ -59,6 +59,6 @@ export const useAuthStore = defineStore("auth", {
         },
         setUpdatedAt(updatedAt: string): void {
             this.updatedAt = updatedAt;
-        }
+        },
     },
 });
