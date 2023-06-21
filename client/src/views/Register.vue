@@ -117,6 +117,8 @@ function dispatchRegistration() {
 
     v$.value.$validate();
 
+    // TODO: Ensure th e password field passes server criteria before sending
+
     AccountsServices.createAccount(state.username, state.email, state.password)
         .catch((err) => {
             // TODO: handle error with snackbar to inform user
