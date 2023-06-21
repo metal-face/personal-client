@@ -21,7 +21,7 @@ export default {
     fetchAccountByEmail(email: string): Promise<AxiosResponse<any, any>> {
         return ApiClient({
             method: "GET",
-            url: `/accounts?email=${email}`
+            url: `/search?email=${email}`
         });
     },
     fetchAccountById(accountId: string): Promise<AxiosResponse<any, any>> {
