@@ -1,8 +1,8 @@
 <template>
     <v-row dense no-gutters justify="center">
         <CircleLoader :loading="loading" circleColor="black" />
-        <v-col cols="6">
-            <v-card height="100%" flat variant="outlined">
+        <v-col :cols="$vuetify.display.mobile ? 12 : 6">
+            <v-card height="100%" width="90%" class="mx-auto" flat variant="outlined">
                 <v-card-title class="text-center">
                     <h2 class="form-title ma-3">Register</h2>
                 </v-card-title>
@@ -30,7 +30,6 @@
                                         v$.username.$errors.map((e) => e.$message.toString())
                                     "
                                     required
-                                    type="text"
                                     label="Username"
                                     variant="outlined" />
                             </v-col>
