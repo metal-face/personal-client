@@ -1,5 +1,6 @@
 <template>
     <v-row dense no-gutters justify="center">
+        <CircleLoader :loading="loading" circle-color="blue-darken-3" />
         <v-col :cols="$vuetify.display.mobile ? 12 : 6">
             <v-card flat height="100%" width="90%" class="mx-auto" variant="outlined">
                 <v-card-title class="form-title ma-3">
@@ -66,6 +67,8 @@ import { reactive, ref } from "vue";
 import { Router, useRouter } from "vue-router";
 import { required, minLength, maxLength } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
+import SessionServices from "@/services/SessionServices";
+import CircleLoader from "@/components/CircleLoader.vue";
 
 const router: Router = useRouter();
 
@@ -85,8 +88,28 @@ const v$ = useVuelidate(rules, state);
 
 const loading = ref<boolean>(false);
 
-function dispatchLoginUser(): void {
-    
+async function dispatchLoginUser(): Promise<void> {
+    loading.value = true;
+
+    let valid = await v$.value.$validate();
+    if (!valid) {
+        v$.value.$reset;
+        return;
+    }
+
+    SessionServices.login(state.username, state.password)
+        .catch((err) => {
+            console.error(err);
+            // TODO: handle error with snackbar
+        })
+        .then((res) => {
+            if (!res) return;
+            console.log(res);
+            // TODO: Handle retaining session token in storage
+        })
+        .finally(() => {
+            loading.value = false;
+        });
 }
 </script>
 <style scoped>
