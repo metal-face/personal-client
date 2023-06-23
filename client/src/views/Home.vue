@@ -118,7 +118,6 @@ onUnmounted(() => {
                         </label>
                         <v-text-field
                             v-model="state.userEmail"
-                            @click:append-inner="dispatchFetchUser"
                             @input="v$.userEmail.$touch"
                             @blur="v$.userEmail.$touch"
                             :error-messages="v$.userEmail.$errors.map((e) => e.$message.toString())"
@@ -126,9 +125,22 @@ onUnmounted(() => {
                             variant="solo"
                             required
                             id="email"
-                            class="page-clock"
-                            prepend-inner-icon="mdi-email"
-                            append-inner-icon="mdi-send" />
+                            class="page-clock">
+                            <template #prepend-inner>
+                                <v-icon size="large" color="accent"> mdi-email </v-icon>
+                            </template>
+                            <template #append-inner>
+                                <v-btn
+                                    block
+                                    @click="dispatchFetchUser"
+                                    rounded="false"
+                                    size="small"
+                                    color="accent">
+                                    <v-icon color="black" size="small"> mdi-send </v-icon>
+                                </v-btn>
+                            </template>
+                        </v-text-field>
+                        <!-- <v-btn @click="dispatchFetchUser" block rounded="false" size="x-large"> Submit </v-btn> -->
                     </v-card>
                 </v-card>
             </v-card>
