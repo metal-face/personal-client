@@ -54,9 +54,9 @@
                 <v-card-actions class="d-flex flex-column align-center justify-end">
                     <v-btn
                         @click="$router.push({ name: 'Home' })"
-                        variant="elevated"
+                        variant="flat"
                         block
-                        color="grey-darken-4"
+                        color="primary"
                         size="x-large"
                         rounded="false"
                         class="ma-1">
@@ -66,7 +66,7 @@
                         @click="dispatchRegistration"
                         block
                         size="x-large"
-                        color="cyan-lighten-1"
+                        color="accent"
                         variant="elevated"
                         rounded="false"
                         class="ma-1">
@@ -78,13 +78,14 @@
     </v-row>
 </template>
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, computed } from "vue";
 import { Router, useRouter } from "vue-router";
 import { useAuthStore } from "@/store/app";
 import { useVuelidate } from "@vuelidate/core";
 import { email, required, minLength, maxLength } from "@vuelidate/validators";
 import AccountsServices from "@/services/AccountsServices";
 import CircleLoader from "@/components/CircleLoader.vue";
+import vuetify from "@/plugins/vuetify";
 
 const store = useAuthStore();
 const router: Router = useRouter();
@@ -94,6 +95,10 @@ interface RegistrationForm {
     username: string;
     password: string;
 }
+
+const isDark = computed<boolean>(() => {
+    return vuetify.theme.current.value.dark;
+});
 
 const state: RegistrationForm = reactive({ email: "", username: "", password: "" });
 
