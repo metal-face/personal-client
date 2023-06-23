@@ -1,6 +1,6 @@
 <template>
     <v-app>
-        <v-app-bar flat color="primary">
+        <v-app-bar flat color="background">
             <v-btn
                 @click="navDrawer = !navDrawer"
                 :color="isDark ? 'white' : 'black'"
@@ -36,7 +36,9 @@ import { computed } from "vue";
 const theme = useTheme();
 
 function toggleTheme(): void {
-    theme.global.name.value = theme.global.current.value.dark ? "light" : "dark";
+    theme.global.name.value = theme.global.current.value.dark
+        ? "customLightTheme"
+        : "customDarkTheme";
 }
 
 const navDrawer = ref<boolean>(false);
@@ -48,5 +50,5 @@ const isDark = computed<boolean>(() => {
 
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display&family=Source+Code+Pro&display=swap");
-@import url('https://fonts.googleapis.com/css2?family=Prata&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Prata&display=swap");
 </style>
