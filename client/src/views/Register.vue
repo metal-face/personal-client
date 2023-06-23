@@ -51,12 +51,22 @@
                         </v-row>
                     </v-container>
                 </v-form>
-                <v-card-actions class="d-flex align-center justify-end">
-                    <v-btn @click="$router.go(-1)" variant="elevated" rounded="false" class="ma-1">
+                <v-card-actions class="d-flex flex-column align-center justify-end">
+                    <v-btn
+                        @click="$router.push({ name: 'Home' })"
+                        variant="elevated"
+                        block
+                        color="grey-darken-4"
+                        size="x-large"
+                        rounded="false"
+                        class="ma-1">
                         Back
                     </v-btn>
                     <v-btn
                         @click="dispatchRegistration"
+                        block
+                        size="x-large"
+                        color="cyan-lighten-1"
                         variant="elevated"
                         rounded="false"
                         class="ma-1">
@@ -116,7 +126,7 @@ function dispatchRegistration() {
 
     v$.value.$validate();
 
-    // TODO: Ensure th e password field passes server criteria before sending
+    // TODO: Ensure the password field passes server criteria before sending
 
     AccountsServices.createAccount(state.username, state.email, state.password)
         .catch((err) => {
@@ -125,8 +135,6 @@ function dispatchRegistration() {
             console.error(err.response);
         })
         .then(() => {
-            store.setUserEmail(state.email);
-            store.setPassword(state.password);
             store.setUsername(state.username);
             router.push({ name: "UserProfile" });
         })
@@ -134,10 +142,6 @@ function dispatchRegistration() {
             loading.value = false;
         });
 }
-
-onMounted(() => {
-    state.email = String(store.getEmail);
-});
 </script>
 
 <style scoped>
