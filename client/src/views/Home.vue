@@ -5,9 +5,7 @@ import { format } from "date-fns";
 import { useVuelidate } from "@vuelidate/core";
 import { email, required } from "@vuelidate/validators";
 import AccountsServices from "@/services/AccountsServices";
-import { useAuthStore } from "@/store/app";
 
-const store = useAuthStore();
 const router = useRouter();
 
 interface State {
@@ -27,7 +25,7 @@ const state: State = reactive({
 const snackbar: Snackbar = reactive({
     message: "",
     visible: false,
-    timeout: 3000
+    timeout: 3000,
 });
 
 const rules = {
@@ -37,7 +35,9 @@ const rules = {
 const v$ = useVuelidate(rules, state);
 
 const intervalID = ref<number>(0);
+
 const templateDate = ref<string>(format(Date.now(), "PPPpp"));
+
 const loading = ref<boolean>(true);
 
 function createClock() {
@@ -63,19 +63,17 @@ async function dispatchFetchUser() {
         .catch((err) => {
             if (err.response.status === 500) {
                 snackbar.visible = true;
-                snackbar.message = "Oops! Something went wrong!"
+                snackbar.message = "Oops! Something went wrong!";
             }
         })
         .then((res) => {
             if (!res) return;
 
-            if (!res.data.data) {
-                store.setUserEmail(state.userEmail);
-                router.push({ name: "Register"});
+            if (!res.data.data.length) {
+                router.push({ name: "Register" });
             }
 
-            if (res.data.data) {
-                store.setUserEmail(state.userEmail);
+            if (Object.keys(res.data.data).length) {
                 router.push({ name: "Login" });
             }
         })
