@@ -52,8 +52,7 @@
                         size="x-large"
                         class="ma-1"
                         variant="flat"
-                        elevation="12"
-                        color="blue-darken-4"
+                        color="accent"
                         @click="dispatchLoginUser">
                         Login
                     </v-btn>
