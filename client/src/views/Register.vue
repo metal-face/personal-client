@@ -145,12 +145,13 @@ function dispatchRegistration() {
             console.error(err.response);
         })
         .then((res) => {
-            console.log(res);
+            if (!res) return;
             store.setUsername(state.username);
-            router.push({ name: "UserProfile" });
-        })
-        .finally(() => {
+            store.setAccountId(res.data.data.account_id);
+            store.setRole(res.data.data.role);
+            store.setCreatedAt(res.data.data.created_at);
             loading.value = false;
+            router.push({ name: "UserProfile" });
         });
 }
 </script>
