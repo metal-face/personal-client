@@ -86,6 +86,7 @@ import { email, required, minLength, maxLength } from "@vuelidate/validators";
 import AccountsServices from "@/services/AccountsServices";
 import CircleLoader from "@/components/CircleLoader.vue";
 import vuetify from "@/plugins/vuetify";
+import SessionServices from "@/services/SessionServices";
 
 const store = useAuthStore();
 const router: Router = useRouter();
@@ -131,14 +132,21 @@ function clearForm(): void {
     state.password = "";
 }
 
-function dispatchRegistration() {
+async function dispatchRegistration(): Promise<void> {
+    await registerUser();
+    await loginUser();
+    loading.value = false;
+    router.push({ name: "UserProfile" });
+}
+
+async function registerUser(): Promise<void> {
     loading.value = true;
 
     v$.value.$validate();
 
     // TODO: Ensure the password field passes server criteria before sending
 
-    AccountsServices.createAccount(state.username, state.email, state.password)
+    return AccountsServices.createAccount(state.username, state.email, state.password)
         .catch((err) => {
             // TODO: handle error with snackbar to inform user
             console.error(err.request);
@@ -150,8 +158,17 @@ function dispatchRegistration() {
             store.setAccountId(res.data.data.account_id);
             store.setRole(res.data.data.role);
             store.setCreatedAt(res.data.data.created_at);
-            loading.value = false;
-            router.push({ name: "UserProfile" });
+        });
+}
+
+async function loginUser(): Promise<void> {
+    return SessionServices.login(state.username, state.password)
+        .catch((err) => {
+            console.error(err.response);
+        })
+        .then((res) => {
+            if (!res) return;
+            console.info(res);
         });
 }
 </script>
