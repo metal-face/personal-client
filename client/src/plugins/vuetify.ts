@@ -19,7 +19,7 @@ const customDarkTheme: ThemeDefinition = {
     colors: {
         primary: colors.grey.darken4,
         secondary: colors.grey.darken3,
-        accent: colors.deepPurple.lighten1,
+        accent: colors.indigo.darken1,
         background: colors.shades.black,
         surface: colors.grey.darken3,
         error: colors.red.accent1,
@@ -35,7 +35,7 @@ const customLightTheme: ThemeDefinition = {
         primary: colors.shades.white,
         secondary: colors.grey.lighten5,
         background: colors.shades.white,
-        accent: colors.deepPurple.lighten1,
+        accent: colors.indigo.lighten1,
         surface: colors.grey.lighten5,
         error: colors.red.accent1,
         info: colors.blue.accent1,
