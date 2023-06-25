@@ -32,6 +32,18 @@ const routes = [
                     restricted: false,
                 },
             },
+            {
+                path: "profile",
+                name: "UserProfile",
+                component: () => import("@/views/UserProfile.vue"),
+                meta: {
+                    title: "User Profile",
+                    restricted: true,
+                    isUser: true,
+                    isAdmin: false,
+                    isSuperUser: false,
+                }
+            }
         ],
     },
 ];
@@ -43,7 +55,7 @@ const router: Router = createRouter({
 
 router.beforeEach((to, from, next) => {
     const pageTitle: string = String(to.meta.title);
-    
+
     if (pageTitle) {
         document.title = pageTitle;
     }
