@@ -5,8 +5,10 @@ import { format } from "date-fns";
 import { useVuelidate } from "@vuelidate/core";
 import { email, required } from "@vuelidate/validators";
 import AccountsServices from "@/services/AccountsServices";
+import { useAuthStore } from "@/store/app";
 
 const router = useRouter();
+const userStore = useAuthStore();
 
 interface State {
     userEmail: string;
@@ -70,6 +72,7 @@ async function dispatchFetchUser() {
             if (!res) return;
 
             if (!res.data.data.length) {
+                userStore.setUserEmail(state.userEmail);
                 router.push({ name: "Register" });
             }
 
@@ -106,7 +109,7 @@ onUnmounted(() => {
                 width="100%">
                 <v-card color="transparent" flat>
                     <v-card-title class="page-title ma-1">
-                        <h1 class="page-title text-center">Bryan Hughes</h1>
+                        <h1 class="page-title text-center">MetalFace</h1>
                     </v-card-title>
                     <v-card-subtitle class="page-clock ma-1">
                         <h3 class="text-center">Full-Stack Software Developer</h3>
@@ -125,22 +128,25 @@ onUnmounted(() => {
                             variant="solo"
                             required
                             id="email"
-                            class="page-clock">
+                            class="d-flex flex-column page-clock">
                             <template #prepend-inner>
-                                <v-icon size="large" color="accent"> mdi-email </v-icon>
+                                <div>
+                                    <v-icon size="x-large" color="accent"> mdi-email </v-icon>
+                                </div>
                             </template>
                             <template #append-inner>
-                                <v-btn
-                                    block
-                                    @click="dispatchFetchUser"
-                                    rounded="false"
-                                    size="small"
-                                    color="accent">
-                                    <v-icon color="black" size="small"> mdi-send </v-icon>
-                                </v-btn>
+                                <div>
+                                    <v-btn
+                                        @click="dispatchFetchUser"
+                                        block
+                                        rounded="false"
+                                        size="small"
+                                        color="accent">
+                                        <v-icon color="black" size="small"> mdi-send </v-icon>
+                                    </v-btn>
+                                </div>
                             </template>
                         </v-text-field>
-                        <!-- <v-btn @click="dispatchFetchUser" block rounded="false" size="x-large"> Submit </v-btn> -->
                     </v-card>
                 </v-card>
             </v-card>
