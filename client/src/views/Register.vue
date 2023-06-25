@@ -114,6 +114,11 @@ const visible = ref<boolean>(false);
 
 const loading = ref<boolean>(false);
 
+onMounted(() => {
+    clearForm();
+    state.email = store.getEmail.toString();
+});
+
 function toggleVisibility() {
     visible.value = !visible.value;
 }
@@ -139,7 +144,8 @@ function dispatchRegistration() {
             console.error(err.request);
             console.error(err.response);
         })
-        .then(() => {
+        .then((res) => {
+            console.log(res);
             store.setUsername(state.username);
             router.push({ name: "UserProfile" });
         })
