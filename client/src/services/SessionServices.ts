@@ -31,8 +31,8 @@ export default {
         return ApiClient({
             method: "DELETE",
             url: `/sessions`,
-            data: {
-                session_id: sessionId
+            headers: {
+                "Authorization": `Bearer ${sessionId}`
             }
         })
     }
