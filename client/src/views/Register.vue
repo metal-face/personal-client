@@ -80,7 +80,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed } from "vue";
 import { Router, useRouter } from "vue-router";
-import { useAuthStore } from "@/store/app";
+import { sessionStore } from "@/store/SessionStore";
 import { useVuelidate } from "@vuelidate/core";
 import { email, required, minLength, maxLength } from "@vuelidate/validators";
 import AccountsServices from "@/services/AccountsServices";
@@ -88,7 +88,7 @@ import CircleLoader from "@/components/CircleLoader.vue";
 import vuetify from "@/plugins/vuetify";
 import SessionServices from "@/services/SessionServices";
 
-const store = useAuthStore();
+const store = sessionStore();
 const router: Router = useRouter();
 
 interface RegistrationForm {
@@ -154,10 +154,6 @@ async function registerUser(): Promise<void> {
         })
         .then((res) => {
             if (!res) return;
-            store.setUsername(state.username);
-            store.setAccountId(res.data.data.account_id);
-            store.setRole(res.data.data.role);
-            store.setCreatedAt(res.data.data.created_at);
         });
 }
 
@@ -178,3 +174,4 @@ async function loginUser(): Promise<void> {
     font-family: "Prata", serif;
 }
 </style>
+@/store/user @/store/SessionStore
