@@ -5,13 +5,21 @@ import { format } from "date-fns";
 import { useVuelidate } from "@vuelidate/core";
 import { email, required } from "@vuelidate/validators";
 import AccountsServices from "@/services/AccountsServices";
-import { useAuthStore } from "@/store/app";
+import { sessionStore } from "@/store/SessionStore";
 
 const router = useRouter();
-const userStore = useAuthStore();
+const store = sessionStore();
 
 interface State {
     userEmail: string;
+}
+
+interface Session {
+    accountId?: string;
+    sessionId?: string;
+    createdAt?: string;
+    expiresAt?: string;
+    userAgent?: string;
 }
 
 interface Snackbar {
@@ -41,6 +49,8 @@ const intervalID = ref<number>(0);
 const templateDate = ref<string>(format(Date.now(), "PPPpp"));
 
 const loading = ref<boolean>(true);
+
+const session: Session = reactive({});
 
 function createClock() {
     intervalID.value = window.setInterval(() => {
@@ -72,7 +82,6 @@ async function dispatchFetchUser() {
             if (!res) return;
 
             if (!res.data.data.length) {
-                userStore.setUserEmail(state.userEmail);
                 router.push({ name: "Register" });
             }
 
@@ -90,6 +99,14 @@ function toggleLoadingState(state: boolean): void {
 }
 
 onMounted(() => {
+    console.log(store.getSession);
+    Object.assign(session, JSON.parse(window.localStorage.getItem("session") || "{}"));
+
+    if (Object.keys(session)) {
+        store.setSession(session);
+    }
+
+    
     createClock();
 });
 
@@ -165,3 +182,4 @@ onUnmounted(() => {
     font-family: "Prata", serif !important;
 }
 </style>
+@/store/user @/store/SessionStore
