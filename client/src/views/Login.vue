@@ -150,8 +150,8 @@ async function loginUser(): Promise<void> {
         })
         .then((res) => {
             if (!res) return;
-            console.log(res.data.data);
             store.setSession(res.data.data);
+            router.push({ name: "UserProfile" });
         })
         .finally(() => {
             loading.value = false;
