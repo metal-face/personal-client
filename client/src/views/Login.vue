@@ -10,6 +10,15 @@
                     <v-container fluid>
                         <v-row dense>
                             <v-col cols="12">
+                                <v-alert
+                                    v-model="alert.visible"
+                                    density="compact"
+                                    :title="alert.title"
+                                    :color="alert.color"
+                                    :type="alert.type"
+                                    :text="alert.text" />
+                            </v-col>
+                            <v-col cols="12">
                                 <v-text-field
                                     v-model="state.username"
                                     @input="v$.username.$touch"
@@ -53,7 +62,7 @@
                         class="ma-1"
                         variant="flat"
                         color="accent"
-                        @click="dispatchLoginUser">
+                        @click="loginUser">
                         Login
                     </v-btn>
                 </v-card-actions>
@@ -68,13 +77,47 @@ import { required, minLength, maxLength } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
 import SessionServices from "@/services/SessionServices";
 import CircleLoader from "@/components/CircleLoader.vue";
+import { sessionStore } from "@/store/SessionStore";
 
 const router: Router = useRouter();
+const store = sessionStore();
 
 interface LoginForm {
     username: string;
     password: string;
 }
+
+interface Alert {
+    type: AlertTypes;
+    color: ColorTypes;
+    title: string;
+    text: string;
+    visible: boolean;
+    timeout: number;
+}
+
+enum AlertTypes {
+    success = "success",
+    info = "info",
+    warning = "warning",
+    error = "error",
+}
+
+enum ColorTypes {
+    success = "success",
+    info = "info",
+    warning = "warning",
+    error = "error",
+}
+
+const alert: Alert = reactive({
+    type: AlertTypes.success,
+    color: ColorTypes.success,
+    title: "",
+    text: "",
+    visible: false,
+    timeout: 0,
+});
 
 const state: LoginForm = reactive({ username: "", password: "" });
 
@@ -87,7 +130,7 @@ const v$ = useVuelidate(rules, state);
 
 const loading = ref<boolean>(false);
 
-async function dispatchLoginUser(): Promise<void> {
+async function loginUser(): Promise<void> {
     loading.value = true;
 
     let valid = await v$.value.$validate();
@@ -97,14 +140,18 @@ async function dispatchLoginUser(): Promise<void> {
     }
 
     SessionServices.login(state.username, state.password)
+
         .catch((err) => {
-            console.error(err);
-            // TODO: handle error with snackbar
+            alert.color = ColorTypes.error;
+            alert.text = err.message;
+            alert.title = "Error";
+            alert.type = AlertTypes.error;
+            alert.visible = true;
         })
         .then((res) => {
             if (!res) return;
-            console.log(res);
-            // TODO: Handle retaining session token in storage
+            console.log(res.data.data);
+            store.setSession(res.data.data);
         })
         .finally(() => {
             loading.value = false;
@@ -116,3 +163,4 @@ async function dispatchLoginUser(): Promise<void> {
     font-family: "Prata", serif;
 }
 </style>
+@/store/SessionStore
