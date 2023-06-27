@@ -6,9 +6,11 @@ import { useVuelidate } from "@vuelidate/core";
 import { email, required } from "@vuelidate/validators";
 import AccountsServices from "@/services/AccountsServices";
 import { sessionStore } from "@/store/SessionStore";
+import { useAccountStore } from "@/store/AccountStore";
 
 const router = useRouter();
-const store = sessionStore();
+const sessStore = sessionStore();
+const accountStore = useAccountStore();
 
 interface State {
     userEmail: string;
@@ -22,6 +24,19 @@ interface Session {
     userAgent?: string;
 }
 
+interface Account {
+    accountId?: string;
+    username?: string;
+    email?: string;
+    role?: Role;
+    createdAt?: Date;
+}
+enum Role {
+    ADMIN = "admin",
+    SUPER = "super",
+    REGULAR = "regular",
+}
+
 interface Snackbar {
     message: string;
     visible: boolean;
@@ -31,6 +46,10 @@ interface Snackbar {
 const state: State = reactive({
     userEmail: "",
 });
+
+const session: Session = reactive({});
+
+const account: Account = reactive({});
 
 const snackbar: Snackbar = reactive({
     message: "",
@@ -49,8 +68,6 @@ const intervalID = ref<number>(0);
 const templateDate = ref<string>(format(Date.now(), "PPPpp"));
 
 const loading = ref<boolean>(true);
-
-const session: Session = reactive({});
 
 function createClock() {
     intervalID.value = window.setInterval(() => {
@@ -99,14 +116,22 @@ function toggleLoadingState(state: boolean): void {
 }
 
 onMounted(() => {
-    console.log(store.getSession);
     Object.assign(session, JSON.parse(window.localStorage.getItem("session") || "{}"));
 
     if (Object.keys(session)) {
-        store.setSession(session);
+        sessStore.setSession(session);
+
+        AccountsServices.fetchAccountById(session.accountId || "")
+            .catch((err) => {
+                console.warn(err.response);
+            })
+            .then((res) => {
+                if (!res) return;
+
+                // TODO: Change the backend so that fetch by id returns one account, not all
+            });
     }
 
-    
     createClock();
 });
 
