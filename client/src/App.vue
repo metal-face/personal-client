@@ -22,7 +22,7 @@
 
         <v-main>
             <v-container fluid class="pa-0 fill-height">
-                <router-view />
+                <router-view @account:change="setAccountData" />
             </v-container>
         </v-main>
     </v-app>
@@ -30,10 +30,23 @@
 
 <script setup lang="ts">
 import { useTheme } from "vuetify";
-import { ref } from "vue";
-import { computed } from "vue";
+import { computed, ref } from "vue";
+import { reactive } from "vue";
+import { Account, Role } from "@/models/Account";
 
 const theme = useTheme();
+
+const account: Account = reactive({
+    account_id: "",
+    username: "",
+    email: "",
+    role: Role.REGULAR,
+    created_at: new Date(),
+});
+
+function setAccountData(payload: Account): void {
+    Object.assign(account, payload);
+}
 
 function toggleTheme(): void {
     theme.global.name.value = theme.global.current.value.dark
