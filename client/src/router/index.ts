@@ -24,8 +24,9 @@ const routes = [
                 },
             },
             {
-                path: "register",
+                path: "register/:email",
                 name: "Register",
+                props: true,
                 component: () => import("@/views/Register.vue"),
                 meta: {
                     title: "Register",
