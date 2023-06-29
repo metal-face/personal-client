@@ -4,37 +4,22 @@ import { useRouter } from "vue-router";
 import { format } from "date-fns";
 import { useVuelidate } from "@vuelidate/core";
 import { email, required } from "@vuelidate/validators";
-import AccountsServices from "@/services/AccountsServices";
 import { sessionStore } from "@/store/SessionStore";
 import { useAccountStore } from "@/store/AccountStore";
+import { Account, Role } from "@/models/Account";
+import { Session } from "@/models/Session";
+import AccountsServices from "@/services/AccountsServices";
 
 const router = useRouter();
 const sessStore = sessionStore();
 const accountStore = useAccountStore();
 
+const emit = defineEmits<{
+    (e: "account:change", account: Account): void;
+}>();
+
 interface State {
     userEmail: string;
-}
-
-interface Session {
-    accountId?: string;
-    sessionId?: string;
-    createdAt?: string;
-    expiresAt?: string;
-    userAgent?: string;
-}
-
-interface Account {
-    accountId?: string;
-    username?: string;
-    email?: string;
-    role?: Role;
-    createdAt?: Date;
-}
-enum Role {
-    ADMIN = "admin",
-    SUPER = "super",
-    REGULAR = "regular",
 }
 
 interface Snackbar {
@@ -47,9 +32,21 @@ const state: State = reactive({
     userEmail: "",
 });
 
-const session: Session = reactive({});
+const session: Session = reactive({
+    account_id: "",
+    session_id: "",
+    created_at: "",
+    expires_at: "",
+    user_agent: "",
+});
 
-const account: Account = reactive({});
+const account: Account = reactive({
+    account_id: "",
+    username: "",
+    email: "",
+    role: Role.REGULAR,
+    created_at: new Date(),
+});
 
 const snackbar: Snackbar = reactive({
     message: "",
@@ -78,7 +75,7 @@ function createClock() {
     }, 1000);
 }
 
-async function dispatchFetchUser() {
+async function fetchUserByEmail() {
     toggleLoadingState(true);
 
     const result = await v$.value.$validate();
@@ -99,7 +96,7 @@ async function dispatchFetchUser() {
             if (!res) return;
 
             if (!res.data.data.length) {
-                router.push({ name: "Register" });
+                router.push({ name: "Register", params: { email: state.userEmail } });
             }
 
             if (Object.keys(res.data.data).length) {
@@ -116,23 +113,36 @@ function toggleLoadingState(state: boolean): void {
 }
 
 onMounted(() => {
-    Object.assign(session, JSON.parse(window.localStorage.getItem("session") || "{}"));
-
-    if (Object.keys(session)) {
-        sessStore.setSession(session);
-
-        AccountsServices.fetchAccountById(session.accountId || "")
-            .catch((err) => {
-                console.warn(err.response);
-            })
-            .then((res) => {
-                if (!res) return;
-
-                // TODO: Change the backend so that fetch by id returns one account, not all
-            });
-    }
-
     createClock();
+
+    const resp = window.localStorage.getItem("session");
+    if (resp) {
+        const jsonResponse = JSON.parse(resp) as Session;
+        if (jsonResponse.expires_at) {
+            // TODO: check if the session has expired
+        }
+
+        Object.assign(session, jsonResponse);
+
+        if (Object.keys(session).length) {
+            sessStore.setSession(session);
+
+            if (session.account_id) {
+                AccountsServices.fetchAccountById(session.account_id)
+                    .catch((err) => {
+                        console.warn(err.response);
+                    })
+                    .then((res) => {
+                        if (!res) return;
+                        Object.assign(account, res.data.data);
+                        accountStore.setAccount(account);
+                    })
+                    .finally(() => {
+                        emit("account:change", account);
+                    });
+            }
+        }
+    }
 });
 
 onUnmounted(() => {
@@ -179,7 +189,7 @@ onUnmounted(() => {
                             <template #append-inner>
                                 <div>
                                     <v-btn
-                                        @click="dispatchFetchUser"
+                                        @click="fetchUserByEmail"
                                         block
                                         rounded="false"
                                         size="small"
@@ -207,4 +217,3 @@ onUnmounted(() => {
     font-family: "Prata", serif !important;
 }
 </style>
-@/store/user @/store/SessionStore
