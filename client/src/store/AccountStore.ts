@@ -1,4 +1,6 @@
 import { defineStore } from "pinia";
+import { Account, Role } from "@/models/Account";
+
 
 interface State {
     account: Account;
@@ -8,10 +10,10 @@ export const useAccountStore = defineStore("account", {
     state: (): State => {
         return {
             account: {
-                accountId: "",
+                account_id: "",
                 username: "",
                 role: Role.REGULAR,
-                createdAt: new Date(),
+                created_at: new Date(),
             },
         }
     },
@@ -31,24 +33,10 @@ export const useAccountStore = defineStore("account", {
             return state.account.role === Role.REGULAR;
         },
         isLoggedIn: (state: State) => {
-            return state.account.accountId !== "";
+            return state.account.account_id !== "";
         },
         getAccount: (state: State) => {
             return state.account;
         }
     }
 });
-
-interface Account {
-    accountId?: string;
-    username?: string;
-    role?: Role;
-    createdAt?: Date;
-
-}
-
-enum Role {
-    ADMIN = "admin",
-    SUPER = "super",
-    REGULAR = "regular"
-}
