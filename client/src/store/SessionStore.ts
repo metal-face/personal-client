@@ -1,5 +1,6 @@
 // Utilities
 import { defineStore } from "pinia";
+import { Session } from "@/models/Session"
 
 interface State {
     session: Session | {};
@@ -9,7 +10,13 @@ interface State {
 export const sessionStore = defineStore("session", {
     state: (): State => {
         return {
-            session: {},
+            session: {
+                account_id: "",
+                session_id: "",
+                created_at: "",
+                expires_at: "",
+                user_agent: "",
+            },
         }
     },
     actions: {
@@ -24,11 +31,3 @@ export const sessionStore = defineStore("session", {
         },
     }
 });
-
-interface Session {
-    accountId?: string;
-    sessionId?: string;
-    createdAt?: string;
-    expiresAt?: string;
-    userAgent?: string;
-}
