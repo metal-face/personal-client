@@ -53,7 +53,17 @@
                 </v-form>
                 <v-card-actions class="d-flex flex-column align-center justify-end">
                     <v-btn
-                        @click="$router.push({ name: 'Home' })"
+                        @click="dispatchRegistration"
+                        block
+                        size="x-large"
+                        color="accent"
+                        variant="elevated"
+                        rounded="false"
+                        class="ma-1">
+                        Register
+                    </v-btn>
+                    <v-btn
+                        @click="router.push({ name: 'Home' })"
                         variant="flat"
                         block
                         color="primary"
@@ -62,34 +72,25 @@
                         class="ma-1">
                         Back
                     </v-btn>
-                    <v-btn
-                        @click="dispatchRegistration"
-                        block
-                        size="x-large"
-                        color="accent"
-                        variant="elevated"
-                        rounded="false"
-                        class="ma-1">
-                        Submit
-                    </v-btn>
                 </v-card-actions>
             </v-card>
         </v-col>
     </v-row>
 </template>
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from "vue";
+import { ref, reactive, onMounted, defineProps } from "vue";
 import { Router, useRouter } from "vue-router";
-import { sessionStore } from "@/store/SessionStore";
 import { useVuelidate } from "@vuelidate/core";
 import { email, required, minLength, maxLength } from "@vuelidate/validators";
 import AccountsServices from "@/services/AccountsServices";
 import CircleLoader from "@/components/CircleLoader.vue";
-import vuetify from "@/plugins/vuetify";
 import SessionServices from "@/services/SessionServices";
 
-const store = sessionStore();
 const router: Router = useRouter();
+
+interface Props {
+    email: string;
+}
 
 interface RegistrationForm {
     email: string;
@@ -97,9 +98,7 @@ interface RegistrationForm {
     password: string;
 }
 
-const isDark = computed<boolean>(() => {
-    return vuetify.theme.current.value.dark;
-});
+const props = defineProps<Props>();
 
 const state: RegistrationForm = reactive({ email: "", username: "", password: "" });
 
@@ -117,7 +116,7 @@ const loading = ref<boolean>(false);
 
 onMounted(() => {
     clearForm();
-    state.email = store.getEmail.toString();
+    state.email = props.email;
 });
 
 function toggleVisibility() {

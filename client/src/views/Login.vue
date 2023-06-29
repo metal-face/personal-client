@@ -47,15 +47,6 @@
                 </v-form>
                 <v-card-actions class="d-flex flex-column ma-2">
                     <v-btn
-                        @click="router.push({ name: 'Home' })"
-                        rounded="1"
-                        variant="flat"
-                        block
-                        class="ma-1"
-                        size="x-large">
-                        Cancel
-                    </v-btn>
-                    <v-btn
                         block
                         rounded="1"
                         size="x-large"
@@ -65,6 +56,16 @@
                         @click="loginUser">
                         Login
                     </v-btn>
+                    <v-btn
+                        @click="router.push({ name: 'Home' })"
+                        rounded="1"
+                        variant="flat"
+                        block
+                        class="ma-1"
+                        size="x-large">
+                        Cancel
+                    </v-btn>
+
                 </v-card-actions>
             </v-card>
         </v-col>
