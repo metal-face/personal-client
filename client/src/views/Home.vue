@@ -127,6 +127,13 @@ onMounted(() => {
         if (Object.keys(session).length) {
             sessStore.setSession(session);
 
+            //
+            if (sessStore.isExpired) {
+                sessStore.destroySessionInStorage;
+                sessStore.clearSession;
+                return;
+            }
+
             if (session.account_id) {
                 AccountsServices.fetchAccountById(session.account_id)
                     .catch((err) => {
