@@ -70,7 +70,7 @@
                         size="x-large"
                         rounded="false"
                         class="ma-1">
-                        Back
+                        Cancle
                     </v-btn>
                 </v-card-actions>
             </v-card>
