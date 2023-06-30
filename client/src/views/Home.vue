@@ -35,8 +35,8 @@ const state: State = reactive({
 const session: Session = reactive({
     account_id: "",
     session_id: "",
-    created_at: "",
-    expires_at: "",
+    created_at: new Date(),
+    expires_at: new Date(),
     user_agent: "",
 });
 
@@ -183,7 +183,7 @@ onUnmounted(() => {
                             class="d-flex flex-column page-clock">
                             <template #prepend-inner>
                                 <div>
-                                    <v-icon size="x-large" color="accent"> mdi-email </v-icon>
+                                    <v-icon size="large" color="accent"> mdi-email </v-icon>
                                 </div>
                             </template>
                             <template #append-inner>
