@@ -2,13 +2,14 @@
     <v-app>
         <v-app-bar flat color="background">
             <v-btn
+                v-if="isLoggedIn"
                 @click="navDrawer = !navDrawer"
                 :color="isDark ? 'white' : 'black'"
                 icon="mdi-menu"
                 variant="text" />
             <v-spacer />
 
-            <v-card color="primary" class="d-flex justify-center align-center">
+            <v-card v-if="!isLoggedIn" color="primary" class="d-flex justify-center align-center">
                 <v-btn
                     @click="router.push({ name: 'Login' })"
                     rounded="0"
@@ -29,6 +30,13 @@
                     color="accent">
                     Register
                 </v-btn>
+            </v-card>
+
+            <v-card v-if="isLoggedIn" color="primary" class="d-flex justify-center align-center">
+                <v-icon> mdi-account-circle </v-icon>
+                <v-card-subtitle>
+                    {{ account.username }}
+                </v-card-subtitle>
             </v-card>
             <v-btn
                 @click="toggleTheme"
@@ -57,9 +65,15 @@ import { computed, ref } from "vue";
 import { reactive } from "vue";
 import { Account, Role } from "@/models/Account";
 import { Router, useRouter } from "vue-router";
+import { useAccountStore } from "./store/AccountStore";
 
 const theme: ThemeInstance = useTheme();
 const router: Router = useRouter();
+const store = useAccountStore();
+
+const isLoggedIn = computed(() => {
+    return store.isLoggedIn;
+});
 
 const account: Account = reactive({
     account_id: "",
