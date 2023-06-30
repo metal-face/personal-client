@@ -7,6 +7,29 @@
                 icon="mdi-menu"
                 variant="text" />
             <v-spacer />
+
+            <v-card color="primary" class="d-flex justify-center align-center">
+                <v-btn
+                    @click="router.push({ name: 'Login' })"
+                    rounded="0"
+                    variant="text"
+                    color="accent">
+                    Login
+                </v-btn>
+                <v-divider vertical />
+                <v-btn
+                    @click="
+                        router.push({
+                            name: 'Register',
+                            params: { email: 'putyouremail@here.com' },
+                        })
+                    "
+                    rounded="0"
+                    variant="text"
+                    color="accent">
+                    Register
+                </v-btn>
+            </v-card>
             <v-btn
                 @click="toggleTheme"
                 :color="isDark ? 'yellow' : 'purple'"
@@ -21,7 +44,7 @@
         </v-navigation-drawer>
 
         <v-main>
-            <v-container fluid class="pa-0 fill-height">
+            <v-container fluid class="fill-height">
                 <router-view @account:change="setAccountData" />
             </v-container>
         </v-main>
@@ -29,12 +52,14 @@
 </template>
 
 <script setup lang="ts">
-import { useTheme } from "vuetify";
+import { ThemeInstance, useTheme } from "vuetify";
 import { computed, ref } from "vue";
 import { reactive } from "vue";
 import { Account, Role } from "@/models/Account";
+import { Router, useRouter } from "vue-router";
 
-const theme = useTheme();
+const theme: ThemeInstance = useTheme();
+const router: Router = useRouter();
 
 const account: Account = reactive({
     account_id: "",
