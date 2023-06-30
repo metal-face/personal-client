@@ -32,11 +32,29 @@
                 </v-btn>
             </v-card>
 
-            <v-card v-if="isLoggedIn" color="primary" class="d-flex justify-center align-center">
-                <v-icon> mdi-account-circle </v-icon>
-                <v-card-subtitle>
+            <v-card
+                v-if="isLoggedIn"
+                density="compact"
+                color="primary"
+                class="d-flex justify-center align-center">
+                <v-btn
+                    variant="elevated"
+                    class="white--text"
+                    rounded="1"
+                    prepend-icon="mdi-account-circle">
                     {{ account.username }}
-                </v-card-subtitle>
+
+                    <v-menu activator="parent" location="bottom" open-on-hover>
+                        <v-list>
+                            <v-list-item @click="logoutUser">
+                                <v-list-item-title color="red"> Logout </v-list-item-title>
+                                <template #append>
+                                    <v-icon color="red" size="large">mdi-power</v-icon>
+                                </template>
+                            </v-list-item>
+                        </v-list>
+                    </v-menu>
+                </v-btn>
             </v-card>
             <v-btn
                 @click="toggleTheme"
@@ -65,14 +83,22 @@ import { computed, ref } from "vue";
 import { reactive } from "vue";
 import { Account, Role } from "@/models/Account";
 import { Router, useRouter } from "vue-router";
-import { useAccountStore } from "./store/AccountStore";
+import { useAccountStore } from "@/store/AccountStore";
+import { sessionStore } from "@/store/SessionStore";
+import SessionServices from "@/services/SessionServices";
+import { ComputedRef } from "vue";
 
 const theme: ThemeInstance = useTheme();
 const router: Router = useRouter();
-const store = useAccountStore();
+const accountStore = useAccountStore();
+const sessStore = sessionStore();
 
-const isLoggedIn = computed(() => {
-    return store.isLoggedIn;
+const isLoggedIn: ComputedRef<boolean> = computed(() => {
+    return accountStore.isLoggedIn;
+});
+
+const sessionId: ComputedRef<string> = computed(() => {
+    return sessStore.getSessionId;
 });
 
 const account: Account = reactive({
@@ -98,6 +124,19 @@ const navDrawer = ref<boolean>(false);
 const isDark = computed<boolean>(() => {
     return theme.global.current.value.dark;
 });
+
+function logoutUser() {
+    SessionServices.logout(sessionId.value)
+        .catch((err) => {
+            console.error(err);
+        })
+        .then((res) => {
+            if (!res) return;
+            sessStore.destroySessionInStorage();
+            sessStore.clearSession();
+            console.log(res);
+        });
+}
 </script>
 
 <style>
