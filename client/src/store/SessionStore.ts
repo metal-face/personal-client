@@ -48,6 +48,9 @@ export const sessionStore = defineStore("session", {
         isExpired(state: State): boolean {
            return state.session.expires_at < new Date();
         },
+        getSessionId(state: State): string {
+            return state.session.session_id;
+        },
         createdAt(state: State): Date {
             return state.session.created_at;
         },
