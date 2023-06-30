@@ -4,12 +4,20 @@ import { Session } from "@/models/Session"
 
 interface State {
     session: Session;
+    emptySession: Session;
 }
 
 export const sessionStore = defineStore("session", {
     state: (): State => {
         return {
             session: {
+                account_id: "",
+                session_id: "",
+                created_at: new Date(),
+                expires_at: new Date(),
+                user_agent: "",
+            },
+            emptySession: {
                 account_id: "",
                 session_id: "",
                 created_at: new Date(),
@@ -23,9 +31,12 @@ export const sessionStore = defineStore("session", {
             window.localStorage.setItem("session", JSON.stringify(session));
             Object.assign(this.session, session);
         },
-        destroySession(): void {
+        destroySessionInStorage(): void {
             window.localStorage.removeItem("session");
         },
+        clearSession(): void {
+            Object.assign(this.session, this.emptySession);
+        }
     },
     getters: {
         getSession(state: State): Session {
