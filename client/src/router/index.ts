@@ -33,18 +33,7 @@ const routes = [
                     restricted: false,
                 },
             },
-            {
-                path: "profile",
-                name: "UserProfile",
-                component: () => import("@/views/UserProfile.vue"),
-                meta: {
-                    title: "User Profile",
-                    restricted: true,
-                    isUser: true,
-                    isAdmin: false,
-                    isSuperUser: false,
-                }
-            }
+
         ],
     },
 ];
