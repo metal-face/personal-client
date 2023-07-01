@@ -65,7 +65,6 @@
                         size="x-large">
                         Cancel
                     </v-btn>
-
                 </v-card-actions>
             </v-card>
         </v-col>
@@ -152,7 +151,7 @@ async function loginUser(): Promise<void> {
         .then((res) => {
             if (!res) return;
             store.setSession(res.data.data);
-            router.push({ name: "UserProfile" });
+            router.push({ name: "Home" });
         })
         .finally(() => {
             loading.value = false;
