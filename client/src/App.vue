@@ -1,6 +1,6 @@
 <template>
     <v-app>
-        <v-app-bar flat color="background">
+        <v-app-bar color="background" location="top">
             <v-btn
                 v-if="isLoggedIn"
                 @click="navDrawer = !navDrawer"
@@ -17,19 +17,6 @@
                     color="accent">
                     Login
                 </v-btn>
-                <v-divider vertical />
-                <v-btn
-                    @click="
-                        router.push({
-                            name: 'Register',
-                            params: { email: 'putyouremail@here.com' },
-                        })
-                    "
-                    rounded="0"
-                    variant="text"
-                    color="accent">
-                    Register
-                </v-btn>
             </v-card>
 
             <v-card
@@ -44,10 +31,19 @@
                     prepend-icon="mdi-account-circle">
                     {{ account.username }}
 
-                    <v-menu activator="parent" location="bottom" open-on-hover>
-                        <v-list>
-                            <v-list-item @click="logoutUser">
-                                <v-list-item-title color="red"> Logout </v-list-item-title>
+                    <v-menu
+                        activator="parent"
+                        location="bottom"
+                        open-on-click
+                        close-on-content-click
+                        height="auto">
+                        <v-list density="compact" bg-color="primary" class="ma-1 pa-0">
+                            <v-list-item
+                                @click="logoutUser"
+                                density="compact"
+                                active-color="red"
+                                border>
+                                <v-list-item-title> Logout </v-list-item-title>
                                 <template #append>
                                     <v-icon color="red" size="large">mdi-power</v-icon>
                                 </template>
@@ -134,7 +130,7 @@ function logoutUser() {
             if (!res) return;
             sessStore.destroySessionInStorage();
             sessStore.clearSession();
-            console.log(res);
+            router.push({ name: "Home" });
         });
 }
 </script>
