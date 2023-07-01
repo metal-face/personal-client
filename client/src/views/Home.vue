@@ -123,9 +123,6 @@ onMounted(() => {
     const resp = window.localStorage.getItem("session");
     if (resp) {
         const jsonResponse = JSON.parse(resp) as Session;
-        if (jsonResponse.expires_at) {
-            // TODO: check if the session has expired
-        }
 
         Object.assign(session, jsonResponse);
 
@@ -219,9 +216,9 @@ onUnmounted(() => {
                         color="transparent"
                         flat
                         rounded="0"
-                        class="d-flex flex-wrap align-center justify-space-between ">
+                        class="d-flex flex-wrap align-center justify-space-between">
                         <div class="ma-2">
-                            <v-tooltip text="metal-face" location="top">
+                            <v-tooltip text="metal-face" location="bottom">
                                 <template #activator="{ props }">
                                     <v-btn
                                         v-bind="props"
@@ -237,7 +234,7 @@ onUnmounted(() => {
                             </v-tooltip>
                         </div>
                         <div class="ma-2">
-                            <v-tooltip location="top" text="bryanhughes1992">
+                            <v-tooltip location="bottom" text="bryanhughes1992">
                                 <template #activator="{ props }">
                                     <v-btn
                                         v-bind="props"
@@ -252,7 +249,7 @@ onUnmounted(() => {
                             </v-tooltip>
                         </div>
                         <div class="ma-2">
-                            <v-tooltip text="scrotalmass" location="top">
+                            <v-tooltip text="scrotalmass" location="bottom">
                                 <template #activator="{ props }">
                                     <v-btn
                                         v-bind="props"
@@ -267,7 +264,7 @@ onUnmounted(() => {
                             </v-tooltip>
                         </div>
                         <div class="ma-2">
-                            <v-tooltip text="metalfaces" location="top">
+                            <v-tooltip text="metalfaces" location="bottom">
                                 <template #activator="{ props }">
                                     <v-btn
                                         v-bind="props"
@@ -299,7 +296,7 @@ onUnmounted(() => {
                             </v-tooltip>
                         </div>
                         <div class="ma-2">
-                            <v-tooltip text="Email" location="top">
+                            <v-tooltip text="Email" location="bottom">
                                 <template #activator="{ props }">
                                     <v-btn
                                         v-bind="props"
