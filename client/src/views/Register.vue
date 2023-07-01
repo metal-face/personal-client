@@ -132,10 +132,26 @@ function clearForm(): void {
 }
 
 async function dispatchRegistration(): Promise<void> {
-    await registerUser();
-    await loginUser();
-    loading.value = false;
-    router.push({ name: "UserProfile" });
+    loading.value = true;
+
+    // Register user
+    try {
+        await registerUser();
+    } catch (error) {
+        loading.value = false;
+        console.error(error);
+        return;
+    }
+
+    // Login user if successful registration
+    try {
+        await loginUser();
+    } catch (error) {
+        loading.value = false;
+        console.error(error);
+    }
+    // Following both,
+    router.push({ name: "Home" });
 }
 
 async function registerUser(): Promise<void> {
