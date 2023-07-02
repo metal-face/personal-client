@@ -10,6 +10,15 @@
                     <v-container fluid>
                         <v-row dense>
                             <v-col cols="12">
+                                <v-alert
+                                    v-model="alert.visible"
+                                    :title="alert.title"
+                                    :text="alert.text"
+                                    :type="alert.type"
+                                    :color="alert.color"
+                                    closable />
+                            </v-col>
+                            <v-col cols="12">
                                 <v-text-field
                                     v-model="state.email"
                                     @input="v$.email.$touch"
@@ -85,8 +94,11 @@ import { email, required, minLength, maxLength } from "@vuelidate/validators";
 import AccountsServices from "@/services/AccountsServices";
 import CircleLoader from "@/components/CircleLoader.vue";
 import SessionServices from "@/services/SessionServices";
+import { sessionStore } from "@/store/SessionStore";
+import type { AxiosResponse } from "axios";
 
 const router: Router = useRouter();
+const session = sessionStore();
 
 interface Props {
     email: string;
@@ -97,6 +109,38 @@ interface RegistrationForm {
     username: string;
     password: string;
 }
+
+interface Alert {
+    type: AlertTypes;
+    color: ColorTypes;
+    title: string;
+    text: string;
+    visible: boolean;
+    timeout: number;
+}
+
+enum AlertTypes {
+    success = "success",
+    info = "info",
+    warning = "warning",
+    error = "error",
+}
+
+enum ColorTypes {
+    success = "success",
+    info = "info",
+    warning = "warning",
+    error = "error",
+}
+
+const alert: Alert = reactive({
+    type: AlertTypes.success,
+    color: ColorTypes.success,
+    title: "",
+    text: "",
+    visible: false,
+    timeout: 0,
+});
 
 const props = defineProps<Props>();
 
@@ -134,53 +178,63 @@ function clearForm(): void {
 async function dispatchRegistration(): Promise<void> {
     loading.value = true;
 
-    // Register user
-    try {
-        await registerUser();
-    } catch (error) {
-        loading.value = false;
-        console.error(error);
+    const valid = await v$.value.$validate();
+
+    if (!valid) {
         return;
     }
 
-    // Login user if successful registration
-    try {
-        await loginUser();
-    } catch (error) {
-        loading.value = false;
-        console.error(error);
-    }
-    // Following both,
-    router.push({ name: "Home" });
+    // Register user
+    registerUser()
+        .then(() => {
+            // Login user if successful registration
+            loginUser()
+                .then((res) => {
+                    session.setSession(res.data.data);
+                    router.push({ name: "Home" });
+                })
+                .finally(() => {
+                    loading.value = false;
+                })
+                .catch((err) => {
+                    alert.text = "Something Went Wrong!";
+                    alert.color = ColorTypes.error;
+                    alert.title = "Error!";
+                    alert.type = AlertTypes.error;
+                    alert.visible = true;
+                    console.error(err);
+                    loading.value = false;
+                    return;
+                });
+        })
+        .catch((err) => {
+            loading.value = false;
+            alert.text = err.response.data.message;
+            alert.color = ColorTypes.error;
+            alert.title = "Error!";
+            alert.type = AlertTypes.error;
+            alert.visible = true;
+            console.error(err);
+            return;
+        });
 }
 
-async function registerUser(): Promise<void> {
-    loading.value = true;
-
+async function registerUser(): Promise<AxiosResponse<any, any>> {
     v$.value.$validate();
 
     // TODO: Ensure the password field passes server criteria before sending
 
-    return AccountsServices.createAccount(state.username, state.email, state.password)
-        .catch((err) => {
-            // TODO: handle error with snackbar to inform user
-            console.error(err.request);
-            console.error(err.response);
-        })
-        .then((res) => {
-            if (!res) return;
-        });
+    return AccountsServices.createAccount(state.username, state.email, state.password).then(
+        (res) => {
+            return res;
+        },
+    );
 }
 
-async function loginUser(): Promise<void> {
-    return SessionServices.login(state.username, state.password)
-        .catch((err) => {
-            console.error(err.response);
-        })
-        .then((res) => {
-            if (!res) return;
-            console.info(res);
-        });
+async function loginUser(): Promise<AxiosResponse<any, any>> {
+    return SessionServices.login(state.username, state.password).then((res) => {
+        return res;
+    });
 }
 </script>
 
@@ -189,4 +243,3 @@ async function loginUser(): Promise<void> {
     font-family: "Prata", serif;
 }
 </style>
-@/store/user @/store/SessionStore

@@ -130,7 +130,7 @@ function logoutUser() {
             if (!res) return;
             sessStore.destroySessionInStorage();
             sessStore.clearSession();
-            router.push({ name: "Home" });
+            window.location.reload();
         });
 }
 </script>
