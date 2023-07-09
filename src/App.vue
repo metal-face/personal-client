@@ -66,7 +66,7 @@
         </v-navigation-drawer>
 
         <v-main>
-            <v-container fluid class="fill-height">
+            <v-container id="app" fluid class="fill-height">
                 <router-view @account:change="setAccountData" />
             </v-container>
         </v-main>
@@ -81,8 +81,8 @@ import { Account, Role } from "@/models/Account";
 import { Router, useRouter } from "vue-router";
 import { useAccountStore } from "@/store/AccountStore";
 import { sessionStore } from "@/store/SessionStore";
-import SessionServices from "@/services/SessionServices";
 import { ComputedRef } from "vue";
+import SessionServices from "@/services/SessionServices";
 
 const theme: ThemeInstance = useTheme();
 const router: Router = useRouter();
