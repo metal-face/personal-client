@@ -64,6 +64,7 @@
                     <v-btn
                         @click="dispatchRegistration"
                         block
+                        :disabled="disabled"
                         size="x-large"
                         color="accent"
                         variant="elevated"
@@ -87,7 +88,7 @@
     </v-row>
 </template>
 <script setup lang="ts">
-import { ref, reactive, onMounted, defineProps } from "vue";
+import { ref, reactive, onMounted, defineProps, computed } from "vue";
 import { Router, useRouter } from "vue-router";
 import { useVuelidate } from "@vuelidate/core";
 import { email, required, minLength, maxLength } from "@vuelidate/validators";
@@ -157,6 +158,8 @@ const v$ = useVuelidate(rules, state);
 const visible = ref<boolean>(false);
 
 const loading = ref<boolean>(false);
+
+const disabled = ref<boolean>(false);
 
 onMounted(() => {
     clearForm();
