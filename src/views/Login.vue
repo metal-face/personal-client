@@ -38,9 +38,14 @@
                                     :error-messages="
                                         v$.password.$errors.map((e) => e.$message.toString())
                                     "
+                                    :type="visible ? 'text' : 'password'"
                                     required
                                     variant="outlined"
-                                    label="Password" />
+                                    label="Password">
+                                    <template #append-inner>
+                                        <v-icon @click="visible = !visible" icon="mdi-eye" />
+                                    </template>
+                                </v-text-field>
                             </v-col>
                         </v-row>
                     </v-container>
@@ -129,6 +134,7 @@ const rules = {
 const v$ = useVuelidate(rules, state);
 
 const loading = ref<boolean>(false);
+const visible = ref<boolean>(false);
 
 async function loginUser(): Promise<void> {
     loading.value = true;
