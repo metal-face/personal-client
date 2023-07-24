@@ -88,7 +88,7 @@
     </v-row>
 </template>
 <script setup lang="ts">
-import { ref, reactive, onMounted, defineProps, computed } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { Router, useRouter } from "vue-router";
 import { useVuelidate } from "@vuelidate/core";
 import { email, required, minLength, maxLength } from "@vuelidate/validators";
@@ -100,10 +100,6 @@ import type { AxiosResponse } from "axios";
 
 const router: Router = useRouter();
 const session = sessionStore();
-
-interface Props {
-    email: string;
-}
 
 interface RegistrationForm {
     email: string;
@@ -143,8 +139,6 @@ const alert: Alert = reactive({
     timeout: 0,
 });
 
-const props = defineProps<Props>();
-
 const state: RegistrationForm = reactive({ email: "", username: "", password: "" });
 
 const rules = {
@@ -163,7 +157,6 @@ const disabled = ref<boolean>(false);
 
 onMounted(() => {
     clearForm();
-    state.email = props.email;
 });
 
 function toggleVisibility() {
