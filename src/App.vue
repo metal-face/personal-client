@@ -9,15 +9,7 @@
                 variant="text" />
             <v-spacer />
 
-            <v-card v-if="!isLoggedIn" color="primary" class="d-flex justify-center align-center">
-                <v-btn
-                    @click="router.push({ name: 'Login' })"
-                    rounded="0"
-                    variant="text"
-                    color="accent">
-                    Login
-                </v-btn>
-            </v-card>
+           
 
             <v-card
                 v-if="isLoggedIn"
@@ -38,11 +30,7 @@
                         close-on-content-click
                         height="auto">
                         <v-list density="compact" bg-color="primary" class="ma-1 pa-0">
-                            <v-list-item
-                                @click="logoutUser"
-                                density="compact"
-                                active-color="red"
-                                border>
+                            <v-list-item @click="logoutUser" density="compact" active-color="red">
                                 <v-list-item-title> Logout </v-list-item-title>
                                 <template #append>
                                     <v-icon color="red" size="large">mdi-power</v-icon>
