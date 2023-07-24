@@ -1,15 +1,12 @@
 <script setup lang="ts">
-import { ref, onUnmounted, onMounted, reactive, computed } from "vue";
+import { ref, onUnmounted, onMounted, reactive, computed, ComputedRef } from "vue";
 import { useRouter } from "vue-router";
 import { format } from "date-fns";
-import { useVuelidate } from "@vuelidate/core";
-import { email, required } from "@vuelidate/validators";
 import { sessionStore } from "@/store/SessionStore";
 import { useAccountStore } from "@/store/AccountStore";
 import { Account, Role } from "@/models/Account";
 import { Session } from "@/models/Session";
 import AccountsServices from "@/services/AccountsServices";
-import { ComputedRef } from "vue";
 
 const router = useRouter();
 const sessStore = sessionStore();
@@ -19,22 +16,14 @@ const emit = defineEmits<{
     (e: "account:change", account: Account): void;
 }>();
 
-interface State {
-    userEmail: string;
-}
-
 interface Snackbar {
     message: string;
     visible: boolean;
     timeout: number;
 }
 
-const isLoggedIn: ComputedRef<boolean> = computed(() => {
+const loggedIn: ComputedRef<boolean> = computed(() => {
     return accountStore.isLoggedIn;
-});
-
-const state: State = reactive({
-    userEmail: "",
 });
 
 const session: Session = reactive({
@@ -59,12 +48,6 @@ const snackbar: Snackbar = reactive({
     timeout: 3000,
 });
 
-const rules = {
-    userEmail: { required, email },
-};
-
-const v$ = useVuelidate(rules, state);
-
 const intervalID = ref<number>(0);
 
 const templateDate = ref<string>(format(Date.now(), "PPPpp"));
@@ -78,43 +61,6 @@ function createClock() {
     window.setTimeout(() => {
         loading.value = false;
     }, 1000);
-}
-
-async function fetchUserByEmail() {
-    toggleLoadingState(true);
-
-    const result = await v$.value.$validate();
-
-    if (!result) {
-        toggleLoadingState(false);
-        return;
-    }
-
-    AccountsServices.fetchAccountByEmail(state.userEmail)
-        .catch((err) => {
-            if (err.response.status === 500) {
-                snackbar.visible = true;
-                snackbar.message = "Oops! Something went wrong!";
-            }
-        })
-        .then((res) => {
-            if (!res) return;
-
-            if (!res.data.data.length) {
-                router.push({ name: "Register", params: { email: state.userEmail } });
-            }
-
-            if (Object.keys(res.data.data).length) {
-                router.push({ name: "Login" });
-            }
-        })
-        .finally(() => {
-            toggleLoadingState(false);
-        });
-}
-
-function toggleLoadingState(state: boolean): void {
-    loading.value = state;
 }
 
 onMounted(() => {
@@ -176,43 +122,36 @@ onUnmounted(() => {
                         <h3 class="text-center page-clock ma-1">{{ templateDate }}</h3>
                     </v-card-subtitle>
 
-                    <!-- TODO Encapsulate this into it's own component -->
-                    <v-card v-if="!isLoggedIn" color="transparent" flat class="mt-12">
-                        <label for="email" class="page-clock mb-3 d-flex justify-center">
-                            Enter your email
-                        </label>
-                        <v-text-field
-                            v-model="state.userEmail"
-                            @input="v$.userEmail.$touch"
-                            @blur="v$.userEmail.$touch"
-                            :error-messages="v$.userEmail.$errors.map((e) => e.$message.toString())"
-                            :loading="loading"
-                            variant="solo"
-                            required
-                            id="email"
-                            class="d-flex flex-column page-clock">
-                            <template #prepend-inner>
-                                <div>
-                                    <v-icon size="large" color="accent"> mdi-email </v-icon>
-                                </div>
-                            </template>
-                            <template #append-inner>
-                                <div>
-                                    <v-btn
-                                        @click="fetchUserByEmail"
-                                        block
-                                        rounded="false"
-                                        size="small"
-                                        color="accent">
-                                        <v-icon color="black" size="small"> mdi-send </v-icon>
-                                    </v-btn>
-                                </div>
-                            </template>
-                        </v-text-field>
-                    </v-card>
+                    <div v-if="!loggedIn" color="transparent" class="mt-6">
+                        <div>
+                            <v-btn size="x-large" block rounded="2" append-icon="mdi-github">
+                                Login with GitHub
+                            </v-btn>
+                        </div>
+
+                        <p class="text-center font-weight-bold ma-2">OR</p>
+                        <div class="d-flex align-center justify-space-between">
+                            <v-btn
+                                @click="router.push({ name: 'Login' })"
+                                size="x-large"
+                                width="49%"
+                                rounded="2"
+                                color="primary">
+                                Login
+                            </v-btn>
+                            <v-btn
+                                @click="router.push({ name: 'Register' })"
+                                width="49%"
+                                size="x-large"
+                                rounded="2"
+                                color="primary">
+                                Register
+                            </v-btn>
+                        </div>
+                    </div>
 
                     <v-card
-                        v-if="isLoggedIn"
+                        v-if="loggedIn"
                         color="transparent"
                         flat
                         rounded="0"
