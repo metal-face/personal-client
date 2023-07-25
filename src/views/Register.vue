@@ -6,7 +6,7 @@
                 <v-card-title class="text-center">
                     <h2 class="form-title ma-3">Register</h2>
                 </v-card-title>
-                <v-form>
+                <form id="registrationForm">
                     <v-container fluid>
                         <v-row dense>
                             <v-col cols="12">
@@ -59,10 +59,10 @@
                             </v-col>
                         </v-row>
                     </v-container>
-                </v-form>
+                </form>
                 <v-card-actions class="d-flex flex-column align-center justify-end">
                     <v-btn
-                        @click="dispatchRegistration"
+                        @click="onClick"
                         block
                         :disabled="disabled"
                         size="x-large"
@@ -97,6 +97,26 @@ import CircleLoader from "@/components/CircleLoader.vue";
 import SessionServices from "@/services/SessionServices";
 import { sessionStore } from "@/store/SessionStore";
 import type { AxiosResponse } from "axios";
+import { useScriptTag } from "@vueuse/core";
+
+const googleRecaptcha = useScriptTag(
+    "https://www.google.com/recaptcha/api.js?render=6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM",
+    (data) => {
+        console.log("loaded", data);
+    },
+);
+
+function onClick(e: Event, token: any) {
+    e.preventDefault();
+    grecaptcha.ready(function () {
+        grecaptcha
+            .execute("6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM", { action: "submit" })
+            .then(function (token: any) {
+                console.log("g-recaptcha", token);
+            });
+    });
+    console.log("triggered", token);
+}
 
 const router: Router = useRouter();
 const session = sessionStore();
@@ -156,6 +176,7 @@ const loading = ref<boolean>(false);
 const disabled = ref<boolean>(false);
 
 onMounted(() => {
+    console.log(googleRecaptcha.scriptTag);
     clearForm();
 });
 
@@ -171,7 +192,8 @@ function clearForm(): void {
     state.password = "";
 }
 
-async function dispatchRegistration(): Promise<void> {
+async function dispatchRegistration(token: any): Promise<void> {
+    console.log(token);
     loading.value = true;
 
     const valid = await v$.value.$validate();
