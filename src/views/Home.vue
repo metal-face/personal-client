@@ -135,16 +135,14 @@ onUnmounted(() => {
                                 @click="router.push({ name: 'Login' })"
                                 size="x-large"
                                 width="49%"
-                                rounded="2"
-                                color="primary">
+                                rounded="2">
                                 Login
                             </v-btn>
                             <v-btn
                                 @click="router.push({ name: 'Register' })"
                                 width="49%"
                                 size="x-large"
-                                rounded="2"
-                                color="primary">
+                                rounded="2">
                                 Register
                             </v-btn>
                         </div>
