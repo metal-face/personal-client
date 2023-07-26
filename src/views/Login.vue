@@ -58,7 +58,7 @@
                         class="ma-1"
                         variant="flat"
                         color="accent"
-                        @click="loginUser">
+                        @click="onClick">
                         Login
                     </v-btn>
                     <v-btn
@@ -83,6 +83,22 @@ import useVuelidate from "@vuelidate/core";
 import SessionServices from "@/services/SessionServices";
 import CircleLoader from "@/components/CircleLoader.vue";
 import { sessionStore } from "@/store/SessionStore";
+import { useScriptTag } from "@vueuse/core";
+
+useScriptTag(
+    "https://www.google.com/recaptcha/api.js?render=6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM",
+);
+
+function onClick(e: Event) {
+    e.preventDefault();
+    grecaptcha.ready(function () {
+        grecaptcha
+            .execute("6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM", { action: "submit" })
+            .then(function (token: string) {
+                loginUser(token);
+            });
+    });
+}
 
 const router: Router = useRouter();
 const store = sessionStore();
@@ -136,7 +152,7 @@ const v$ = useVuelidate(rules, state);
 const loading = ref<boolean>(false);
 const visible = ref<boolean>(false);
 
-async function loginUser(): Promise<void> {
+async function loginUser(token: string): Promise<void> {
     loading.value = true;
 
     let valid = await v$.value.$validate();
@@ -145,8 +161,7 @@ async function loginUser(): Promise<void> {
         return;
     }
 
-    SessionServices.login(state.username, state.password)
-
+    SessionServices.login(state.username, state.password, token)
         .catch((err) => {
             alert.color = ColorTypes.error;
             alert.text = err.message;
