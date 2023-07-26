@@ -6,6 +6,7 @@ export default {
         username: string,
         email: string,
         password: string,
+        token: string,
     ): Promise<AxiosResponse<any, any>> {
         return ApiClient({
             method: "POST",
@@ -14,7 +15,8 @@ export default {
                 username: username,
                 email: email,
                 password: password,
-                role: "REGULAR"
+                role: "REGULAR",
+                token: token
             },
         });
     },
