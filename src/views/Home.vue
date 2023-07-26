@@ -105,7 +105,6 @@ onMounted(() => {
                     <PersonalInfoCard @loading="toggleLoadingState" />
                     <div v-if="!loggedIn" color="transparent" class="ma-6">
                         <GitHubLoginButton />
-                        <p class="text-center font-weight-bold ma-2">OR</p>
                         <AuthenticationButtons />
                     </div>
 
