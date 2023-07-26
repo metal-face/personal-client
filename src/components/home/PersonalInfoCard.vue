@@ -11,13 +11,14 @@
 import { format } from "date-fns";
 import { ref, onMounted, onUnmounted } from "vue";
 
-onMounted(() => {
-    createClock();
-});
-
 const emit = defineEmits<{
     (e: "loading", loading: boolean): void;
 }>();
+
+onMounted(() => {
+    emit("loading", true);
+    createClock();
+});
 
 const intervalID = ref<number>(0);
 const templateDate = ref<string>(format(Date.now(), "PPPpp"));
