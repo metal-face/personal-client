@@ -99,14 +99,12 @@ import { sessionStore } from "@/store/SessionStore";
 import type { AxiosResponse } from "axios";
 import { useScriptTag } from "@vueuse/core";
 
-const googleRecaptcha = useScriptTag(
+// Load Google Recaptcha
+useScriptTag(
     "https://www.google.com/recaptcha/api.js?render=6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM",
-    (data) => {
-        console.log("loaded", data);
-    },
 );
 
-function onClick(e: Event, token: any) {
+function onClick(e: Event) {
     e.preventDefault();
     grecaptcha.ready(function () {
         grecaptcha
@@ -115,7 +113,6 @@ function onClick(e: Event, token: any) {
                 dispatchRegistration(token);
             });
     });
-    console.log("triggered", token);
 }
 
 const router: Router = useRouter();
