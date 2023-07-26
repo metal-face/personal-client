@@ -9,8 +9,6 @@
                 variant="text" />
             <v-spacer />
 
-           
-
             <v-card
                 v-if="isLoggedIn"
                 density="compact"
@@ -47,9 +45,18 @@
                 variant="text" />
         </v-app-bar>
 
-        <v-navigation-drawer v-model="navDrawer" color="secondary">
-            <v-list>
-                <v-list-item></v-list-item>
+        <v-navigation-drawer
+            v-model="navDrawer"
+            color="secondary"
+            disable-resize-watcher
+            disable-route-watcher>
+            <v-list nav>
+                <v-list-item v-for="(link, i) in links" :key="i" :to="link.value">
+                    <template #prepend>
+                        <v-icon :icon="link.props.prependIcon" />
+                    </template>
+                    <v-list-item-title>{{ link.text }}</v-list-item-title>
+                </v-list-item>
             </v-list>
         </v-navigation-drawer>
 
@@ -92,6 +99,11 @@ const account: Account = reactive({
     role: Role.REGULAR,
     created_at: new Date(),
 });
+
+const links: object[] = [
+    { text: "Home", value: "/", props: { prependIcon: "mdi-home-circle" } },
+    { text: "Blogs", value: "/blogs", props: { prependIcon: "mdi-post-outline" } },
+];
 
 function setAccountData(payload: Account): void {
     Object.assign(account, payload);
