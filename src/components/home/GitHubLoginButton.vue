@@ -4,7 +4,8 @@
             size="x-large"
             block
             rounded="2"
-            color="secondary"
+            color="primary"
+            class="mb-1"
             elevation="12"
             append-icon="mdi-github">
             Login with GitHub
