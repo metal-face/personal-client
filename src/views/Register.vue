@@ -111,8 +111,8 @@ function onClick(e: Event, token: any) {
     grecaptcha.ready(function () {
         grecaptcha
             .execute("6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM", { action: "submit" })
-            .then(function (token: any) {
-                console.log("g-recaptcha", token);
+            .then(function (token: string) {
+                dispatchRegistration(token);
             });
     });
     console.log("triggered", token);
@@ -176,7 +176,6 @@ const loading = ref<boolean>(false);
 const disabled = ref<boolean>(false);
 
 onMounted(() => {
-    console.log(googleRecaptcha.scriptTag);
     clearForm();
 });
 
@@ -192,8 +191,7 @@ function clearForm(): void {
     state.password = "";
 }
 
-async function dispatchRegistration(token: any): Promise<void> {
-    console.log(token);
+async function dispatchRegistration(token: string): Promise<void> {
     loading.value = true;
 
     const valid = await v$.value.$validate();
@@ -203,7 +201,7 @@ async function dispatchRegistration(token: any): Promise<void> {
     }
 
     // Register user
-    registerUser()
+    registerUser(token)
         .then(() => {
             // Login user if successful registration
             loginUser()
@@ -237,12 +235,12 @@ async function dispatchRegistration(token: any): Promise<void> {
         });
 }
 
-async function registerUser(): Promise<AxiosResponse<any, any>> {
+async function registerUser(token: string): Promise<AxiosResponse<any, any>> {
     v$.value.$validate();
 
     // TODO: Ensure the password field passes server criteria before sending
 
-    return AccountsServices.createAccount(state.username, state.email, state.password).then(
+    return AccountsServices.createAccount(state.username, state.email, state.password, token).then(
         (res) => {
             return res;
         },
