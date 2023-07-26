@@ -36,6 +36,15 @@ const routes = [
 
         ],
     },
+    {
+        path: "/blogs",
+        name: "Blogs",
+        component: () => import("@/views/Blogs.vue"),
+        meta: {
+            restricted: true,
+            title: "Blogs"
+        }
+    }
 ];
 
 const router: Router = createRouter({
