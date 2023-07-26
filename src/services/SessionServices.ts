@@ -2,13 +2,14 @@ import ApiClient from "@/clients/ApiClient"
 import { AxiosResponse } from "axios";
 
 export default {
-    login(username: string, password: string): Promise<AxiosResponse<any, any>> {
+    login(username: string, password: string, token: string): Promise<AxiosResponse<any, any>> {
         return ApiClient({
             method: "POST",
             url: "/sessions",
             data: {
                 username: username,
                 password: password,
+                token: token,
             }
         })
     },
