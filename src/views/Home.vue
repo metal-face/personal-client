@@ -9,6 +9,7 @@ import PersonalButtonGroup from "@/components/home/PersonalButtonGroup.vue";
 import GitHubLoginButton from "@/components/home/GitHubLoginButton.vue";
 import AuthenticationButtons from "@/components/home/AuthenticationButtons.vue";
 import PersonalInfoCard from "@/components/home/PersonalInfoCard.vue";
+import CircleLoader from "@/components/CircleLoader.vue";
 
 const sessStore = sessionStore();
 const accountStore = useAccountStore();
@@ -50,6 +51,10 @@ const snackbar: Snackbar = reactive({
 });
 
 const loading = ref<boolean>(true);
+
+function toggleLoadingState(state: boolean): void {
+    loading.value = state;
+}
 
 onMounted(() => {
     const resp = window.localStorage.getItem("session");
@@ -96,7 +101,8 @@ onMounted(() => {
                 height="90%"
                 width="100%">
                 <v-card color="transparent" flat class="ma-5">
-                    <PersonalInfoCard />
+                    <CircleLoader :loading="loading" circle-color="white" />
+                    <PersonalInfoCard @loading="toggleLoadingState" />
                     <div v-if="!loggedIn" color="transparent" class="ma-6">
                         <GitHubLoginButton />
                         <p class="text-center font-weight-bold ma-2">OR</p>
