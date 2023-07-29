@@ -17,6 +17,7 @@
                 <v-btn
                     variant="elevated"
                     class="white--text"
+                    :color="isDark ? 'white' : 'black'"
                     rounded="1"
                     prepend-icon="mdi-account-circle">
                     {{ account.username }}
@@ -47,12 +48,16 @@
 
         <v-navigation-drawer
             v-model="navDrawer"
-            color="secondary"
-            close-on-content-click
+            color="primary"
+            temporary
             disable-resize-watcher
             disable-route-watcher>
             <v-list nav>
-                <v-list-item v-for="(link, i) in links" :key="i" :to="link.value">
+                <v-list-item
+                    v-for="(link, i) in links"
+                    :key="i"
+                    :to="link.value"
+                    @click="navDrawer = !navDrawer">
                     <template #prepend>
                         <v-icon :icon="link.props.prependIcon" />
                     </template>
