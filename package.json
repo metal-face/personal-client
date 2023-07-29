@@ -12,6 +12,7 @@
     "@vuelidate/core": "^2.0.2",
     "@vuelidate/validators": "^2.0.2",
     "date-fns": "^2.29.3",
+    "marked": "^5.1.2",
     "pinia": "^2.0.23",
     "roboto-fontface": "*",
     "vue": "^3.2.38",
