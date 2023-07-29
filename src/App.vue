@@ -48,6 +48,7 @@
         <v-navigation-drawer
             v-model="navDrawer"
             color="secondary"
+            close-on-content-click
             disable-resize-watcher
             disable-route-watcher>
             <v-list nav>
@@ -73,14 +74,12 @@ import { ThemeInstance, useTheme } from "vuetify";
 import { computed, ref } from "vue";
 import { reactive } from "vue";
 import { Account, Role } from "@/models/Account";
-import { Router, useRouter } from "vue-router";
 import { useAccountStore } from "@/store/AccountStore";
 import { sessionStore } from "@/store/SessionStore";
 import { ComputedRef } from "vue";
 import SessionServices from "@/services/SessionServices";
 
 const theme: ThemeInstance = useTheme();
-const router: Router = useRouter();
 const accountStore = useAccountStore();
 const sessStore = sessionStore();
 
@@ -100,7 +99,13 @@ const account: Account = reactive({
     created_at: new Date(),
 });
 
-const links: object[] = [
+interface Link {
+    text: string;
+    value: string;
+    props: Record<string, string>;
+}
+
+const links: Link[] = [
     { text: "Home", value: "/", props: { prependIcon: "mdi-home-circle" } },
     { text: "Blogs", value: "/blogs", props: { prependIcon: "mdi-post-outline" } },
 ];
