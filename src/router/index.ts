@@ -40,6 +40,23 @@ const routes = [
         path: "/blogs",
         name: "Blogs",
         component: () => import("@/views/Blogs.vue"),
+        children: [
+            {
+                path: "create",
+                name: "BlogCreator",
+                component: () => import("@/views/BlogCreator.vue")
+            },
+            {
+                path: ":id",
+                name: "Blog",
+                props: true,
+                component: () => import("@/views/Blog.vue"),
+                meta: {
+                    restricted: true,
+                    title: "Blog Post Title"
+                }
+            }
+        ],
         meta: {
             restricted: true,
             title: "Blogs"
