@@ -13,6 +13,7 @@ export const useAccountStore = defineStore("account", {
                 account_id: "",
                 username: "",
                 role: Role.REGULAR,
+                email: "",
                 created_at: new Date(),
             },
         }
