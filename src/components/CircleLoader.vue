@@ -3,7 +3,7 @@
         :model-value="props.loading"
         scrim="rgba(0,0,0,0.5)"
         absolute
-        attach="container"
+        attach
         persistent
         class="align-enter justify-center">
         <v-progress-circular :color="props.circleColor" indeterminate :size="128" :width="4" />
