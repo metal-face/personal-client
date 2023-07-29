@@ -83,7 +83,10 @@ import useVuelidate from "@vuelidate/core";
 import SessionServices from "@/services/SessionServices";
 import CircleLoader from "@/components/CircleLoader.vue";
 import { sessionStore } from "@/store/SessionStore";
+import { useAccountStore } from "@/store/AccountStore";
 import { useScriptTag } from "@vueuse/core";
+import { Account } from "@/models/Account";
+import { Role } from "@/models/Account";
 
 useScriptTag(
     "https://www.google.com/recaptcha/api.js?render=6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM",
@@ -101,7 +104,8 @@ function onClick(e: Event) {
 }
 
 const router: Router = useRouter();
-const store = sessionStore();
+const sessStore = sessionStore();
+const accountStore = useAccountStore();
 
 interface LoginForm {
     username: string;
@@ -152,6 +156,14 @@ const v$ = useVuelidate(rules, state);
 const loading = ref<boolean>(false);
 const visible = ref<boolean>(false);
 
+let account: Account = reactive({
+    account_id: "",
+    username: "",
+    email: "",
+    role: Role.REGULAR,
+    created_at: new Date(),
+});
+
 async function loginUser(token: string): Promise<void> {
     loading.value = true;
 
@@ -171,7 +183,13 @@ async function loginUser(token: string): Promise<void> {
         })
         .then((res) => {
             if (!res) return;
-            store.setSession(res.data.data);
+            sessStore.setSession(res.data.data);
+
+            account.account_id = res.data.data.account_id;
+            account.created_at = new Date(res.data.data.created_at);
+
+            accountStore.setAccount(account);
+
             router.push({ name: "Home" });
         })
         .finally(() => {
@@ -184,4 +202,3 @@ async function loginUser(token: string): Promise<void> {
     font-family: "Prata", serif;
 }
 </style>
-@/store/SessionStore
