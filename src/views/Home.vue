@@ -104,7 +104,7 @@ onMounted(() => {
                     <CircleLoader :loading="loading" circle-color="white" />
                     <PersonalInfoCard @loading="toggleLoadingState" />
                     <div v-if="!loggedIn" color="transparent" class="ma-6">
-                        <GitHubLoginButton />
+                        <!-- <GitHubLoginButton /> -->
                         <AuthenticationButtons />
                     </div>
 
