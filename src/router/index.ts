@@ -38,29 +38,38 @@ const routes = [
     },
     {
         path: "/blogs",
-        name: "Blogs",
-        component: () => import("@/views/Blogs.vue"),
+        component: () => import("@/views/blogs/BlogsView.vue"),
+        meta: {
+            restricted: true,
+            title: "Blogs",
+        },
         children: [
+            {
+                path: "",
+                name: "UserBlogPosts",
+                component: () => import("@/views/blogs/UserBlogPosts.vue"),
+                meta: {
+                    restricted: true,
+                    meta: "Blog Posts"
+                }
+            },
             {
                 path: "create",
                 name: "BlogCreator",
-                component: () => import("@/views/BlogCreator.vue")
+                component: () => import("@/views/blogs/BlogCreator.vue")
             },
             {
                 path: ":id",
                 name: "Blog",
                 props: true,
-                component: () => import("@/views/Blog.vue"),
+                component: () => import("@/views/blogs/Blog.vue"),
                 meta: {
                     restricted: true,
                     title: "Blog Post Title"
                 }
             }
         ],
-        meta: {
-            restricted: true,
-            title: "Blogs"
-        }
+
     }
 ];
 
