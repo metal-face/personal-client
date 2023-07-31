@@ -2,7 +2,6 @@
     <v-app>
         <v-app-bar color="background" location="top">
             <v-btn
-                v-if="isLoggedIn"
                 @click="navDrawer = !navDrawer"
                 :color="isDark ? 'white' : 'black'"
                 icon="mdi-menu"
@@ -56,8 +55,7 @@
                 <v-list-item
                     v-for="(link, i) in links"
                     :key="i"
-                    :to="link.value"
-                    @click="navDrawer = !navDrawer">
+                    @click="handleRedirection(link)">
                     <template #prepend>
                         <v-icon :icon="link.props.prependIcon" />
                     </template>
@@ -76,17 +74,17 @@
 
 <script setup lang="ts">
 import { ThemeInstance, useTheme } from "vuetify";
-import { computed, ref } from "vue";
-import { reactive } from "vue";
+import { computed, ref, reactive, ComputedRef } from "vue";
+import { useRouter, Router} from "vue-router";
 import { Account, Role } from "@/models/Account";
 import { useAccountStore } from "@/store/AccountStore";
 import { sessionStore } from "@/store/SessionStore";
-import { ComputedRef } from "vue";
 import SessionServices from "@/services/SessionServices";
 
 const theme: ThemeInstance = useTheme();
 const accountStore = useAccountStore();
 const sessStore = sessionStore();
+const router: Router = useRouter();
 
 const isLoggedIn: ComputedRef<boolean> = computed(() => {
     return accountStore.isLoggedIn;
@@ -111,9 +109,15 @@ interface Link {
 }
 
 const links: Link[] = [
-    { text: "Home", value: "/", props: { prependIcon: "mdi-home-circle" } },
-    { text: "Blogs", value: "/blogs", props: { prependIcon: "mdi-post-outline" } },
+    { text: "Home", value: "Home", props: { prependIcon: "mdi-home-circle" } },
+    { text: "Blogs", value: "UserBlogPosts", props: { prependIcon: "mdi-post-outline" } },
 ];
+
+function handleRedirection(link: Link): void {
+    navDrawer.value = !navDrawer.value;
+
+    router.push({ name: link.value });
+}
 
 function setAccountData(payload: Account): void {
     Object.assign(account, payload);
