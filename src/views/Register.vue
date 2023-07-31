@@ -201,7 +201,8 @@ async function dispatchRegistration(token: string): Promise<void> {
     registerUser(token)
         .then(() => {
             // Login user if successful registration
-            loginUser()
+            // TODO: Login now requires a recaptcha token, see if the token you have is good, otherwise, get a new token
+            loginUser(token)
                 .then((res) => {
                     session.setSession(res.data.data);
                     router.push({ name: "Home" });
@@ -244,8 +245,8 @@ async function registerUser(token: string): Promise<AxiosResponse<any, any>> {
     );
 }
 
-async function loginUser(): Promise<AxiosResponse<any, any>> {
-    return SessionServices.login(state.username, state.password).then((res) => {
+async function loginUser(token: string): Promise<AxiosResponse<any, any>> {
+    return SessionServices.login(state.username, state.password, token).then((res) => {
         return res;
     });
 }
