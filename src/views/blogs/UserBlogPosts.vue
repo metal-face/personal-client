@@ -1,12 +1,44 @@
 <script setup lang="ts">
 import { ThemeInstance, useTheme } from "vuetify";
-import { computed } from "vue";
+import { computed, reactive, onMounted } from "vue";
+import { sessionStore } from "@/store/SessionStore";
+import { Session } from "@/models/Session";
+import BlogServices from "@/services/BlogServices";
+
+interface Blog {
+    blogTitle: string;
+    blogPost: string;
+    accountId: string;
+}
+
+onMounted(() => {
+    fetchAllBlogsForUser();
+});
 
 const theme: ThemeInstance = useTheme();
+const sessStore = sessionStore();
 
-let isDark = computed<boolean>(() => {
+const session: Session = sessStore.getSession;
+
+const isDark = computed<boolean>(() => {
     return theme.global.current.value.dark;
 });
+
+const accountId = computed<string>(() => {
+    return session.account_id;
+});
+
+const blogs: Blog[] = reactive([]);
+
+async function fetchAllBlogsForUser() {
+    BlogServices.fetchManyBlogs(accountId.value)
+        .then((res) => {
+            console.log(res);
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+}
 </script>
 <style scoped>
 .page-title {
