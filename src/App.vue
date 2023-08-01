@@ -52,10 +52,7 @@
             disable-resize-watcher
             disable-route-watcher>
             <v-list nav>
-                <v-list-item
-                    v-for="(link, i) in links"
-                    :key="i"
-                    @click="handleRedirection(link)">
+                <v-list-item v-for="(link, i) in links" :key="i" @click="handleRedirection(link)">
                     <template #prepend>
                         <v-icon :icon="link.props.prependIcon" />
                     </template>
@@ -74,8 +71,8 @@
 
 <script setup lang="ts">
 import { ThemeInstance, useTheme } from "vuetify";
-import { computed, ref, reactive, ComputedRef } from "vue";
-import { useRouter, Router} from "vue-router";
+import { computed, ref, reactive, ComputedRef, onMounted } from "vue";
+import { useRouter, Router } from "vue-router";
 import { Account, Role } from "@/models/Account";
 import { useAccountStore } from "@/store/AccountStore";
 import { sessionStore } from "@/store/SessionStore";
@@ -85,6 +82,17 @@ const theme: ThemeInstance = useTheme();
 const accountStore = useAccountStore();
 const sessStore = sessionStore();
 const router: Router = useRouter();
+
+onMounted(() => {
+    const viewModePreference: string | null = window.localStorage.getItem("viewModePreference");
+
+    if (viewModePreference === "light") {
+        setTheme("customLightTheme");
+    }
+    if (viewModePreference === "dark") {
+        setTheme("customDarkTheme");
+    }
+});
 
 const isLoggedIn: ComputedRef<boolean> = computed(() => {
     return accountStore.isLoggedIn;
@@ -123,10 +131,22 @@ function setAccountData(payload: Account): void {
     Object.assign(account, payload);
 }
 
+function setTheme(preference: string): void {
+    theme.global.name.value = preference;
+
+    preference === "customDarkMode"
+        ? window.localStorage.setItem("viewModePreference", "dark")
+        : window.localStorage.setItem("viewModePreference", "light");
+}
+
 function toggleTheme(): void {
     theme.global.name.value = theme.global.current.value.dark
         ? "customLightTheme"
         : "customDarkTheme";
+
+    theme.global.current.value.dark
+        ? window.localStorage.setItem("viewModePreference", "dark")
+        : window.localStorage.setItem("viewModePreference", "light");
 }
 
 const navDrawer = ref<boolean>(false);
