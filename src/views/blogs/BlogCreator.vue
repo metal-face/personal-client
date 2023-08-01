@@ -1,9 +1,9 @@
 <template>
-    <v-card class="fill-height d-flex flex-column" color="primary">
+    <v-card elevation="12" class="fill-height d-flex flex-column" color="background">
         <v-card-title class="text-center ma-3">
             <h1 class="page-title text-decoration-underline">Create a Post</h1>
         </v-card-title>
-        <v-card-text>
+        <v-card-text class="fill-height">
             <v-text-field
                 v-model="blogPostTitle"
                 :counter="100"
@@ -15,18 +15,12 @@
                 variant="outlined"
                 :bg-color="isDark ? 'black' : 'white'"
                 label="Blog Post"
-                class="fill-height"
+                class="fill-height mb-2"
                 auto-grow
                 placeholder="You write your blog post here!" />
         </v-card-text>
         <v-card-actions class="d-flex flex-column ma-0 pa-0">
-            <v-btn
-                class="ma-0 pa-0"
-                rounded="0"
-                size="x-large"
-                variant="elevated"
-                color="accent"
-                block>
+            <v-btn class="ma-0 pa-0" rounded="0" size="x-large" variant="flat" color="accent" block>
                 Save
             </v-btn>
             <v-btn
@@ -34,7 +28,7 @@
                 class="ma-0 pa-0"
                 rounded="0"
                 size="x-large"
-                variant="elevated"
+                variant="flat"
                 color="secondary"
                 block>
                 Cancel
