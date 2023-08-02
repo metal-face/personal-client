@@ -16,22 +16,21 @@ onMounted(() => {
 });
 
 const theme: ThemeInstance = useTheme();
-const sessStore = sessionStore();
 
-const session: Session = sessStore.getSession;
+const rawStorageSession = window.localStorage.getItem("session");
+
+// TODO: add !rawStorageSession redirect to the login
+
+const session = JSON.parse(rawStorageSession!) as Session;
 
 const isDark = computed<boolean>(() => {
     return theme.global.current.value.dark;
 });
 
-const accountId = computed<string>(() => {
-    return session.account_id;
-});
-
 const blogs: Blog[] = reactive([]);
 
 async function fetchAllBlogsForUser() {
-    BlogServices.fetchManyBlogs(accountId.value)
+    BlogServices.fetchManyBlogs(session.account_id)
         .then((res) => {
             console.log(res);
         })
@@ -55,16 +54,21 @@ async function fetchAllBlogsForUser() {
                 <h1 class="text-decoration-underline">Blog Posts</h1>
             </v-card-title>
         </v-card>
-        <v-btn
-            :to="{ name: 'BlogCreator' }"
-            :color="isDark ? 'white' : 'black'"
-            position="absolute"
-            location="bottom right"
-            variant="elevated"
-            size="x-large"
-            rounded="3"
-            class="ma-3"
-            icon="mdi-pencil">
-        </v-btn>
+        <v-tooltip text="Create Post" location="left">
+            <template #activator="{ props }">
+                <v-btn
+                    :to="{ name: 'BlogCreator' }"
+                    :color="isDark ? 'white' : 'black'"
+                    v-bind="props"
+                    position="absolute"
+                    location="bottom right"
+                    variant="elevated"
+                    size="x-large"
+                    rounded="3"
+                    class="ma-3"
+                    icon="mdi-pencil">
+                </v-btn>
+            </template>
+        </v-tooltip>
     </v-card>
 </template>
