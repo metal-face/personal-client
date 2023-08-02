@@ -9,7 +9,7 @@ export default {
     ): Promise<AxiosResponse<any, any>> {
         return ApiClient({
             method: "POST",
-            url: "/blog",
+            url: "/blogs",
             data: {
                 blog_post: blogPost,
                 blog_title: blogTitle,
