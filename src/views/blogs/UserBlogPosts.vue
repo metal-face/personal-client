@@ -33,6 +33,8 @@ async function fetchAllBlogsForUser() {
     BlogServices.fetchManyBlogs(session.account_id)
         .then((res) => {
             console.log(res);
+            blogs.splice(0, blogs.length);
+            blogs.push(...res.data.data);
         })
         .catch((err) => {
             console.error(err);
