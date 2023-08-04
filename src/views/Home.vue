@@ -3,20 +3,13 @@ import { ref, onMounted, reactive, computed, ComputedRef } from "vue";
 import { sessionStore } from "@/store/SessionStore";
 import { useAccountStore } from "@/store/AccountStore";
 import { Account, Role } from "@/models/Account";
-import { Session } from "@/models/Session";
-import AccountsServices from "@/services/AccountsServices";
 import PersonalButtonGroup from "@/components/home/PersonalButtonGroup.vue";
 import GitHubLoginButton from "@/components/home/GitHubLoginButton.vue";
 import AuthenticationButtons from "@/components/home/AuthenticationButtons.vue";
 import PersonalInfoCard from "@/components/home/PersonalInfoCard.vue";
 import CircleLoader from "@/components/CircleLoader.vue";
 
-const sessStore = sessionStore();
 const accountStore = useAccountStore();
-
-const emit = defineEmits<{
-    (e: "account:change", account: Account): void;
-}>();
 
 interface Snackbar {
     message: string;
@@ -26,22 +19,6 @@ interface Snackbar {
 
 const loggedIn: ComputedRef<boolean> = computed(() => {
     return accountStore.isLoggedIn;
-});
-
-const session: Session = reactive({
-    account_id: "",
-    session_id: "",
-    created_at: new Date(),
-    expires_at: new Date(),
-    user_agent: "",
-});
-
-const account: Account = reactive({
-    account_id: "",
-    username: "",
-    email: "",
-    role: Role.REGULAR,
-    created_at: new Date(),
 });
 
 const snackbar: Snackbar = reactive({
@@ -55,40 +32,6 @@ const loading = ref<boolean>(true);
 function toggleLoadingState(state: boolean): void {
     loading.value = state;
 }
-
-onMounted(() => {
-    const resp = window.localStorage.getItem("session");
-    if (resp) {
-        const jsonResponse = JSON.parse(resp) as Session;
-
-        Object.assign(session, jsonResponse);
-
-        if (Object.keys(session).length) {
-            sessStore.setSession(session);
-
-            if (sessStore.isExpired) {
-                sessStore.destroySessionInStorage;
-                sessStore.clearSession;
-                return;
-            }
-
-            if (session.account_id) {
-                AccountsServices.fetchAccountById(session.account_id)
-                    .catch((err) => {
-                        console.warn(err.response);
-                    })
-                    .then((res) => {
-                        if (!res) return;
-                        Object.assign(account, res.data.data);
-                        accountStore.setAccount(account);
-                    })
-                    .finally(() => {
-                        emit("account:change", account);
-                    });
-            }
-        }
-    }
-});
 </script>
 
 <template>
