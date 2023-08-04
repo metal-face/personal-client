@@ -77,6 +77,8 @@ import { Account, Role } from "@/models/Account";
 import { useAccountStore } from "@/store/AccountStore";
 import { sessionStore } from "@/store/SessionStore";
 import SessionServices from "@/services/SessionServices";
+import { Session } from "@/models/Session";
+import AccountsServices from "@/services/AccountsServices";
 
 const theme: ThemeInstance = useTheme();
 const accountStore = useAccountStore();
@@ -92,14 +94,44 @@ onMounted(() => {
     if (viewModePreference === "dark") {
         setTheme("customDarkTheme");
     }
+
+    const resp = window.localStorage.getItem("session");
+
+    if (resp) {
+        const jsonResponse = JSON.parse(resp) as Session;
+
+        Object.assign(session, jsonResponse);
+
+        if (Object.keys(session).length) {
+            sessStore.setSession(session);
+
+            if (sessStore.isExpired) {
+                sessStore.destroySessionInStorage();
+                sessStore.clearSession();
+                return;
+            }
+
+            if (session.account_id) {
+                AccountsServices.fetchAccountById(session.account_id)
+                    .catch((err) => {
+                        console.warn(err.response);
+                    })
+                    .then((res) => {
+                        if (!res) return;
+                        Object.assign(account, res.data.data);
+                        accountStore.setAccount(account);
+                    });
+            }
+        }
+    }
 });
 
-const isLoggedIn: ComputedRef<boolean> = computed(() => {
-    return accountStore.isLoggedIn;
-});
-
-const sessionId: ComputedRef<string> = computed(() => {
-    return sessStore.getSessionId;
+const session: Session = reactive({
+    account_id: "",
+    session_id: "",
+    created_at: new Date(),
+    expires_at: new Date(),
+    user_agent: "",
 });
 
 const account: Account = reactive({
@@ -115,6 +147,14 @@ interface Link {
     value: string;
     props: Record<string, string>;
 }
+
+const isLoggedIn: ComputedRef<boolean> = computed(() => {
+    return accountStore.isLoggedIn;
+});
+
+const sessionId: ComputedRef<string> = computed(() => {
+    return sessStore.getSessionId;
+});
 
 const links: Link[] = [
     { text: "Home", value: "Home", props: { prependIcon: "mdi-home-circle" } },
