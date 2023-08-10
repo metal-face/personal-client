@@ -7,34 +7,39 @@
         <v-card-title class="text-center ma-3">
             <h1 class="page-title text-decoration-underline">Create a Post</h1>
         </v-card-title>
-        <v-card-text class="fill-height">
-            <v-text-field
-                v-model="blogPostTitle"
-                :counter="100"
-                :bg-color="isDark ? 'black' : 'white'"
-                variant="outlined"
-                label="Blog Title" />
-            <v-row>
-                <v-col cols="6">
-                    <v-textarea
-                        v-model="blogPostBody"
-                        :bg-color="isDark ? 'black' : 'white'"
-                        @input="update"
-                        variant="outlined"
-                        auto-grow
-                        label="Blog Post"
-                        class="fill-height mb-2"
-                        placeholder="You write your blog post here!" />
-                </v-col>
-                <v-col cols="6">
-                    <div v-html="markdownOutput" class="" />
-                </v-col>
-            </v-row>
-        </v-card-text>
+
+        <v-row dense no-gutters>
+            <v-col cols="12">
+                <v-card variant="flat" color="transparent" width="25%" class="ml-auto">
+                    <v-select
+                        v-model="previewThemePreference"
+                        :items="previewTheme"
+                        :menu-props="{
+                            offset: 5,
+                        }"
+                        item-title="text"
+                        item-value="value"
+                        density="compact"
+                        label="Select preview theme"
+                        variant="solo" />
+                </v-card>
+            </v-col>
+            <v-col cols="12">
+                <MdEditor
+                    v-model="text"
+                    language="en-US"
+                    :theme="isDark ? 'dark' : 'light'"
+                    :sanitize="sanitize"
+                    :preview-theme="previewThemePreference"
+                    auto-detect-code
+                    show-code-row-number />
+            </v-col>
+        </v-row>
+
         <v-card-actions class="d-flex flex-column ma-0 pa-0">
             <v-btn
                 @click="createBlogPost"
-                :color="isDark ? 'white' : 'black'"
+                :color="isDark ? 'accent' : 'black'"
                 class="ma-0 pa-0"
                 rounded="0"
                 size="x-large"
@@ -57,23 +62,35 @@
 </template>
 <script setup lang="ts">
 import { useRouter, Router } from "vue-router";
-import { ref, computed } from "vue";
+import { ref, computed, reactive } from "vue";
 import { ThemeInstance, useTheme } from "vuetify";
 import { Session } from "@/models/Session";
-import { marked } from "marked";
-import { debounce } from "lodash-es";
+import { MdEditor } from "md-editor-v3";
+import sanitizeHtml from "sanitize-html";
 import BlogServices from "@/services/BlogServices";
+import "md-editor-v3/lib/style.css";
+
+interface PreviewTheme {
+    text: string;
+    value: string;
+}
 
 const theme: ThemeInstance = useTheme();
 const router: Router = useRouter();
 
-const blogPostTitle = ref<string>("");
-const blogPostBody = ref("");
-const markdownOutput = computed(() => marked(blogPostBody.value));
+const text = ref("# You can write markdown here!");
+const sanitize: any = (html: string) => sanitizeHtml(html);
 
-const update = debounce((e: any) => {
-    blogPostBody.value = e.target.value;
-}, 100);
+const previewTheme = reactive<PreviewTheme[]>([
+    { text: "Default", value: "default" },
+    { text: "GitHub", value: "github" },
+    { text: "VuePress", value: "vuepress" },
+    { text: "MKCute", value: "mk-cute" },
+    { text: "Smart Blue", value: "smart-blue" },
+    { text: "Cyanosis", value: "cyanosis" },
+]);
+
+const previewThemePreference = ref<string>("");
 
 const sessionFromStorage: string = window.localStorage.getItem("session")!;
 const session: Session = JSON.parse(sessionFromStorage);
@@ -100,5 +117,9 @@ async function createBlogPost() {
 <style scoped>
 .page-title {
     font-family: "Prata", "serif";
+}
+
+.markdown-output {
+    height: 100%;
 }
 </style>
