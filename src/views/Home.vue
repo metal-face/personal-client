@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, reactive, computed, ComputedRef } from "vue";
-import { sessionStore } from "@/store/SessionStore";
+import { ref, reactive, computed, ComputedRef } from "vue";
 import { useAccountStore } from "@/store/AccountStore";
-import { Account, Role } from "@/models/Account";
 import PersonalButtonGroup from "@/components/home/PersonalButtonGroup.vue";
 import GitHubLoginButton from "@/components/home/GitHubLoginButton.vue";
 import AuthenticationButtons from "@/components/home/AuthenticationButtons.vue";
@@ -46,7 +44,7 @@ function toggleLoadingState(state: boolean): void {
                 <v-card color="transparent" flat class="ma-5">
                     <CircleLoader :loading="loading" circle-color="white" />
                     <PersonalInfoCard @loading="toggleLoadingState" />
-                    <div v-if="!loggedIn" color="transparent" class="ma-6">
+                    <div v-if="!loggedIn" class="ma-6">
                         <!-- <GitHubLoginButton /> -->
                         <AuthenticationButtons />
                     </div>
