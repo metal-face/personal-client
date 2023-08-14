@@ -73,7 +73,7 @@ import { useRouter, Router } from "vue-router";
 import { ref, computed, reactive } from "vue";
 import { ThemeInstance, useTheme } from "vuetify";
 import { Session } from "@/models/Session";
-import { lineNumbers, crosshairCursor } from "@codemirror/view";
+import { lineNumbers } from "@codemirror/view";
 import { MdEditor, config } from "md-editor-v3";
 import { CompletionSource } from "@codemirror/autocomplete";
 import sanitizeHtml from "sanitize-html";
@@ -83,11 +83,26 @@ import katex from "katex";
 import mermaid from "mermaid";
 import Cropper from "cropperjs";
 import highlight from "highlight.js";
+import javascript from "highlight.js/lib/languages/javascript";
+import python from "highlight.js/lib/languages/python";
 
 import "highlight.js/styles/github.css";
 import "cropperjs/dist/cropper.css";
 import "md-editor-v3/lib/style.css";
 import "katex/dist/katex.min.css";
+
+let mermaidConfig = {
+    startOnLoad: true,
+    securityLevel: "strict",
+
+    flowchart: { titleTopMargin: 1 },
+    gantt: { titleTopMargin: 25, barHeight: 20, topPadding: 50 },
+};
+
+mermaid.initialize(mermaidConfig);
+
+highlight.registerLanguage("javascript", javascript);
+highlight.registerLanguage("python", python);
 
 interface PreviewTheme {
     text: string;
@@ -119,12 +134,11 @@ const completions = ref<Array<CompletionSource>>([
 
 config({
     editorExtensions: {
-        prettier: {
-            // prettierInstance: prettier,
-            // parserMarkdownInstance: parserMarkdown,
-        },
         highlight: {
             instance: highlight,
+        },
+        mermaid: {
+            instance: mermaid,
         },
         screenfull: {
             instance: screenfull,
@@ -135,19 +149,16 @@ config({
         cropper: {
             instance: Cropper,
         },
-        mermaid: {
-            instance: mermaid,
-        },
     },
     codeMirrorExtensions(_theme, extensions) {
-        return [...extensions, lineNumbers(), crosshairCursor()];
+        return [...extensions, lineNumbers()];
     },
 });
 
 const sanitize = (html: string): string => sanitizeHtml(html);
 const userInput = ref("# Start your post here!");
 const tableShape = reactive<number[]>([8, 4]);
-const previewThemePreference = ref<string>("github");
+const previewThemePreference = ref<string>("default");
 
 const previewTheme = reactive<PreviewTheme[]>([
     { text: "Default", value: "default" },
@@ -172,7 +183,6 @@ const isDark = computed<boolean>(() => {
 async function createBlogPost() {
     BlogServices.createBlogPost(blogPostTitle.value, blogPostBody.value, session.account_id)
         .then((res) => {
-            console.log(res);
             router.push({ name: "UserBlogPosts" });
         })
         .catch((err) => {
