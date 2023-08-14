@@ -9,35 +9,43 @@
         </v-card-title>
 
         <v-row dense no-gutters>
-            <v-row dense no-gutters justify="center" align-content="center">
-                <v-col cols="3">
-                    <v-card variant="flat" color="transparent" class="ma-1">
-                        <v-select
-                            v-model="previewThemePreference"
-                            :items="previewTheme"
-                            :menu-props="{
-                                offset: 5,
-                            }"
-                            item-title="text"
-                            item-value="value"
-                            density="compact"
-                            label="Select preview theme"
-                            variant="solo" />
-                    </v-card>
-                </v-col>
-            </v-row>
+            <v-col cols="2">
+                <v-card variant="flat" color="transparent" class="mr-1">
+                    <v-select
+                        v-model="codeThemePreference"
+                        :items="codeTheme"
+                        variant="solo"
+                        density="compact"
+                        item-title="text"
+                        item-value="item-value"
+                        label="Code Theme Preference" />
+                </v-card>
+            </v-col>
+            <v-col cols="2">
+                <v-card variant="flat" color="transparent" class="ml-auto">
+                    <v-select
+                        v-model="previewThemePreference"
+                        :items="previewTheme"
+                        :menu-props="{
+                            offset: 5,
+                        }"
+                        item-title="text"
+                        item-value="value"
+                        density="compact"
+                        label="Select preview theme"
+                        variant="solo" />
+                </v-card>
+            </v-col>
             <v-col cols="12">
                 <MdEditor
                     v-model="userInput"
                     language="en-US"
                     class="page-title"
                     :theme="isDark ? 'dark' : 'light'"
-                    :sanitize="sanitize"
                     :preview-theme="previewThemePreference"
                     :tab-width="4"
-                    :completions="completions"
                     :table-shape="tableShape"
-                    code-theme="github"
+                    :code-theme="codeThemePreference"
                     auto-detect-code
                     no-prettier
                     show-code-row-number />
@@ -75,7 +83,6 @@ import { ThemeInstance, useTheme } from "vuetify";
 import { Session } from "@/models/Session";
 import { lineNumbers } from "@codemirror/view";
 import { MdEditor, config } from "md-editor-v3";
-import { CompletionSource } from "@codemirror/autocomplete";
 import sanitizeHtml from "sanitize-html";
 import BlogServices from "@/services/BlogServices";
 import screenfull from "screenfull";
@@ -94,7 +101,6 @@ import "katex/dist/katex.min.css";
 let mermaidConfig = {
     startOnLoad: true,
     securityLevel: "strict",
-
     flowchart: { titleTopMargin: 1 },
     gantt: { titleTopMargin: 25, barHeight: 20, topPadding: 50 },
 };
@@ -109,28 +115,13 @@ interface PreviewTheme {
     value: string;
 }
 
+interface CodeTheme {
+    text: String;
+    value: String;
+}
+
 const theme: ThemeInstance = useTheme();
 const router: Router = useRouter();
-
-const completions = ref<Array<CompletionSource>>([
-    (context) => {
-        const word = context.matchBefore(/@\w*/);
-
-        if (word === null || (word.from == word.to && context.explicit)) {
-            return null;
-        }
-
-        return {
-            from: word.from,
-            options: [
-                {
-                    label: "@imzbf",
-                    type: "text",
-                },
-            ],
-        };
-    },
-]);
 
 config({
     editorExtensions: {
@@ -158,15 +149,24 @@ config({
 const sanitize = (html: string): string => sanitizeHtml(html);
 const userInput = ref("# Start your post here!");
 const tableShape = reactive<number[]>([8, 4]);
-const previewThemePreference = ref<string>("default");
+const previewThemePreference = ref<string>("github");
+const codeThemePreference = ref<string>("github");
 
 const previewTheme = reactive<PreviewTheme[]>([
     { text: "Default", value: "default" },
     { text: "GitHub", value: "github" },
-    { text: "VuePress", value: "vuepress" },
     { text: "MKCute", value: "mk-cute" },
-    { text: "Smart Blue", value: "smart-blue" },
     { text: "Cyanosis", value: "cyanosis" },
+]);
+const codeTheme = reactive<CodeTheme[]>([
+    { text: "Atom", value: "atom" },
+    { text: "a11y", value: "a11y" },
+    { text: "GitHub", value: "github" },
+    { text: "Gradient", value: "gradient" },
+    { text: "Kimbie", value: "kimbie" },
+    { text: "Paraiso", value: "paraiso" },
+    { text: "QTCreator", value: "qtcreator" },
+    { text: "StackOverflow", value: "stackoverflow" },
 ]);
 
 const sessionFromStorage: string = window.localStorage.getItem("session")!;
