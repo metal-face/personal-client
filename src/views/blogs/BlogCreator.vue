@@ -8,7 +8,7 @@
             <h1 class="page-title text-decoration-underline">Create a Post</h1>
         </v-card-title>
 
-        <v-row dense no-gutters>
+        <v-row dense>
             <v-col cols="2">
                 <v-card variant="flat" color="transparent" class="mr-1">
                     <v-select
@@ -36,9 +36,19 @@
                         variant="solo" />
                 </v-card>
             </v-col>
+            <v-col cols="2">
+                <v-card variant="flat" color="transparent">
+                    <v-text-field
+                        v-model="blogPostTitle"
+                        variant="plain"
+                        color="primary"
+                        density="compact"
+                        label="Blog Post Title" />
+                </v-card>
+            </v-col>
             <v-col cols="12">
                 <MdEditor
-                    v-model="userInput"
+                    v-model="blogPostBody"
                     @onChange="sanitizeCode"
                     :theme="isDark ? 'dark' : 'light'"
                     :preview-theme="previewThemePreference"
@@ -106,8 +116,8 @@ let mermaidConfig = {
     gantt: { titleTopMargin: 25, barHeight: 20, topPadding: 50 },
 };
 
-function sanitizeCode(code: any): void {
-    userInput.value = sanitize(code);
+function sanitizeCode(code: string): void {
+    blogPostBody.value = sanitize(code);
 }
 
 mermaid.initialize(mermaidConfig);
@@ -152,7 +162,8 @@ config({
 });
 
 const sanitize = (html: string): string => sanitizeHtml(html);
-const userInput = ref("# Start your post here!");
+const blogPostBody = ref("# Write your post here.");
+const blogPostTitle = ref<string>("Write a title here.");
 const tableShape = reactive<number[]>([8, 4]);
 const previewThemePreference = ref<string>("github");
 const codeThemePreference = ref<string>("github");
