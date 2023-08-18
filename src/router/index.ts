@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory, Router } from "vue-router";
+import { sessionStore } from "@/store/SessionStore";
 
 const routes = [
     {
@@ -33,7 +34,6 @@ const routes = [
                     restricted: false,
                 },
             },
-
         ],
     },
     {
@@ -50,13 +50,13 @@ const routes = [
                 component: () => import("@/views/blogs/UserBlogPosts.vue"),
                 meta: {
                     restricted: true,
-                    meta: "Blog Posts"
-                }
+                    meta: "Blog Posts",
+                },
             },
             {
                 path: "create",
                 name: "BlogCreator",
-                component: () => import("@/views/blogs/BlogCreator.vue")
+                component: () => import("@/views/blogs/BlogCreator.vue"),
             },
             {
                 path: ":id",
@@ -65,12 +65,11 @@ const routes = [
                 component: () => import("@/views/blogs/Blog.vue"),
                 meta: {
                     restricted: true,
-                    title: "Blog Post Title"
-                }
-            }
+                    title: "Blog Post Title",
+                },
+            },
         ],
-
-    }
+    },
 ];
 
 const router: Router = createRouter({
@@ -80,6 +79,7 @@ const router: Router = createRouter({
 
 router.beforeEach((to, from, next) => {
     const pageTitle: string = String(to.meta.title);
+    const sessStore = sessionStore();
 
     if (pageTitle) {
         document.title = pageTitle;
