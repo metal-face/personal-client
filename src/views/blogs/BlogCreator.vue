@@ -39,8 +39,7 @@
             <v-col cols="12">
                 <MdEditor
                     v-model="userInput"
-                    language="en-US"
-                    class="page-title"
+                    @onChange="sanitizeCode"
                     :theme="isDark ? 'dark' : 'light'"
                     :preview-theme="previewThemePreference"
                     :tab-width="4"
@@ -48,7 +47,9 @@
                     :code-theme="codeThemePreference"
                     auto-detect-code
                     no-prettier
-                    show-code-row-number />
+                    show-code-row-number
+                    language="en-US"
+                    class="page-title" />
             </v-col>
         </v-row>
 
@@ -104,6 +105,10 @@ let mermaidConfig = {
     flowchart: { titleTopMargin: 1 },
     gantt: { titleTopMargin: 25, barHeight: 20, topPadding: 50 },
 };
+
+function sanitizeCode(code: any): void {
+    userInput.value = sanitize(code);
+}
 
 mermaid.initialize(mermaidConfig);
 
