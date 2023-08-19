@@ -1,96 +1,125 @@
 <template>
-    <v-card
-        :elevation="isDark ? 0 : 12"
-        :variant="isDark ? 'flat' : 'elevated'"
-        class="fill-height d-flex flex-column"
-        color="background">
-        <v-card-title class="text-center ma-3">
-            <h1 class="page-title text-decoration-underline">Create a Post</h1>
-        </v-card-title>
+    <v-row>
+        <v-col cols="12">
+            <v-card
+                :elevation="isDark ? 0 : 12"
+                :variant="isDark ? 'flat' : 'elevated'"
+                class="fill-height d-flex flex-column"
+                color="background">
+                <v-row dense justify="center" align-content="center">
+                    <v-col v-if="!titleState" cols="12">
+                        <v-card @click="titleState = true" flat color="transparent">
+                            <v-card-title class="d-flex justify-center align-center ma-3">
+                                <h1 class="page-title">{{ blogPostTitle }}</h1>
+                            </v-card-title>
+                        </v-card>
+                    </v-col>
+                    <v-col v-if="titleState" cols="3">
+                        <v-card flat color="transparent" width="100%" class="mx-auto">
+                            <v-card-title>
+                                <v-text-field
+                                    v-model="blogPostTitle"
+                                    @keydown="handleKeyDown"
+                                    autofocus
+                                    class="interactive-title"
+                                    variant="solo"
+                                    hide-details>
+                                    <template #append-inner>
+                                        <v-icon>mdi-keyboard-return</v-icon>
+                                    </template>
+                                    <template #append>
+                                        <v-btn
+                                            :rounded="false"
+                                            variant="elevated"
+                                            color="success"
+                                            size="small"
+                                            @click="titleState = false">
+                                            <template #default>
+                                                <v-icon> mdi-check </v-icon>
+                                            </template>
+                                        </v-btn>
+                                    </template>
+                                </v-text-field>
+                            </v-card-title>
+                        </v-card>
+                    </v-col>
+                    <!--                    <v-col cols="2">-->
+                    <!--                        <v-card variant="flat" color="transparent" class="mr-1">-->
+                    <!--                            <v-select-->
+                    <!--                                v-model="codeThemePreference"-->
+                    <!--                                :items="codeTheme"-->
+                    <!--                                variant="solo"-->
+                    <!--                                density="compact"-->
+                    <!--                                item-title="text"-->
+                    <!--                                item-value="item-value"-->
+                    <!--                                label="Code Theme Preference" />-->
+                    <!--                        </v-card>-->
+                    <!--                    </v-col>-->
+                    <!--                    <v-col cols="2">-->
+                    <!--                        <v-card variant="flat" color="transparent" class="ml-auto">-->
+                    <!--                            <v-select-->
+                    <!--                                v-model="previewThemePreference"-->
+                    <!--                                :items="previewTheme"-->
+                    <!--                                :menu-props="{-->
+                    <!--                                    offset: 5,-->
+                    <!--                                }"-->
+                    <!--                                item-title="text"-->
+                    <!--                                item-value="value"-->
+                    <!--                                density="compact"-->
+                    <!--                                label="Select preview theme"-->
+                    <!--                                variant="solo" />-->
+                    <!--                        </v-card>-->
+                    <!--                    </v-col>-->
 
-        <v-row dense>
-            <v-col cols="2">
-                <v-card variant="flat" color="transparent" class="mr-1">
-                    <v-select
-                        v-model="codeThemePreference"
-                        :items="codeTheme"
-                        variant="solo"
-                        density="compact"
-                        item-title="text"
-                        item-value="item-value"
-                        label="Code Theme Preference" />
-                </v-card>
-            </v-col>
-            <v-col cols="2">
-                <v-card variant="flat" color="transparent" class="ml-auto">
-                    <v-select
-                        v-model="previewThemePreference"
-                        :items="previewTheme"
-                        :menu-props="{
-                            offset: 5,
-                        }"
-                        item-title="text"
-                        item-value="value"
-                        density="compact"
-                        label="Select preview theme"
-                        variant="solo" />
-                </v-card>
-            </v-col>
-            <v-col cols="2">
-                <v-card variant="flat" color="transparent">
-                    <v-text-field
-                        v-model="blogPostTitle"
-                        variant="plain"
-                        color="primary"
-                        density="compact"
-                        label="Blog Post Title" />
-                </v-card>
-            </v-col>
-            <v-col cols="12">
-                <MdEditor
-                    v-model="blogPostBody"
-                    @onChange="sanitizeCode"
-                    :theme="isDark ? 'dark' : 'light'"
-                    :preview-theme="previewThemePreference"
-                    :tab-width="4"
-                    :table-shape="tableShape"
-                    :code-theme="codeThemePreference"
-                    auto-detect-code
-                    no-prettier
-                    show-code-row-number
-                    language="en-US"
-                    class="page-title" />
-            </v-col>
-        </v-row>
+                    <v-col cols="12">
+                        <MdEditor
+                            v-model="blogPostBody"
+                            @onChange="sanitizeCode"
+                            ref="editorRef"
+                            :theme="isDark ? 'dark' : 'light'"
+                            :preview-theme="previewThemePreference"
+                            :tab-width="4"
+                            :table-shape="tableShape"
+                            :code-theme="codeThemePreference"
+                            auto-detect-code
+                            no-prettier
+                            show-code-row-number
+                            language="en-US"
+                            class="page-title" />
+                    </v-col>
+                </v-row>
 
-        <v-card-actions class="d-flex flex-column ma-0 pa-0">
-            <v-btn
-                @click="createBlogPost"
-                :color="isDark ? 'accent' : 'black'"
-                class="ma-0 pa-0"
-                rounded="0"
-                size="x-large"
-                variant="flat"
-                block>
-                Save
-            </v-btn>
-            <v-btn
-                @click="router.push({ name: 'UserBlogPosts' })"
-                :color="isDark ? 'black' : 'white'"
-                class="ma-0 pa-0"
-                rounded="0"
-                size="x-large"
-                variant="flat"
-                block>
-                Cancel
-            </v-btn>
-        </v-card-actions>
-    </v-card>
+                <!-- SAVE/CANCEL -->
+                <v-card-actions class="d-flex flex-column ma-0 pa-0">
+                    <v-btn
+                        @click="createBlogPost"
+                        :color="isDark ? 'accent' : 'black'"
+                        class="ma-0 pa-0"
+                        rounded="0"
+                        size="x-large"
+                        variant="flat"
+                        block>
+                        Save
+                    </v-btn>
+                    <v-btn
+                        @click="router.push({ name: 'UserBlogPosts' })"
+                        :color="isDark ? 'black' : 'white'"
+                        class="ma-0 pa-0"
+                        rounded="0"
+                        size="x-large"
+                        variant="flat"
+                        block>
+                        Cancel
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-col>
+    </v-row>
 </template>
 <script setup lang="ts">
 import { useRouter, Router } from "vue-router";
-import { ref, computed, reactive } from "vue";
-import { ThemeInstance, useTheme } from "vuetify";
+import { ref, computed, reactive, watch, nextTick } from "vue";
+import { ThemeInstance, useTheme, useDisplay, DisplayInstance } from "vuetify";
 import { Session } from "@/models/Session";
 import { lineNumbers } from "@codemirror/view";
 import { MdEditor, config } from "md-editor-v3";
@@ -101,29 +130,12 @@ import katex from "katex";
 import mermaid from "mermaid";
 import Cropper from "cropperjs";
 import highlight from "highlight.js";
-import javascript from "highlight.js/lib/languages/javascript";
-import python from "highlight.js/lib/languages/python";
+import type { ExposeParam } from "md-editor-v3";
 
 import "highlight.js/styles/github.css";
 import "cropperjs/dist/cropper.css";
 import "md-editor-v3/lib/style.css";
 import "katex/dist/katex.min.css";
-
-let mermaidConfig = {
-    startOnLoad: true,
-    securityLevel: "strict",
-    flowchart: { titleTopMargin: 1 },
-    gantt: { titleTopMargin: 25, barHeight: 20, topPadding: 50 },
-};
-
-function sanitizeCode(code: string): void {
-    blogPostBody.value = sanitize(code);
-}
-
-mermaid.initialize(mermaidConfig);
-
-highlight.registerLanguage("javascript", javascript);
-highlight.registerLanguage("python", python);
 
 interface PreviewTheme {
     text: string;
@@ -135,8 +147,22 @@ interface CodeTheme {
     value: String;
 }
 
+let mermaidConfig = {
+    startOnLoad: true,
+    securityLevel: "strict",
+    flowchart: { titleTopMargin: 1 },
+    gantt: { titleTopMargin: 25, barHeight: 20, topPadding: 50 },
+};
+
+function sanitizeCode(code: string): void {
+    // blogPostBody.value = sanitize(code);
+}
+
+mermaid.initialize(mermaidConfig);
+
 const theme: ThemeInstance = useTheme();
 const router: Router = useRouter();
+const display: DisplayInstance = useDisplay();
 
 config({
     editorExtensions: {
@@ -163,10 +189,15 @@ config({
 
 const sanitize = (html: string): string => sanitizeHtml(html);
 const blogPostBody = ref("# Write your post here.");
-const blogPostTitle = ref<string>("Write a title here.");
+const blogPostTitle = ref<string>("A Good Blog Post Title");
 const tableShape = reactive<number[]>([8, 4]);
-const previewThemePreference = ref<string>("github");
-const codeThemePreference = ref<string>("github");
+const previewThemePreference = ref<string>("default");
+const codeThemePreference = ref<string>("default");
+const previewState = ref<boolean>(true);
+const titleState = ref<boolean>(false);
+const editorRef = ref<ExposeParam>();
+
+editorRef.value?.on("preview", console.log);
 
 const previewTheme = reactive<PreviewTheme[]>([
     { text: "Default", value: "default" },
@@ -191,10 +222,47 @@ const session: Session = JSON.parse(sessionFromStorage);
 const darkState = computed<string>(() => {
     return theme.global.name.value;
 });
-
 const isDark = computed<boolean>(() => {
     return darkState.value === "customDarkTheme";
 });
+
+watch(
+    display.name,
+    async (newVal) => {
+        await nextTick();
+
+        switch (newVal) {
+            case "xs":
+                editorRef.value?.togglePreview(false);
+                break;
+            case "sm":
+                editorRef.value?.togglePreview(false);
+                break;
+            case "md":
+                editorRef.value?.togglePreview(true);
+                break;
+            case "lg":
+                editorRef.value?.togglePreview(true);
+                break;
+            case "xl":
+                editorRef.value?.togglePreview(true);
+                break;
+            case "xxl":
+                editorRef.value?.togglePreview(true);
+                break;
+            default:
+                editorRef.value?.togglePreview(true);
+                break;
+        }
+    },
+    { immediate: true },
+);
+
+function handleKeyDown(e: KeyboardEvent): void {
+    if (e.code === "Enter") {
+        titleState.value = false;
+    }
+}
 
 async function createBlogPost() {
     BlogServices.createBlogPost(blogPostTitle.value, blogPostBody.value, session.account_id)
@@ -207,6 +275,10 @@ async function createBlogPost() {
 }
 </script>
 <style>
+.interactive-title {
+    font-family: "Prata", "serif";
+    font-size: x-large;
+}
 .default-theme h1 {
     margin: 0 !important;
 }
