@@ -9,10 +9,27 @@
                 <v-row justify="center" align-content="center">
                     <!-- Actual Title -->
                     <v-col v-if="!titleState" :cols="12">
-                        <v-card @click="titleState = true" flat color="transparent">
-                            <v-card-title class="d-flex justify-center align-center ma-3">
-                                <h1 class="page-title">{{ blogPostTitle }}</h1>
-                            </v-card-title>
+                        <v-card
+                            @click="titleState = true"
+                            flat
+                            color="transparent"
+                            class="d-flex justify-center align-center">
+                            <v-badge
+                                v-model="editBadge.visible"
+                                :color="editBadge.color"
+                                offset-x="15"
+                                offset-y="15"
+                                location="top end"
+                                bordered>
+                                <template #badge>
+                                    <v-icon size="large">
+                                        {{ editBadge.icon }}
+                                    </v-icon>
+                                </template>
+                                <v-card-title class="ma-3">
+                                    <h1 class="page-title">{{ blogPostTitle }}</h1>
+                                </v-card-title>
+                            </v-badge>
                         </v-card>
                     </v-col>
                     <!-- Title Editor -->
@@ -45,33 +62,22 @@
                             </v-card-title>
                         </v-card>
                     </v-col>
-                    <!--                    <v-col cols="2">-->
-                    <!--                        <v-card variant="flat" color="transparent" class="mr-1">-->
-                    <!--                            <v-select-->
-                    <!--                                v-model="codeThemePreference"-->
-                    <!--                                :items="codeTheme"-->
-                    <!--                                variant="solo"-->
-                    <!--                                density="compact"-->
-                    <!--                                item-title="text"-->
-                    <!--                                item-value="item-value"-->
-                    <!--                                label="Code Theme Preference" />-->
-                    <!--                        </v-card>-->
-                    <!--                    </v-col>-->
-                    <!--                    <v-col cols="2">-->
-                    <!--                        <v-card variant="flat" color="transparent" class="ml-auto">-->
-                    <!--                            <v-select-->
-                    <!--                                v-model="previewThemePreference"-->
-                    <!--                                :items="previewTheme"-->
-                    <!--                                :menu-props="{-->
-                    <!--                                    offset: 5,-->
-                    <!--                                }"-->
-                    <!--                                item-title="text"-->
-                    <!--                                item-value="value"-->
-                    <!--                                density="compact"-->
-                    <!--                                label="Select preview theme"-->
-                    <!--                                variant="solo" />-->
-                    <!--                        </v-card>-->
-                    <!--                    </v-col>-->
+                    <v-col :cols="inputWidth">
+                        <v-card variant="flat" color="transparent" class="ml-auto">
+                            <v-select
+                                v-model="previewThemePreference"
+                                :items="previewTheme"
+                                :menu-props="{
+                                    offset: 5,
+                                }"
+                                item-title="text"
+                                item-value="value"
+                                density="compact"
+                                label="Select preview theme"
+                                variant="solo"
+                                hide-details />
+                        </v-card>
+                    </v-col>
 
                     <v-col :cols="12">
                         <MdEditor
@@ -81,8 +87,8 @@
                             :preview-theme="previewThemePreference"
                             :tab-width="4"
                             :table-shape="tableShape"
-                            :code-theme="codeThemePreference"
                             :toolbars="toolbarItems"
+                            :read-only="props.readonly"
                             ref="editorRef"
                             language="en-US"
                             no-prettier
@@ -116,6 +122,8 @@
                     </v-btn>
                 </v-card-actions>
             </v-card>
+
+            <!-- SNACKBAR INDICATOR -->
             <v-snackbar
                 v-model="snackbar.visible"
                 :timeout="snackbar.timeout"
@@ -144,22 +152,24 @@ import type { ExposeParam, ToolbarNames } from "md-editor-v3";
 
 import { sessionStore } from "@/store/SessionStore";
 import { Snackbar } from "@/models/Snackbar";
+import { Badge } from "@/models/Badge";
 
 import "highlight.js/styles/github.css";
 import "cropperjs/dist/cropper.css";
 import "md-editor-v3/lib/style.css";
 import "katex/dist/katex.min.css";
+import { indexOf } from "lodash-es";
 
 interface PreviewTheme {
     text: string;
     value: string;
 }
-
-interface CodeTheme {
-    text: String;
-    value: String;
+interface Props {
+    readonly?: boolean;
+    blogId?: string;
 }
 
+const props = defineProps<Props>();
 const sanitize = (html: string): string => sanitizeHtml(html);
 
 const theme: ThemeInstance = useTheme();
@@ -176,7 +186,11 @@ const snackbar = reactive<Snackbar>({
     timeout: 3000,
     text: "",
 });
-
+const editBadge = reactive<Badge>({
+    visible: true,
+    color: "accent",
+    icon: "mdi-pencil",
+});
 const toolbarItems = reactive<ToolbarNames[]>([
     "save",
     "bold",
@@ -202,7 +216,6 @@ const toolbarItems = reactive<ToolbarNames[]>([
 
 const tableShape = reactive<number[]>([8, 4]);
 const previewThemePreference = ref<string>("default");
-const codeThemePreference = ref<string>("default");
 const titleState = ref<boolean>(false);
 const editorRef = ref<ExposeParam>();
 const mermaidConfig = {
@@ -215,16 +228,6 @@ const previewTheme = reactive<PreviewTheme[]>([
     { text: "GitHub", value: "github" },
     { text: "MKCute", value: "mk-cute" },
     { text: "Cyanosis", value: "cyanosis" },
-]);
-const codeTheme = reactive<CodeTheme[]>([
-    { text: "Atom", value: "atom" },
-    { text: "a11y", value: "a11y" },
-    { text: "GitHub", value: "github" },
-    { text: "Gradient", value: "gradient" },
-    { text: "Kimbie", value: "kimbie" },
-    { text: "Paraiso", value: "paraiso" },
-    { text: "QTCreator", value: "qtcreator" },
-    { text: "StackOverflow", value: "stackoverflow" },
 ]);
 
 const inputWidth = computed<number>(() => {
@@ -306,21 +309,57 @@ watch(
         switch (newVal) {
             case "xs":
                 editorRef.value?.togglePreview(false);
+                if (toolbarItems.indexOf("sub") >= 0) {
+                    toolbarItems.splice(toolbarItems.indexOf("sub"), 1);
+                }
+                if (toolbarItems.indexOf("sup") >= 0) {
+                    toolbarItems.splice(toolbarItems.indexOf("sup"), 1);
+                }
+                if (toolbarItems.indexOf("preview") < 0) {
+                    toolbarItems.push("preview");
+                }
                 break;
             case "sm":
                 editorRef.value?.togglePreview(false);
+                if (toolbarItems.indexOf("sub") >= 0) {
+                    toolbarItems.splice(toolbarItems.indexOf("sub"), 1);
+                }
+                if (toolbarItems.indexOf("sup") >= 0) {
+                    toolbarItems.splice(toolbarItems.indexOf("sup"), 1);
+                }
+                if (toolbarItems.indexOf("preview") < 0) {
+                    toolbarItems.push("preview");
+                }
                 break;
             case "md":
                 editorRef.value?.togglePreview(true);
+                if (toolbarItems.indexOf("sub") < 0) {
+                    toolbarItems.push("sub");
+                }
+                if (toolbarItems.indexOf("preview") >= 0) {
+                    toolbarItems.splice(toolbarItems.indexOf("preview"), 1);
+                }
                 break;
             case "lg":
                 editorRef.value?.togglePreview(true);
+                if (toolbarItems.indexOf("sub") < 0) {
+                    toolbarItems.push("sub");
+                }
                 break;
             case "xl":
                 editorRef.value?.togglePreview(true);
+                if (toolbarItems.indexOf("sub") < 0) {
+                    toolbarItems.push("sub");
+                }
+                if (toolbarItems.indexOf("sup") < 0) {
+                    toolbarItems.push("sup");
+                }
                 break;
             case "xxl":
                 editorRef.value?.togglePreview(true);
+                if (toolbarItems.indexOf("sub") < 0) {
+                    toolbarItems.push("sub");
+                }
                 break;
             default:
                 editorRef.value?.togglePreview(true);
@@ -373,6 +412,8 @@ async function createBlogPost() {
     sanitizeCode(blogPostBody.value);
     BlogServices.createBlogPost(blogPostTitle.value, blogPostBody.value, accountId.value)
         .then(() => {
+            window.localStorage.removeItem("blog_content");
+            window.localStorage.removeItem("blog_title");
             router.push({ name: "UserBlogPosts" });
         })
         .catch((err) => {
@@ -380,16 +421,34 @@ async function createBlogPost() {
         });
 }
 
-onMounted(() => {
-    const savedContent: string | null = window.localStorage.getItem("blog_content");
-    const savedTitle: string | null = window.localStorage.getItem("blog_title");
+async function fetchBlogById() {
+    BlogServices.fetchBlogById(props.blogId!)
+        .then((res) => {
+            console.log(res);
+            blogPostTitle.value = res.data.data.blog_title;
+            blogPostBody.value = res.data.data.blog_post;
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+}
 
-    if (savedContent) {
-        blogPostBody.value = savedContent;
+onMounted(() => {
+    if (props.blogId && props.readonly) {
+        fetchBlogById();
     }
 
-    if (savedTitle) {
-        blogPostTitle.value = savedTitle;
+    if (!props.blogId && !props.readonly) {
+        const savedContent: string | null = window.localStorage.getItem("blog_content");
+        const savedTitle: string | null = window.localStorage.getItem("blog_title");
+
+        if (savedContent) {
+            blogPostBody.value = savedContent;
+        }
+
+        if (savedTitle) {
+            blogPostTitle.value = savedTitle;
+        }
     }
 });
 </script>
@@ -398,7 +457,12 @@ onMounted(() => {
     font-family: "Prata", "serif";
     font-size: x-large;
 }
-.default-theme h1 {
+.default-theme h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     margin: 0 !important;
 }
 .page-title {
