@@ -75,18 +75,18 @@
 
                     <v-col :cols="12">
                         <MdEditor
-                            @onSave="saveContentToLocalStorage"
-                            @onUploadImage="handleImageUpload"
                             v-model="blogPostBody"
+                            @onSave="saveContentToLocalStorage"
                             :theme="isDark ? 'dark' : 'light'"
                             :preview-theme="previewThemePreference"
                             :tab-width="4"
                             :table-shape="tableShape"
                             :code-theme="codeThemePreference"
+                            :toolbars="toolbarItems"
                             ref="editorRef"
                             language="en-US"
-                            auto-detect-code
                             no-prettier
+                            no-upload-img
                             show-code-row-number
                             class="page-title" />
                     </v-col>
@@ -116,6 +116,14 @@
                     </v-btn>
                 </v-card-actions>
             </v-card>
+            <v-snackbar
+                v-model="snackbar.visible"
+                :timeout="snackbar.timeout"
+                :color="snackbar.color">
+                <div class="text-center">
+                    {{ snackbar.text }}
+                </div>
+            </v-snackbar>
         </v-col>
     </v-row>
 </template>
@@ -132,8 +140,10 @@ import katex from "katex";
 import mermaid from "mermaid";
 import Cropper from "cropperjs";
 import highlight from "highlight.js";
-import type { ExposeParam } from "md-editor-v3";
+import type { ExposeParam, ToolbarNames } from "md-editor-v3";
+
 import { sessionStore } from "@/store/SessionStore";
+import { Snackbar } from "@/models/Snackbar";
 
 import "highlight.js/styles/github.css";
 import "cropperjs/dist/cropper.css";
@@ -159,6 +169,36 @@ const sessStore = sessionStore();
 
 const blogPostBody = ref("# Write your post here.");
 const blogPostTitle = ref<string>("A Good Blog Post Title");
+
+const snackbar = reactive<Snackbar>({
+    color: "success",
+    visible: false,
+    timeout: 3000,
+    text: "",
+});
+
+const toolbarItems = reactive<ToolbarNames[]>([
+    "save",
+    "bold",
+    "underline",
+    "italic",
+    "-",
+    "title",
+    "strikeThrough",
+    "sub",
+    "sup",
+    "quote",
+    "unorderedList",
+    "task",
+    "-",
+    "codeRow",
+    "code",
+    "link",
+    "image",
+    "table",
+    "mermaid",
+    "katex",
+]);
 
 const tableShape = reactive<number[]>([8, 4]);
 const previewThemePreference = ref<string>("default");
@@ -305,10 +345,9 @@ function sanitizeCode(code: string): void {
 const saveContentToLocalStorage = (saveContent: string) => {
     window.localStorage.setItem("blog_content", saveContent);
     window.localStorage.setItem("blog_title", blogPostTitle.value);
-};
 
-const handleImageUpload = (files, callback) => {
-    console.log(files);
+    snackbar.text = "Local Save Successful 💾";
+    snackbar.visible = true;
 };
 
 /**
