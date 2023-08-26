@@ -165,8 +165,8 @@ interface PreviewTheme {
     value: string;
 }
 interface Props {
-    readonly?: boolean;
-    blogId?: string;
+    readonly: boolean;
+    blogId: string;
 }
 
 const props = defineProps<Props>();
@@ -186,11 +186,13 @@ const snackbar = reactive<Snackbar>({
     timeout: 3000,
     text: "",
 });
+
 const editBadge = reactive<Badge>({
     visible: true,
     color: "accent",
     icon: "mdi-pencil",
 });
+
 const toolbarItems = reactive<ToolbarNames[]>([
     "save",
     "bold",
