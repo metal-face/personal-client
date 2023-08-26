@@ -5,7 +5,7 @@ import PersonalButtonGroup from "@/components/home/PersonalButtonGroup.vue";
 import GitHubLoginButton from "@/components/home/GitHubLoginButton.vue";
 import AuthenticationButtons from "@/components/home/AuthenticationButtons.vue";
 import PersonalInfoCard from "@/components/home/PersonalInfoCard.vue";
-import CircleLoader from "@/components/CircleLoader.vue";
+import CircleLoader from "@/components/utils/CircleLoader.vue";
 
 const accountStore = useAccountStore();
 
