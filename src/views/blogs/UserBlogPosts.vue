@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { ThemeInstance, useTheme } from "vuetify";
-import { computed, reactive, onMounted } from "vue";
+import { computed, reactive, onMounted, ref, Ref, nextTick } from "vue";
 import { Session } from "@/models/Session";
 import BlogServices from "@/services/BlogServices";
 import BlogPostCard from "@/components/blogs/BlogPostCard.vue";
 import { format } from "date-fns";
 import { useRouter, Router, RouteParamsRaw } from "vue-router";
+import CircleLoader from "@/components/utils/CircleLoader.vue";
+import ConfirmDelete from "@/components/utils/ConfirmDelete.vue";
+import { ConfirmDeleteState } from "@/models/ConfirmDeleteState";
 
 interface Blog {
     blog_title: string;
@@ -32,7 +35,24 @@ const isDark = computed<boolean>(() => {
     return theme.global.current.value.dark;
 });
 
+const loading = ref<boolean>(false);
+
+const confirmDeleteState = reactive<ConfirmDeleteState>({
+    visible: ref<boolean>(false),
+    idToDelete: ref<string | number>(""),
+});
+
 const blogs: Blog[] = reactive([]);
+
+function openConfirmDelete(idToDelete: string | number): void {
+    confirmDeleteState.visible = true;
+    confirmDeleteState.idToDelete = idToDelete;
+}
+
+function closeConfirmDelete() {
+    confirmDeleteState.idToDelete = "";
+    confirmDeleteState.visible = false;
+}
 
 function humanReadableData(rawString: string): string {
     const rawDate: Date = new Date(rawString);
@@ -47,11 +67,34 @@ function redirectToReadOnly(blogId: string): void {
     router.push({ name: "BlogCreator", params: { readonly: true, blogId: blogId } });
 }
 
+async function deleteBlogPostById(blogId: string) {
+    closeConfirmDelete();
+
+    await nextTick(() => {
+        loading.value = true;
+        BlogServices.deleteBlogById(blogId)
+            .then(() => {
+                loading.value = false;
+            })
+            .finally(() => {
+                fetchAllBlogsForUser();
+            })
+            .catch((err) => {
+                // TODO: snackbar handling
+                console.error(err);
+            });
+    });
+}
+
 async function fetchAllBlogsForUser() {
+    loading.value = true;
     BlogServices.fetchManyBlogs(session.account_id)
         .then((res) => {
             blogs.splice(0, blogs.length);
             blogs.push(...res.data.data);
+        })
+        .finally(() => {
+            loading.value = false;
         })
         .catch((err) => {
             console.error(err);
@@ -60,6 +103,12 @@ async function fetchAllBlogsForUser() {
 </script>
 <template>
     <v-row class="fill-height">
+        <CircleLoader :loading="loading" circle-color="accent" />
+        <ConfirmDelete
+            @confirm:delete="deleteBlogPostById"
+            @confirm:cancel="closeConfirmDelete"
+            :visible="confirmDeleteState.visible"
+            :resourceId="confirmDeleteState.idToDelete" />
         <v-col cols="12">
             <v-card
                 elevation="12"
@@ -86,11 +135,13 @@ async function fetchAllBlogsForUser() {
                                 :blog-post="blog.blog_post"
                                 :blog-title="blog.blog_title" />
                             <v-card-actions class="ma-0 pa-0">
+                                <!-- EDIT-->
                                 <v-btn size="large" class="ma-0" icon="mdi-pencil" color="info" />
+                                <!-- VIEW (READ ONLY) -->
                                 <v-btn
                                     @click="
                                         handleRedirection('BlogCreator', {
-                                            readonly: true,
+                                            readonly: Boolean(true),
                                             blogId: blog.blog_id,
                                         })
                                     "
@@ -98,7 +149,9 @@ async function fetchAllBlogsForUser() {
                                     class="ma-0"
                                     icon="mdi-eye"
                                     color="yellow" />
+                                <!-- DELETE -->
                                 <v-btn
+                                    @click="openConfirmDelete(blog.blog_id)"
                                     size="large"
                                     class="ma-0"
                                     icon="mdi-trash-can"
