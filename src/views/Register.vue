@@ -93,7 +93,7 @@ import { Router, useRouter } from "vue-router";
 import { useVuelidate } from "@vuelidate/core";
 import { email, required, minLength, maxLength } from "@vuelidate/validators";
 import AccountsServices from "@/services/AccountsServices";
-import CircleLoader from "@/components/CircleLoader.vue";
+import CircleLoader from "@/components/utils/CircleLoader.vue";
 import SessionServices from "@/services/SessionServices";
 import { sessionStore } from "@/store/SessionStore";
 import type { AxiosResponse } from "axios";

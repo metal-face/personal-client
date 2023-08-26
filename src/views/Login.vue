@@ -81,7 +81,7 @@ import { Router, useRouter } from "vue-router";
 import { required, minLength, maxLength } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
 import SessionServices from "@/services/SessionServices";
-import CircleLoader from "@/components/CircleLoader.vue";
+import CircleLoader from "@/components/utils/CircleLoader.vue";
 import { sessionStore } from "@/store/SessionStore";
 import { useAccountStore } from "@/store/AccountStore";
 import { useScriptTag } from "@vueuse/core";
