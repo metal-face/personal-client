@@ -1,76 +1,9 @@
 import { createRouter, createWebHistory, Router } from "vue-router";
 import { sessionStore } from "@/store/SessionStore";
+import blogsRouter from "@/router/blogsRouter";
+import userRouter from "@/router/userRouter";
 
-const routes = [
-    {
-        path: "/",
-        children: [
-            {
-                path: "",
-                name: "Home",
-                component: () => import("@/views/Home.vue"),
-                meta: {
-                    title: "Home",
-                    restricted: false,
-                },
-            },
-            {
-                path: "login",
-                name: "Login",
-                props: true,
-                component: () => import("@/views/Login.vue"),
-                meta: {
-                    title: "Login",
-                    restricted: false,
-                },
-            },
-            {
-                path: "register",
-                name: "Register",
-                props: true,
-                component: () => import("@/views/Register.vue"),
-                meta: {
-                    title: "Register",
-                    restricted: false,
-                },
-            },
-        ],
-    },
-    {
-        path: "/blogs",
-        component: () => import("@/views/blogs/BlogsView.vue"),
-        meta: {
-            restricted: true,
-            title: "Blogs",
-        },
-        children: [
-            {
-                path: "",
-                name: "UserBlogPosts",
-                component: () => import("@/views/blogs/UserBlogPosts.vue"),
-                meta: {
-                    restricted: true,
-                    meta: "Blog Posts",
-                },
-            },
-            {
-                path: "create",
-                name: "BlogCreator",
-                component: () => import("@/views/blogs/BlogCreator.vue"),
-            },
-            {
-                path: ":id",
-                name: "Blog",
-                props: true,
-                component: () => import("@/views/blogs/Blog.vue"),
-                meta: {
-                    restricted: true,
-                    title: "Blog Post Title",
-                },
-            },
-        ],
-    },
-];
+const routes = [...userRouter, ...blogsRouter];
 
 const router: Router = createRouter({
     history: createWebHistory(process.env.BASE_URL),
