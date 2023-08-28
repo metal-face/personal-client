@@ -116,9 +116,7 @@ async function fetchAllBlogsForUser() {
                 color="primary"
                 rounded="1"
                 class="fill-height">
-                <!-- TODO: list all blogs for the signed in user -->
-                <!-- TODO: if there are no blogs, diplay an indicator to create a blog. -->
-                <!-- TODO: add a create button that redirects the user to the create page. -->
+                <!-- TODO: if there are no blogs, display an indicator to create a blog. -->
                 <v-card-title class="page-title text-center ma-3">
                     <h1 class="text-decoration-underline">Blog Posts</h1>
                 </v-card-title>
