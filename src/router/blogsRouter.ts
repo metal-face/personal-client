@@ -7,23 +7,36 @@ const blogsRouter = [
             {
                 path: "",
                 name: "UserBlogPosts",
-                component: () => import("@/views/blogs/UserBlogPosts.vue"),
+                component: () => import("@/views/blogs/BlogPosts.vue"),
                 meta: {
                     restricted: true,
                     meta: "Blog Posts",
                 },
             },
             {
-                path: "create/:readonly?/:blogId?",
+                path: "create",
                 name: "BlogCreator",
-                props: true,
                 component: () => import("@/views/blogs/BlogCreator.vue"),
+                meta: {
+                    restricted: true,
+                    title: "Blog Creator",
+                },
+            },
+            {
+                path: "update/:id",
+                name: "BlogUpdater",
+                props: true,
+                component: () => import("@/views/blogs/BlogUpdater.vue"),
+                meta: {
+                    restricted: true,
+                    title: "Blog Updater",
+                },
             },
             {
                 path: ":id",
-                name: "Blog",
+                name: "BlogViewer",
                 props: true,
-                component: () => import("@/views/blogs/Blog.vue"),
+                component: () => import("@/views/blogs/BlogViewer.vue"),
                 meta: {
                     restricted: true,
                     title: "Blog Post Title",
