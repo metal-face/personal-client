@@ -12,6 +12,7 @@
                         <v-card
                             @click="titleState = true"
                             flat
+                            height="100%"
                             color="transparent"
                             class="d-flex justify-center align-center">
                             <v-badge
@@ -26,7 +27,7 @@
                                         {{ editBadge.icon }}
                                     </v-icon>
                                 </template>
-                                <v-card-title class="ma-3">
+                                <v-card-title class="ma-3 pa-3">
                                     <h1 class="page-title">{{ blogPostTitle }}</h1>
                                 </v-card-title>
                             </v-badge>
@@ -44,9 +45,6 @@
                                     class="interactive-title"
                                     variant="solo">
                                     <template #append-inner>
-                                        <v-icon>mdi-keyboard-return</v-icon>
-                                    </template>
-                                    <template #append>
                                         <v-btn
                                             :rounded="false"
                                             variant="elevated"
