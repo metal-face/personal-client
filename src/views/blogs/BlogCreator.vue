@@ -6,95 +6,7 @@
                 :variant="isDark ? 'flat' : 'elevated'"
                 class="fill-height"
                 color="background">
-                <v-row justify="center" align-content="center">
-                    <!-- Actual Title -->
-                    <v-col v-if="!titleState" :cols="12">
-                        <v-card
-                            @click="titleState = true"
-                            flat
-                            height="100%"
-                            color="transparent"
-                            class="d-flex justify-center align-center">
-                            <v-badge
-                                v-model="editBadge.visible"
-                                :color="editBadge.color"
-                                offset-x="15"
-                                offset-y="15"
-                                location="top end"
-                                bordered>
-                                <template #badge>
-                                    <v-icon size="large">
-                                        {{ editBadge.icon }}
-                                    </v-icon>
-                                </template>
-                                <v-card-title class="ma-3 pa-3">
-                                    <h1 class="page-title">{{ blogPostTitle }}</h1>
-                                </v-card-title>
-                            </v-badge>
-                        </v-card>
-                    </v-col>
-                    <!-- Title Editor -->
-                    <v-col v-if="titleState" :cols="inputWidth">
-                        <v-card flat color="transparent" width="100%" class="mx-auto">
-                            <v-card-title>
-                                <v-text-field
-                                    v-model="blogPostTitle"
-                                    @keydown="handleKeyDown"
-                                    autofocus
-                                    hint="You can press enter to save!"
-                                    class="interactive-title"
-                                    variant="solo">
-                                    <template #append-inner>
-                                        <v-btn
-                                            :rounded="false"
-                                            variant="elevated"
-                                            color="success"
-                                            size="small"
-                                            @click="titleState = false">
-                                            <template #default>
-                                                <v-icon> mdi-check </v-icon>
-                                            </template>
-                                        </v-btn>
-                                    </template>
-                                </v-text-field>
-                            </v-card-title>
-                        </v-card>
-                    </v-col>
-                    <v-col :cols="inputWidth">
-                        <v-card variant="flat" color="transparent" class="ml-auto">
-                            <v-select
-                                v-model="previewThemePreference"
-                                :items="previewTheme"
-                                :menu-props="{
-                                    offset: 5,
-                                }"
-                                item-title="text"
-                                item-value="value"
-                                density="compact"
-                                label="Select preview theme"
-                                variant="solo"
-                                hide-details />
-                        </v-card>
-                    </v-col>
-
-                    <v-col :cols="12">
-                        <MdEditor
-                            v-model="blogPostBody"
-                            @onSave="saveContentToLocalStorage"
-                            :theme="isDark ? 'dark' : 'light'"
-                            :preview-theme="previewThemePreference"
-                            :tab-width="4"
-                            :table-shape="tableShape"
-                            :toolbars="toolbarItems"
-                            :read-only="props.readonly"
-                            ref="editorRef"
-                            language="en-US"
-                            no-prettier
-                            no-upload-img
-                            show-code-row-number
-                            class="page-title" />
-                    </v-col>
-                </v-row>
+                <MarkdownEditor @body:change="handleBodyChange" @title:change="handleTitleChange" />
 
                 <!-- SAVE/CANCEL -->
                 <v-card-actions class="d-flex flex-column ma-0 pa-0">
@@ -137,31 +49,12 @@
 import { useRouter, Router } from "vue-router";
 import { ref, computed, reactive, watch, onMounted } from "vue";
 import { ThemeInstance, useTheme, useDisplay, DisplayInstance } from "vuetify";
-import { lineNumbers } from "@codemirror/view";
-import { MdEditor, config } from "md-editor-v3";
 import sanitizeHtml from "sanitize-html";
 import BlogServices from "@/services/BlogServices";
-import screenfull from "screenfull";
-import katex from "katex";
-import mermaid from "mermaid";
-import Cropper from "cropperjs";
-import highlight from "highlight.js";
-import type { ExposeParam, ToolbarNames } from "md-editor-v3";
-
 import { sessionStore } from "@/store/SessionStore";
 import { Snackbar } from "@/models/Snackbar";
-import { Badge } from "@/models/Badge";
+import MarkdownEditor from "@/components/blogs/MarkdownEditor.vue";
 
-import "highlight.js/styles/github.css";
-import "cropperjs/dist/cropper.css";
-import "md-editor-v3/lib/style.css";
-import "katex/dist/katex.min.css";
-import { indexOf } from "lodash-es";
-
-interface PreviewTheme {
-    text: string;
-    value: string;
-}
 interface Props {
     readonly: boolean;
     blogId: string;
@@ -183,70 +76,6 @@ const snackbar = reactive<Snackbar>({
     visible: false,
     timeout: 3000,
     text: "",
-});
-
-const editBadge = reactive<Badge>({
-    visible: true,
-    color: "accent",
-    icon: "mdi-pencil",
-});
-
-const toolbarItems = reactive<ToolbarNames[]>([
-    "save",
-    "bold",
-    "underline",
-    "italic",
-    "-",
-    "title",
-    "strikeThrough",
-    "sub",
-    "sup",
-    "quote",
-    "unorderedList",
-    "task",
-    "-",
-    "codeRow",
-    "code",
-    "link",
-    "image",
-    "table",
-    "mermaid",
-    "katex",
-]);
-
-const tableShape = reactive<number[]>([8, 4]);
-const previewThemePreference = ref<string>("default");
-const titleState = ref<boolean>(false);
-const editorRef = ref<ExposeParam>();
-const mermaidConfig = {
-    startOnLoad: true,
-    securityLevel: "strict",
-};
-
-const previewTheme = reactive<PreviewTheme[]>([
-    { text: "Default", value: "default" },
-    { text: "GitHub", value: "github" },
-    { text: "MKCute", value: "mk-cute" },
-    { text: "Cyanosis", value: "cyanosis" },
-]);
-
-const inputWidth = computed<number>(() => {
-    switch (display.name.value) {
-        case "xs":
-            return 10;
-        case "sm":
-            return 8;
-        case "md":
-            return 6;
-        case "lg":
-            return 4;
-        case "xl":
-            return 4;
-        case "xxl":
-            return 4;
-        default:
-            return 6;
-    }
 });
 
 const editorWidth = computed<number>(() => {
@@ -277,97 +106,26 @@ const accountId = computed<string>(() => {
 });
 
 // MDEditor configuration.
-config({
-    editorExtensions: {
-        highlight: {
-            instance: highlight,
-        },
-        mermaid: {
-            instance: mermaid,
-        },
-        screenfull: {
-            instance: screenfull,
-        },
-        katex: {
-            instance: katex,
-        },
-        cropper: {
-            instance: Cropper,
-        },
-    },
-    codeMirrorExtensions(_theme, extensions) {
-        return [...extensions, lineNumbers()];
-    },
-});
-// Mermaid Initialization
-mermaid.initialize(mermaidConfig);
 
-// Display breakpoint watcher
-watch(
-    display.name,
-    (newVal) => {
-        switch (newVal) {
-            case "xs":
-                editorRef.value?.togglePreview(false);
-                if (toolbarItems.indexOf("sub") >= 0) {
-                    toolbarItems.splice(toolbarItems.indexOf("sub"), 1);
-                }
-                if (toolbarItems.indexOf("sup") >= 0) {
-                    toolbarItems.splice(toolbarItems.indexOf("sup"), 1);
-                }
-                if (toolbarItems.indexOf("preview") < 0) {
-                    toolbarItems.push("preview");
-                }
-                break;
-            case "sm":
-                editorRef.value?.togglePreview(false);
-                if (toolbarItems.indexOf("sub") >= 0) {
-                    toolbarItems.splice(toolbarItems.indexOf("sub"), 1);
-                }
-                if (toolbarItems.indexOf("sup") >= 0) {
-                    toolbarItems.splice(toolbarItems.indexOf("sup"), 1);
-                }
-                if (toolbarItems.indexOf("preview") < 0) {
-                    toolbarItems.push("preview");
-                }
-                break;
-            case "md":
-                editorRef.value?.togglePreview(true);
-                if (toolbarItems.indexOf("sub") < 0) {
-                    toolbarItems.push("sub");
-                }
-                if (toolbarItems.indexOf("preview") >= 0) {
-                    toolbarItems.splice(toolbarItems.indexOf("preview"), 1);
-                }
-                break;
-            case "lg":
-                editorRef.value?.togglePreview(true);
-                if (toolbarItems.indexOf("sub") < 0) {
-                    toolbarItems.push("sub");
-                }
-                break;
-            case "xl":
-                editorRef.value?.togglePreview(true);
-                if (toolbarItems.indexOf("sub") < 0) {
-                    toolbarItems.push("sub");
-                }
-                if (toolbarItems.indexOf("sup") < 0) {
-                    toolbarItems.push("sup");
-                }
-                break;
-            case "xxl":
-                editorRef.value?.togglePreview(true);
-                if (toolbarItems.indexOf("sub") < 0) {
-                    toolbarItems.push("sub");
-                }
-                break;
-            default:
-                editorRef.value?.togglePreview(true);
-                break;
-        }
-    },
-    { immediate: true },
-);
+/**
+ * When the body:change event is heard,
+ * this method is used to save the payloads
+ * contents to the blogPostBody variable in
+ * this component.
+ */
+function handleBodyChange(payload: string): void {
+    blogPostBody.value = payload;
+}
+
+/**
+ * When the title:change event is heard,
+ * this method is used to save the contents
+ * of that payload to the blogPostTitle variable
+ * in this component.
+ */
+function handleTitleChange(payload: string): void {
+    blogPostTitle.value = payload;
+}
 
 /**
  * Sanitizes the user input to protect
@@ -375,31 +133,6 @@ watch(
  */
 function sanitizeCode(code: string): void {
     blogPostBody.value = sanitize(code);
-}
-
-/**
- * Saves content in editor to local storage
- * @param saveContent
- */
-const saveContentToLocalStorage = (saveContent: string) => {
-    window.localStorage.setItem("blog_content", saveContent);
-    window.localStorage.setItem("blog_title", blogPostTitle.value);
-
-    snackbar.text = "Local Save Successful 💾";
-    snackbar.visible = true;
-};
-
-/**
- * Handles the keydown event, specifically
- * the enter event. When this happens, the
- * text-field to edit the blog post title is
- * hidden.
- * @param {KeyboardEvent} e
- */
-function handleKeyDown(e: KeyboardEvent): void {
-    if (e.code === "Enter") {
-        titleState.value = false;
-    }
 }
 
 /**
