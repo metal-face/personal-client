@@ -2,13 +2,13 @@
 import { ThemeInstance, useTheme } from "vuetify";
 import { computed, reactive, onMounted, ref, Ref, nextTick } from "vue";
 import { Session } from "@/models/Session";
+import { format } from "date-fns";
+import { useRouter, Router, RouteParamsRaw, RouteParams } from "vue-router";
+import { ConfirmDeleteState } from "@/models/ConfirmDeleteState";
 import BlogServices from "@/services/BlogServices";
 import BlogPostCard from "@/components/blogs/BlogPostCard.vue";
-import { format } from "date-fns";
-import { useRouter, Router, RouteParamsRaw } from "vue-router";
-import CircleLoader from "@/components/utils/CircleLoader.vue";
 import ConfirmDelete from "@/components/utils/ConfirmDelete.vue";
-import { ConfirmDeleteState } from "@/models/ConfirmDeleteState";
+import CircleLoader from "@/components/utils/CircleLoader.vue";
 
 interface Blog {
     blog_title: string;
@@ -138,9 +138,9 @@ async function fetchAllBlogsForUser() {
                                 <!-- VIEW (READ ONLY) -->
                                 <v-btn
                                     @click="
-                                        handleRedirection('BlogCreator', {
-                                            readonly: Boolean(true),
+                                        handleRedirection('BlogViewer', {
                                             blogId: blog.blog_id,
+                                            readonly: 'true',
                                         })
                                     "
                                     size="large"
