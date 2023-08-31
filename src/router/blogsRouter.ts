@@ -6,7 +6,7 @@ const blogsRouter = [
         children: [
             {
                 path: "",
-                name: "UserBlogPosts",
+                name: "BlogPosts",
                 component: () => import("@/views/blogs/BlogPosts.vue"),
                 meta: {
                     restricted: true,
@@ -33,7 +33,7 @@ const blogsRouter = [
                 },
             },
             {
-                path: ":id",
+                path: "/view/:blogId/:readonly",
                 name: "BlogViewer",
                 props: true,
                 component: () => import("@/views/blogs/BlogViewer.vue"),
