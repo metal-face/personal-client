@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { config, ExposeParam, MdEditor, ToolbarNames } from "md-editor-v3";
-import { computed, reactive, ref, watch, defineEmits } from "vue";
+import { config, ExposeParam, MdEditor, ToolbarNames, NormalToolbar } from "md-editor-v3";
+import { computed, reactive, ref, watch, defineEmits, onMounted } from "vue";
 import { DisplayInstance, ThemeInstance, useDisplay, useTheme } from "vuetify";
 import { Badge } from "@/models/Badge";
 import { lineNumbers } from "@codemirror/view";
 import mermaid from "mermaid";
 import screenfull from "screenfull";
 import highlight from "highlight.js";
-import sanitize from "sanitize-html";
 import katex from "katex";
 import Cropper from "cropperjs";
 import "highlight.js/styles/github.css";
@@ -16,8 +15,10 @@ import "md-editor-v3/lib/style.css";
 import "katex/dist/katex.min.css";
 
 interface Props {
-    readonly?: boolean;
+    readonly?: string;
     blogId?: string;
+    blogPostTitle?: string;
+    blogPostBody?: string;
 }
 
 interface PreviewTheme {
@@ -29,6 +30,7 @@ const emit = defineEmits<{
     (e: "title:change", title: string): void;
     (e: "body:change", title: string): void;
 }>();
+
 const props = defineProps<Props>();
 
 const theme: ThemeInstance = useTheme();
@@ -39,12 +41,17 @@ const blogPostTitle = ref<string>("A Good Blog Post Title");
 const previewThemePreference = ref<string>("default");
 const tableShape = reactive<number[]>([8, 4]);
 const editorRef = ref<ExposeParam>();
+
 const previewTheme = reactive<PreviewTheme[]>([
     { text: "Default", value: "default" },
     { text: "GitHub", value: "github" },
     { text: "MKCute", value: "mk-cute" },
     { text: "Cyanosis", value: "cyanosis" },
 ]);
+
+const readonlyProp = computed<boolean>(() => {
+    return Boolean(props.readonly);
+});
 
 const inputWidth = computed<number>(() => {
     switch (display.name.value) {
@@ -147,7 +154,7 @@ watch(
                 if (toolbarItems.indexOf("sup") >= 0) {
                     toolbarItems.splice(toolbarItems.indexOf("sup"), 1);
                 }
-                if (toolbarItems.indexOf("preview") < 0) {
+                if (toolbarItems.indexOf("preview") < 0 && !readonlyProp.value) {
                     toolbarItems.push("preview");
                 }
                 break;
@@ -159,13 +166,13 @@ watch(
                 if (toolbarItems.indexOf("sup") >= 0) {
                     toolbarItems.splice(toolbarItems.indexOf("sup"), 1);
                 }
-                if (toolbarItems.indexOf("preview") < 0) {
+                if (toolbarItems.indexOf("preview") < 0 && !readonlyProp.value) {
                     toolbarItems.push("preview");
                 }
                 break;
             case "md":
                 editorRef.value?.togglePreview(true);
-                if (toolbarItems.indexOf("sub") < 0) {
+                if (toolbarItems.indexOf("sub") < 0 && !readonlyProp.value) {
                     toolbarItems.push("sub");
                 }
                 if (toolbarItems.indexOf("preview") >= 0) {
@@ -174,22 +181,22 @@ watch(
                 break;
             case "lg":
                 editorRef.value?.togglePreview(true);
-                if (toolbarItems.indexOf("sub") < 0) {
+                if (toolbarItems.indexOf("sub") < 0 && !readonlyProp.value) {
                     toolbarItems.push("sub");
                 }
                 break;
             case "xl":
                 editorRef.value?.togglePreview(true);
-                if (toolbarItems.indexOf("sub") < 0) {
+                if (toolbarItems.indexOf("sub") < 0 && !readonlyProp.value) {
                     toolbarItems.push("sub");
                 }
-                if (toolbarItems.indexOf("sup") < 0) {
+                if (toolbarItems.indexOf("sup") < 0 && !readonlyProp.value) {
                     toolbarItems.push("sup");
                 }
                 break;
             case "xxl":
                 editorRef.value?.togglePreview(true);
-                if (toolbarItems.indexOf("sub") < 0) {
+                if (toolbarItems.indexOf("sub") < 0 && !readonlyProp.value) {
                     toolbarItems.push("sub");
                 }
                 break;
@@ -208,14 +215,6 @@ watch(blogPostTitle, () => {
 watch(blogPostBody, () => {
     emit("body:change", blogPostBody.value);
 });
-
-/**
- * Sanitizes the user input to protect
- * @param code
- */
-function sanitizeCode(code: string): void {
-    blogPostBody.value = sanitize(code);
-}
 
 /**
  * Saves content in editor to local storage
@@ -241,13 +240,25 @@ function handleKeyDown(e: KeyboardEvent): void {
         titleState.value = false;
     }
 }
+
+onMounted(() => {
+    if (readonlyProp.value) {
+        toolbarItems.splice(0, toolbarItems.length);
+    }
+});
 </script>
 
 <template>
-    <v-row>
+    <v-row justify="center" align-content="center">
         <!-- Actual Title -->
         <v-col v-if="!titleState" :cols="12">
+            <v-card v-if="readonlyProp" flat height="100%" color="transparent">
+                <v-card-title class="text-center page-title">
+                    <h1>{{ blogPostTitle }}</h1>
+                </v-card-title>
+            </v-card>
             <v-card
+                v-if="!readonlyProp"
                 @click="titleState = true"
                 flat
                 height="100%"
@@ -272,31 +283,35 @@ function handleKeyDown(e: KeyboardEvent): void {
             </v-card>
         </v-col>
         <!-- Title Editor -->
-        <v-col v-if="titleState" :cols="inputWidth">
-            <v-card flat color="transparent" width="100%" class="mx-auto">
-                <v-card-title>
-                    <v-text-field
-                        v-model="blogPostTitle"
-                        @keydown="handleKeyDown"
-                        autofocus
-                        hint="You can press enter to save!"
-                        class="interactive-title"
-                        variant="solo">
-                        <template #append-inner>
-                            <v-btn
-                                :rounded="false"
-                                variant="elevated"
-                                color="success"
-                                size="small"
-                                @click="titleState = false">
-                                <template #default>
-                                    <v-icon> mdi-check </v-icon>
+        <v-col v-if="titleState" :cols="12">
+            <v-row justify="center" align-content="center">
+                <v-col :cols="inputWidth">
+                    <v-card flat color="transparent" width="100%" class="mx-auto">
+                        <v-card-title>
+                            <v-text-field
+                                v-model="blogPostTitle"
+                                @keydown="handleKeyDown"
+                                autofocus
+                                hint="You can press enter to save!"
+                                class="interactive-title"
+                                variant="solo">
+                                <template #append-inner>
+                                    <v-btn
+                                        :rounded="false"
+                                        variant="elevated"
+                                        color="success"
+                                        size="small"
+                                        @click="titleState = false">
+                                        <template #default>
+                                            <v-icon> mdi-check </v-icon>
+                                        </template>
+                                    </v-btn>
                                 </template>
-                            </v-btn>
-                        </template>
-                    </v-text-field>
-                </v-card-title>
-            </v-card>
+                            </v-text-field>
+                        </v-card-title>
+                    </v-card>
+                </v-col>
+            </v-row>
         </v-col>
         <v-col :cols="inputWidth">
             <v-card variant="flat" color="transparent" class="ml-auto">
@@ -324,13 +339,35 @@ function handleKeyDown(e: KeyboardEvent): void {
                 :tab-width="4"
                 :table-shape="tableShape"
                 :toolbars="toolbarItems"
-                :read-only="props.readonly"
+                :read-only="readonlyProp"
                 ref="editorRef"
                 language="en-US"
                 no-prettier
                 no-upload-img
                 show-code-row-number
-                class="page-title" />
+                class="page-title">
+                <template #defToolbars>
+                    <NormalToolbar v-if="!readonlyProp" />
+                </template>
+            </MdEditor>
         </v-col>
     </v-row>
 </template>
+
+<style scoped>
+.interactive-title {
+    font-family: "Prata", "serif";
+    font-size: x-large;
+}
+.default-theme h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0 !important;
+}
+.page-title {
+    font-family: "Prata", "serif";
+}
+</style>
