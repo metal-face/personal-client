@@ -49,24 +49,22 @@
 import { useRouter, Router } from "vue-router";
 import { ref, computed, reactive, watch, onMounted } from "vue";
 import { ThemeInstance, useTheme, useDisplay, DisplayInstance } from "vuetify";
-import sanitizeHtml from "sanitize-html";
-import BlogServices from "@/services/BlogServices";
 import { sessionStore } from "@/store/SessionStore";
 import { Snackbar } from "@/models/Snackbar";
+import sanitizeHtml from "sanitize-html";
+import BlogServices from "@/services/BlogServices";
 import MarkdownEditor from "@/components/blogs/MarkdownEditor.vue";
 
-interface Props {
-    readonly: boolean;
-    blogId: string;
-}
-
-const props = defineProps<Props>();
 const sanitize = (html: string): string => sanitizeHtml(html);
 
 const theme: ThemeInstance = useTheme();
 const router: Router = useRouter();
 const display: DisplayInstance = useDisplay();
+
 const sessStore = sessionStore();
+const accountId = computed<string>(() => {
+    return sessStore.accountID;
+});
 
 const blogPostBody = ref("# Write your post here.");
 const blogPostTitle = ref<string>("A Good Blog Post Title");
@@ -92,20 +90,12 @@ const editorWidth = computed<number>(() => {
             return 10;
     }
 });
-
 const darkState = computed<string>(() => {
     return theme.global.name.value;
 });
-
 const isDark = computed<boolean>(() => {
     return darkState.value === "customDarkTheme";
 });
-
-const accountId = computed<string>(() => {
-    return sessStore.accountID;
-});
-
-// MDEditor configuration.
 
 /**
  * When the body:change event is heard,
@@ -154,51 +144,16 @@ async function createBlogPost() {
         });
 }
 
-async function fetchBlogById() {
-    BlogServices.fetchBlogById(props.blogId!)
-        .then((res) => {
-            console.log(res);
-            blogPostTitle.value = res.data.data.blog_title;
-            blogPostBody.value = res.data.data.blog_post;
-        })
-        .catch((err) => {
-            console.error(err);
-        });
-}
-
 onMounted(() => {
-    if (props.blogId && props.readonly) {
-        fetchBlogById();
+    const savedContent: string | null = window.localStorage.getItem("blog_content");
+    const savedTitle: string | null = window.localStorage.getItem("blog_title");
+
+    if (savedContent) {
+        blogPostBody.value = savedContent;
     }
 
-    if (!props.blogId && !props.readonly) {
-        const savedContent: string | null = window.localStorage.getItem("blog_content");
-        const savedTitle: string | null = window.localStorage.getItem("blog_title");
-
-        if (savedContent) {
-            blogPostBody.value = savedContent;
-        }
-
-        if (savedTitle) {
-            blogPostTitle.value = savedTitle;
-        }
+    if (savedTitle) {
+        blogPostTitle.value = savedTitle;
     }
 });
 </script>
-<style>
-.interactive-title {
-    font-family: "Prata", "serif";
-    font-size: x-large;
-}
-.default-theme h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    margin: 0 !important;
-}
-.page-title {
-    font-family: "Prata", "serif";
-}
-</style>
