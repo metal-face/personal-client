@@ -23,7 +23,7 @@ const blogsRouter = [
                 },
             },
             {
-                path: "update/:id",
+                path: "update/:blogId/:readonly",
                 name: "BlogUpdater",
                 props: true,
                 component: () => import("@/views/blogs/BlogUpdater.vue"),
