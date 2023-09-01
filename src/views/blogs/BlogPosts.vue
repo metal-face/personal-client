@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ThemeInstance, useTheme } from "vuetify";
-import { computed, reactive, onMounted, ref, Ref, nextTick } from "vue";
+import { computed, reactive, onMounted, ref, nextTick } from "vue";
 import { Session } from "@/models/Session";
 import { format } from "date-fns";
-import { useRouter, Router, RouteParamsRaw, RouteParams } from "vue-router";
+import { useRouter, Router, RouteParamsRaw } from "vue-router";
 import { ConfirmDeleteState } from "@/models/ConfirmDeleteState";
 import BlogServices from "@/services/BlogServices";
 import BlogPostCard from "@/components/blogs/BlogPostCard.vue";
@@ -61,10 +61,6 @@ function humanReadableData(rawString: string): string {
 
 function handleRedirection(name: string, params: object) {
     router.push({ name: name, params: params as RouteParamsRaw });
-}
-
-function redirectToReadOnly(blogId: string): void {
-    router.push({ name: "BlogCreator", params: { readonly: true, blogId: blogId } });
 }
 
 async function deleteBlogPostById(blogId: string) {
@@ -134,7 +130,17 @@ async function fetchAllBlogsForUser() {
                                 :blog-title="blog.blog_title" />
                             <v-card-actions class="ma-0 pa-0">
                                 <!-- EDIT-->
-                                <v-btn size="large" class="ma-0" icon="mdi-pencil" color="info" />
+                                <v-btn
+                                    @click="
+                                        handleRedirection('BlogUpdater', {
+                                            blogId: blog.blog_id,
+                                            readonly: 'false',
+                                        })
+                                    "
+                                    size="large"
+                                    class="ma-0"
+                                    icon="mdi-pencil"
+                                    color="info" />
                                 <!-- VIEW (READ ONLY) -->
                                 <v-btn
                                     @click="
