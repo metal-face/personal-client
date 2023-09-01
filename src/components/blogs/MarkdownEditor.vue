@@ -13,12 +13,11 @@ import "highlight.js/styles/github.css";
 import "cropperjs/dist/cropper.css";
 import "md-editor-v3/lib/style.css";
 import "katex/dist/katex.min.css";
+import BlogServices from "@/services/BlogServices";
 
 interface Props {
-    readonly?: string;
+    readonly: string;
     blogId?: string;
-    blogPostTitle?: string;
-    blogPostBody?: string;
 }
 
 interface PreviewTheme {
@@ -29,6 +28,7 @@ interface PreviewTheme {
 const emit = defineEmits<{
     (e: "title:change", title: string): void;
     (e: "body:change", title: string): void;
+    (e: "save:local"): void;
 }>();
 
 const props = defineProps<Props>();
@@ -38,6 +38,7 @@ const display: DisplayInstance = useDisplay();
 
 const blogPostBody = ref("# Write your post here.");
 const blogPostTitle = ref<string>("A Good Blog Post Title");
+
 const previewThemePreference = ref<string>("default");
 const tableShape = reactive<number[]>([8, 4]);
 const editorRef = ref<ExposeParam>();
@@ -50,7 +51,7 @@ const previewTheme = reactive<PreviewTheme[]>([
 ]);
 
 const readonlyProp = computed<boolean>(() => {
-    return Boolean(props.readonly);
+    return props.readonly === "true";
 });
 
 const inputWidth = computed<number>(() => {
@@ -224,8 +225,7 @@ const saveContentToLocalStorage = (saveContent: string) => {
     window.localStorage.setItem("blog_content", saveContent);
     window.localStorage.setItem("blog_title", blogPostTitle.value);
 
-    // snackbar.text = "Local Save Successful 💾";
-    // snackbar.visible = true;
+    emit("save:local");
 };
 
 /**
@@ -241,9 +241,25 @@ function handleKeyDown(e: KeyboardEvent): void {
     }
 }
 
+async function fetchBlogById() {
+    if (!props.blogId) return;
+    BlogServices.fetchBlogById(props.blogId)
+        .then((res) => {
+            console.log(res);
+            blogPostTitle.value = res.data.data.blog_title;
+            blogPostBody.value = res.data.data.blog_post;
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+}
+
 onMounted(() => {
     if (readonlyProp.value) {
         toolbarItems.splice(0, toolbarItems.length);
+    }
+    if (props.blogId) {
+        fetchBlogById();
     }
 });
 </script>
@@ -252,13 +268,13 @@ onMounted(() => {
     <v-row justify="center" align-content="center">
         <!-- Actual Title -->
         <v-col v-if="!titleState" :cols="12">
-            <v-card v-if="readonlyProp" flat height="100%" color="transparent">
+            <v-card v-if="readonlyProp === true" flat height="100%" color="transparent">
                 <v-card-title class="text-center page-title">
                     <h1>{{ blogPostTitle }}</h1>
                 </v-card-title>
             </v-card>
             <v-card
-                v-if="!readonlyProp"
+                v-if="readonlyProp === false"
                 @click="titleState = true"
                 flat
                 height="100%"
