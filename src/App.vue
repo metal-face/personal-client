@@ -158,7 +158,7 @@ const sessionId: ComputedRef<string> = computed(() => {
 
 const links: Link[] = [
     { text: "Home", value: "Home", props: { prependIcon: "mdi-home-circle" } },
-    { text: "Blogs", value: "UserBlogPosts", props: { prependIcon: "mdi-post-outline" } },
+    { text: "Blogs", value: "BlogPosts", props: { prependIcon: "mdi-post-outline" } },
 ];
 
 function handleRedirection(link: Link): void {
