@@ -21,7 +21,7 @@
                         Save
                     </v-btn>
                     <v-btn
-                        @click="router.push({ name: 'UserBlogPosts' })"
+                        @click="router.push({ name: 'BlogPosts' })"
                         :color="isDark ? 'black' : 'white'"
                         class="ma-0 pa-0"
                         rounded="0"
