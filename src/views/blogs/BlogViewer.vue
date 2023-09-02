@@ -4,6 +4,7 @@ import MarkdownEditor from "@/components/blogs/MarkdownEditor.vue";
 import { reactive, Ref, ref, onMounted, computed } from "vue";
 import { Router, useRouter } from "vue-router";
 import { useTheme, ThemeInstance } from "vuetify";
+import { MdPreview } from "md-editor-v3";
 
 const router: Router = useRouter();
 const theme: ThemeInstance = useTheme();
@@ -54,14 +55,14 @@ onMounted(async () => {
 </script>
 
 <template>
-    <v-row>
-        <v-col cols="12">
+    <v-row justify="center">
+        <v-col cols="6">
             <v-card :color="isDark ? 'black' : 'white'" variant="elevated" width="100%">
-                <MarkdownEditor
-                    :blogId="props.blogId"
-                    :readonly="props.readonly"
-                    :blogPostBody="blog.blogPostBody"
-                    :blogPostTitle="blog.blogPostTitle" />
+                <MdPreview
+                    class="editor"
+                    id="mdEditor"
+                    :modelValue="blog.blogPostBody"
+                    :theme="isDark ? 'dark' : 'light'" />
                 <v-card-actions class="ma-0 pa-0">
                     <v-btn
                         @click="router.push({ name: 'BlogPosts' })"
@@ -78,4 +79,10 @@ onMounted(async () => {
     </v-row>
 </template>
 
-<style scoped></style>
+<style scoped>
+.editor {
+    font-family: "Prata", "serif";
+}
+h1 {
+}
+</style>
