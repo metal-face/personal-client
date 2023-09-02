@@ -119,6 +119,12 @@ async function fetchAllBlogsForUser() {
                 <v-row justify="center" align-content="center">
                     <v-col cols="6">
                         <v-card
+                            @click="
+                                handleRedirection('BlogViewer', {
+                                    blogId: blog.blog_id,
+                                    readonly: 'true',
+                                })
+                            "
                             class="ma-2 d-flex justify-space-between align-center"
                             elevation="12"
                             variant="elevated"
@@ -141,18 +147,6 @@ async function fetchAllBlogsForUser() {
                                     class="ma-0"
                                     icon="mdi-pencil"
                                     color="info" />
-                                <!-- VIEW (READ ONLY) -->
-                                <v-btn
-                                    @click="
-                                        handleRedirection('BlogViewer', {
-                                            blogId: blog.blog_id,
-                                            readonly: 'true',
-                                        })
-                                    "
-                                    size="large"
-                                    class="ma-0"
-                                    icon="mdi-eye"
-                                    color="yellow" />
                                 <!-- DELETE -->
                                 <v-btn
                                     @click="openConfirmDelete(blog.blog_id)"
