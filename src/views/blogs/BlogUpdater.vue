@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import MarkdownEditor from "@/components/blogs/MarkdownEditor.vue";
 import { computed, onMounted, reactive, ref } from "vue";
 import { useTheme, ThemeInstance } from "vuetify";
 import { RouteParamsRaw, Router, useRouter } from "vue-router";
-import BlogServices from "@/services/BlogServices";
 import { Snackbar } from "@/models/Snackbar";
 import { sessionStore } from "@/store/SessionStore";
+import MarkdownEditor from "@/components/blogs/MarkdownEditor.vue";
+import BlogServices from "@/services/BlogServices";
 
 interface Props {
     blogId: string;
@@ -44,7 +44,6 @@ function redirectUser(name: string, params?: RouteParamsRaw): void {
 
 function fetchBlogPostById(): void {
     BlogServices.fetchBlogById(props.blogId).then((res) => {
-        console.log(res);
         if (res.data.data.blog_post) {
             blogPostBody.value = res.data.data.blog_post;
         }
@@ -91,17 +90,16 @@ onMounted(() => {
 
 <template>
     <v-row>
-        <v-snackbar
-            v-model="snackbar.visible"
-            :timeout="snackbar.timeout"
-            :color="snackbar.color"
-            location="center top"
-            variant="elevated">
-            <h3 class="text-center">{{ snackbar.text }}</h3>
-        </v-snackbar>
         <v-col cols="12">
+            <v-snackbar
+                v-model="snackbar.visible"
+                :timeout="snackbar.timeout"
+                :color="snackbar.color"
+                location="center top"
+                variant="elevated">
+                <h3 class="text-center">{{ snackbar.text }}</h3>
+            </v-snackbar>
             <v-card flat variant="elevated" elevation="12" :color="isDark ? 'black' : 'white'">
-                <!--TODO: add event listener for body and title changes, save them locally in this component-->
                 <MarkdownEditor
                     @title:change="handleTitleChange"
                     @body:change="handleBodyChange"
@@ -133,5 +131,3 @@ onMounted(() => {
         </v-col>
     </v-row>
 </template>
-
-<style scoped></style>
