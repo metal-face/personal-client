@@ -1,12 +1,12 @@
 <template>
     <v-overlay
         :model-value="props.loading"
-        scrim="rgba(0,0,0,0.5)"
         absolute
+        :scrim="false"
         attach
         persistent
-        class="align-enter justify-center">
-        <v-progress-circular :color="props.circleColor" indeterminate :size="128" :width="4" />
+        class="d-flex align-enter justify-center">
+        <v-progress-circular :color="props.circleColor" indeterminate :size="128" :width="15" />
     </v-overlay>
 </template>
 
