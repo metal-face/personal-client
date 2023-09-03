@@ -20,7 +20,6 @@
                     rounded="1"
                     prepend-icon="mdi-account-circle">
                     {{ account.username }}
-
                     <v-menu
                         activator="parent"
                         location="bottom"
