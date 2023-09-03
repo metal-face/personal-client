@@ -79,11 +79,6 @@ import SessionServices from "@/services/SessionServices";
 import { Session } from "@/models/Session";
 import AccountsServices from "@/services/AccountsServices";
 
-const theme: ThemeInstance = useTheme();
-const accountStore = useAccountStore();
-const sessStore = sessionStore();
-const router: Router = useRouter();
-
 onMounted(() => {
     const viewModePreference: string | null = window.localStorage.getItem("viewModePreference");
 
@@ -93,37 +88,59 @@ onMounted(() => {
     if (viewModePreference === "dark") {
         setTheme("customDarkTheme");
     }
+});
 
+onMounted(async () => {
     const resp = window.localStorage.getItem("session");
 
     if (resp) {
         const jsonResponse = JSON.parse(resp) as Session;
-
         Object.assign(session, jsonResponse);
 
         if (Object.keys(session).length) {
-            sessStore.setSession(session);
+            // First check if the session even exists.
+            if (session.session_id) {
+                const sessionExists = await fetchSessionById();
+                // If no session exists, clear the content of the account store.
+                if (!sessionExists) {
+                    accountStore.clearAccount();
+                    sessStore.clearSession();
+                    sessStore.destroySessionInStorage();
+                    return;
+                }
+            }
 
+            // Then check if session is expired.
             if (sessStore.isExpired) {
+                // clear the session from local storage
                 sessStore.destroySessionInStorage();
+                // clear the contents of the session store.
                 sessStore.clearSession();
+                // clear the session in the server
+                logoutUser();
+                // exit the function.
                 return;
             }
 
+            // If it's a valid session, fetch the user's account.
             if (session.account_id) {
-                AccountsServices.fetchAccountById(session.account_id)
-                    .catch((err) => {
-                        console.warn(err.response);
-                    })
-                    .then((res) => {
-                        if (!res) return;
-                        Object.assign(account, res.data.data);
-                        accountStore.setAccount(account);
-                    });
+                sessStore.setSession(session);
+                await fetchAccountById();
             }
         }
     }
 });
+
+interface Link {
+    text: string;
+    value: string;
+    props: Record<string, string>;
+}
+
+const theme: ThemeInstance = useTheme();
+const accountStore = useAccountStore();
+const sessStore = sessionStore();
+const router: Router = useRouter();
 
 const session: Session = reactive({
     account_id: "",
@@ -141,12 +158,6 @@ const account: Account = reactive({
     created_at: new Date(),
 });
 
-interface Link {
-    text: string;
-    value: string;
-    props: Record<string, string>;
-}
-
 const isLoggedIn: ComputedRef<boolean> = computed(() => {
     return accountStore.isLoggedIn;
 });
@@ -159,6 +170,12 @@ const links: Link[] = [
     { text: "Home", value: "Home", props: { prependIcon: "mdi-home-circle" } },
     { text: "Blogs", value: "BlogPosts", props: { prependIcon: "mdi-post-outline" } },
 ];
+
+const navDrawer = ref<boolean>(false);
+
+const isDark = computed<boolean>(() => {
+    return theme.global.current.value.dark;
+});
 
 function handleRedirection(link: Link): void {
     navDrawer.value = !navDrawer.value;
@@ -188,22 +205,40 @@ function toggleTheme(): void {
         : window.localStorage.setItem("viewModePreference", "light");
 }
 
-const navDrawer = ref<boolean>(false);
-
-const isDark = computed<boolean>(() => {
-    return theme.global.current.value.dark;
-});
-
 function logoutUser() {
-    SessionServices.logout(sessionId.value)
-        .catch((err) => {
-            console.error(err);
-        })
-        .then((res) => {
-            if (!res) return;
+    SessionServices.logout(session.session_id)
+        .then(() => {
             sessStore.destroySessionInStorage();
             sessStore.clearSession();
             window.location.reload();
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+}
+
+async function fetchSessionById(): Promise<boolean> {
+    return SessionServices.fetchSessionById(session.session_id)
+        .then((res) => {
+            sessStore.setSession(res.data.data as Session);
+            return true;
+        })
+        .catch((err) => {
+            console.error(err);
+            return false;
+        });
+}
+
+async function fetchAccountById(): Promise<boolean> {
+    return AccountsServices.fetchAccountById(session.account_id)
+        .then((res) => {
+            Object.assign(account, res.data.data);
+            accountStore.setAccount(account);
+            return true;
+        })
+        .catch((err) => {
+            console.warn(err.response);
+            return false;
         });
 }
 </script>
