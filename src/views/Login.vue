@@ -87,6 +87,8 @@ import { useAccountStore } from "@/store/AccountStore";
 import { useScriptTag } from "@vueuse/core";
 import { Account } from "@/models/Account";
 import { Role } from "@/models/Account";
+import { Session } from "@/models/Session";
+import AccountsServices from "@/services/AccountsServices";
 
 useScriptTag(
     "https://www.google.com/recaptcha/api.js?render=6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM",
@@ -97,8 +99,12 @@ function onClick(e: Event) {
     grecaptcha.ready(function () {
         grecaptcha
             .execute("6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM", { action: "submit" })
-            .then(function (token: string) {
-                loginUser(token);
+            .then(async function (token: string) {
+                const loginReq: boolean = await loginUser(token);
+
+                if (loginReq) {
+                    await fetchAccountById();
+                }
             });
     });
 }
@@ -164,36 +170,54 @@ let account: Account = reactive({
     created_at: new Date(),
 });
 
-async function loginUser(token: string): Promise<void> {
+async function fetchAccountById(): Promise<boolean> {
+    if (account.account_id) {
+        return AccountsServices.fetchAccountById(account.account_id)
+            .then((res) => {
+                accountStore.setAccount(res.data.data as Account);
+                return true;
+            })
+            .catch((err) => {
+                alert.color = ColorTypes.error;
+                alert.text = err.message;
+                alert.title = "Error";
+                alert.type = AlertTypes.error;
+                alert.visible = true;
+                return false;
+            });
+    }
+    return false;
+}
+
+async function loginUser(token: string): Promise<boolean> {
     loading.value = true;
 
     let valid = await v$.value.$validate();
     if (!valid) {
-        v$.value.$reset;
-        return;
+        v$.value.$reset();
+        return false;
     }
 
-    SessionServices.login(state.username, state.password, token)
+    return SessionServices.login(state.username, state.password, token)
+        .then((res) => {
+            sessStore.setSession(res.data.data as Session);
+
+            account.account_id = res.data.data.account_id;
+            account.created_at = new Date(res.data.data.created_at);
+
+            router.push({ name: "Home" });
+            return true;
+        })
+        .finally(() => {
+            loading.value = false;
+        })
         .catch((err) => {
             alert.color = ColorTypes.error;
             alert.text = err.message;
             alert.title = "Error";
             alert.type = AlertTypes.error;
             alert.visible = true;
-        })
-        .then((res) => {
-            if (!res) return;
-            sessStore.setSession(res.data.data);
-
-            account.account_id = res.data.data.account_id;
-            account.created_at = new Date(res.data.data.created_at);
-
-            accountStore.setAccount(account);
-
-            router.push({ name: "Home" });
-        })
-        .finally(() => {
-            loading.value = false;
+            return false;
         });
 }
 </script>
