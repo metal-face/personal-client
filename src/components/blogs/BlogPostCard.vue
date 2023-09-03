@@ -9,9 +9,15 @@ const props = defineProps<Props>();
 </script>
 
 <template>
-    <v-card variant="flat" color="transparent" width="100%">
-        <v-card-title class="ma-0">{{ props.blogTitle }}</v-card-title>
-        <v-card-subtitle class="mb-2">{{ props.creationDate }}</v-card-subtitle>
+    <v-card
+        class="ma-0 pa-0"
+        variant="flat"
+        color="transparent"
+        height="100%"
+        rounded="0"
+        width="100%">
+        <v-card-title class="my-0 ml-2 pa-0">{{ props.blogTitle }}</v-card-title>
+        <v-card-subtitle class="my-0 ml-2 pa-0">{{ props.creationDate }}</v-card-subtitle>
     </v-card>
 </template>
 
