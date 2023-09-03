@@ -106,12 +106,7 @@ async function fetchAllBlogsForUser() {
             :visible="confirmDeleteState.visible"
             :resourceId="confirmDeleteState.idToDelete" />
         <v-col cols="12">
-            <v-card
-                elevation="12"
-                variant="elevated"
-                color="primary"
-                rounded="1"
-                class="fill-height">
+            <v-card variant="flat" elevation="12" color="primary" rounded="1" class="fill-height">
                 <!-- TODO: if there are no blogs, display an indicator to create a blog. -->
                 <v-card-title class="page-title text-center ma-3">
                     <h1 class="text-decoration-underline">Blog Posts</h1>
@@ -119,42 +114,59 @@ async function fetchAllBlogsForUser() {
                 <v-row justify="center" align-content="center">
                     <v-col cols="6">
                         <v-card
-                            @click="
-                                handleRedirection('BlogViewer', {
-                                    blogId: blog.blog_id,
-                                    readonly: 'true',
-                                })
-                            "
-                            class="ma-2 d-flex justify-space-between align-center"
-                            elevation="12"
+                            class="ma-3 pa-0 d-flex justify-space-between align-center"
+                            elevation="4"
                             variant="elevated"
                             v-for="(blog, i) in blogs"
                             :key="i">
                             <BlogPostCard
+                                @click="
+                                    handleRedirection('BlogViewer', {
+                                        blogId: blog.blog_id,
+                                        readonly: 'true',
+                                    })
+                                "
                                 :creation-date="humanReadableData(blog.created_at)"
                                 :blog-post="blog.blog_post"
-                                :blog-title="blog.blog_title" />
-                            <v-card-actions class="ma-0 pa-0">
-                                <!-- EDIT-->
-                                <v-btn
-                                    @click="
-                                        handleRedirection('BlogUpdater', {
-                                            blogId: blog.blog_id,
-                                            readonly: 'false',
-                                        })
-                                    "
-                                    size="large"
-                                    class="ma-0"
-                                    icon="mdi-pencil"
-                                    color="info" />
-                                <!-- DELETE -->
-                                <v-btn
-                                    @click="openConfirmDelete(blog.blog_id)"
-                                    size="large"
-                                    class="ma-0"
-                                    icon="mdi-trash-can"
-                                    color="error" />
-                            </v-card-actions>
+                                :blog-title="blog.blog_title">
+                            </BlogPostCard>
+                            <!-- EDIT-->
+                            <v-tooltip location="top">
+                                <template #activator="{ props }">
+                                    <v-btn
+                                        @click="
+                                            handleRedirection('BlogUpdater', {
+                                                blogId: blog.blog_id,
+                                                readonly: 'false',
+                                            })
+                                        "
+                                        v-bind="props"
+                                        size="x-large"
+                                        rounded="0"
+                                        icon="mdi-pencil"
+                                        variant="flat"
+                                        class="ma-0 pa-0"
+                                        color="info">
+                                    </v-btn>
+                                </template>
+                                <span>Edit</span>
+                            </v-tooltip>
+
+                            <!-- DELETE -->
+                            <v-tooltip location="top">
+                                <template #activator="{ props }">
+                                    <v-btn
+                                        @click="openConfirmDelete(blog.blog_id)"
+                                        v-bind="props"
+                                        size="x-large"
+                                        class="ma-0 pa-0"
+                                        variant="flat"
+                                        rounded="0"
+                                        icon="mdi-trash-can"
+                                        color="error" />
+                                </template>
+                                <span>Delete</span>
+                            </v-tooltip>
                         </v-card>
                     </v-col>
                 </v-row>
@@ -165,13 +177,13 @@ async function fetchAllBlogsForUser() {
                             :to="{ name: 'BlogCreator' }"
                             :color="isDark ? 'white' : 'black'"
                             v-bind="props"
-                            position="absolute"
+                            position="fixed"
                             location="bottom right"
                             variant="elevated"
-                            size="x-large"
-                            rounded="3"
-                            class="ma-3"
-                            icon="mdi-pencil">
+                            rounded="10"
+                            class="mr-4 mb-4"
+                            icon="mdi-plus"
+                            size="x-large">
                         </v-btn>
                     </template>
                 </v-tooltip>
