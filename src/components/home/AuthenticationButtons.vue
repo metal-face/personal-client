@@ -3,7 +3,7 @@
         <v-btn
             @click="router.push({ name: 'Login' })"
             size="x-large"
-            elevation="12"
+            elevation="4"
             append-icon="mdi-login"
             width="49%"
             rounded="2">
@@ -12,7 +12,7 @@
         <v-btn
             @click="router.push({ name: 'Register' })"
             width="49%"
-            elevation="12"
+            elevation="4"
             append-icon="mdi-account-plus"
             size="x-large"
             rounded="2">
