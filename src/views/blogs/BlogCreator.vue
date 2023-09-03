@@ -47,7 +47,7 @@
 </template>
 <script setup lang="ts">
 import { useRouter, Router } from "vue-router";
-import { ref, computed, reactive, watch, onMounted } from "vue";
+import { ref, computed, reactive, onMounted } from "vue";
 import { ThemeInstance, useTheme, useDisplay, DisplayInstance } from "vuetify";
 import { sessionStore } from "@/store/SessionStore";
 import { Snackbar } from "@/models/Snackbar";
@@ -137,7 +137,7 @@ async function createBlogPost() {
         .then(() => {
             window.localStorage.removeItem("blog_content");
             window.localStorage.removeItem("blog_title");
-            router.push({ name: "UserBlogPosts" });
+            router.push({ name: "BlogPosts" });
         })
         .catch((err) => {
             console.error(err);
