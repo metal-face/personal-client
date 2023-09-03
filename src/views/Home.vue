@@ -2,26 +2,21 @@
 import { ref, reactive, computed, ComputedRef } from "vue";
 import { useAccountStore } from "@/store/AccountStore";
 import PersonalButtonGroup from "@/components/home/PersonalButtonGroup.vue";
-import GitHubLoginButton from "@/components/home/GitHubLoginButton.vue";
 import AuthenticationButtons from "@/components/home/AuthenticationButtons.vue";
 import PersonalInfoCard from "@/components/home/PersonalInfoCard.vue";
 import CircleLoader from "@/components/utils/CircleLoader.vue";
+import { Snackbar } from "@/models/Snackbar";
 
 const accountStore = useAccountStore();
-
-interface Snackbar {
-    message: string;
-    visible: boolean;
-    timeout: number;
-}
 
 const loggedIn: ComputedRef<boolean> = computed(() => {
     return accountStore.isLoggedIn;
 });
 
 const snackbar: Snackbar = reactive({
-    message: "",
     visible: false,
+    text: "",
+    color: "error",
     timeout: 3000,
 });
 
@@ -42,18 +37,15 @@ function toggleLoadingState(state: boolean): void {
                 height="90%"
                 width="100%">
                 <v-card color="transparent" flat class="ma-5">
-                    <CircleLoader :loading="loading" circle-color="white" />
-                    <PersonalInfoCard @loading="toggleLoadingState" />
-                    <div v-if="!loggedIn" class="ma-6">
-                        <!-- <GitHubLoginButton /> -->
-                        <AuthenticationButtons />
-                    </div>
+                    <CircleLoader :loading="loading" circle-color="pink" />
 
+                    <PersonalInfoCard @loading="toggleLoadingState" />
+                    <AuthenticationButtons v-if="!loggedIn" class="ma-6" />
                     <PersonalButtonGroup v-if="loggedIn" />
                 </v-card>
             </v-card>
             <v-snackbar v-model="snackbar.visible" :timeout="snackbar.timeout">
-                {{ snackbar.message }}
+                {{ snackbar.text }}
             </v-snackbar>
         </v-col>
     </v-row>
