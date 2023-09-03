@@ -16,7 +16,7 @@ import "katex/dist/katex.min.css";
 import BlogServices from "@/services/BlogServices";
 
 interface Props {
-    readonly: string;
+    readonly?: string;
     blogId?: string;
 }
 
