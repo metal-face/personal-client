@@ -1,4 +1,10 @@
-import { createRouter, createWebHistory, Router } from "vue-router";
+import {
+    createRouter,
+    createWebHistory,
+    NavigationGuardNext,
+    RouteLocationNormalized,
+    Router,
+} from "vue-router";
 import { sessionStore } from "@/store/SessionStore";
 import blogsRouter from "@/router/blogsRouter";
 import userRouter from "@/router/userRouter";
@@ -10,15 +16,25 @@ const router: Router = createRouter({
     routes,
 });
 
-router.beforeEach((to, from, next) => {
-    const pageTitle: string = String(to.meta.title);
-    const sessStore = sessionStore();
+router.beforeEach(
+    async (
+        to: RouteLocationNormalized,
+        from: RouteLocationNormalized,
+        next: NavigationGuardNext,
+    ): Promise<void> => {
+        const pageTitle: string = String(to.meta.title);
+        const sessStore = sessionStore();
+        const isAuthenticated: boolean = await sessStore.isAuthenticated;
 
-    if (pageTitle) {
-        document.title = pageTitle;
-    }
+        console.log(isAuthenticated);
 
-    next();
-});
+        if (pageTitle) {
+            document.title = pageTitle;
+        }
+
+        if (to.name !== "Login" && !isAuthenticated) next({ name: "Login" });
+        else next();
+    },
+);
 
 export default router;
