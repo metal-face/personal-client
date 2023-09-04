@@ -27,8 +27,6 @@ const router: Router = useRouter();
 
 const rawStorageSession = window.localStorage.getItem("session");
 
-// TODO: add !rawStorageSession redirect to the login
-
 const session = JSON.parse(rawStorageSession!) as Session;
 
 const isDark = computed<boolean>(() => {
@@ -106,7 +104,7 @@ async function fetchAllBlogsForUser() {
             :visible="confirmDeleteState.visible"
             :resourceId="confirmDeleteState.idToDelete" />
         <v-col cols="12">
-            <v-card variant="flat" elevation="12" color="primary" rounded="1" class="fill-height">
+            <v-card variant="flat" color="primary" rounded="1" class="fill-height">
                 <!-- TODO: if there are no blogs, display an indicator to create a blog. -->
                 <v-card-title class="page-title text-center ma-3">
                     <h1 class="text-decoration-underline">Blog Posts</h1>
