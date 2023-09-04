@@ -42,6 +42,15 @@ const blogsRouter = [
                     title: "Blog Post Title",
                 },
             },
+            {
+                path: "/feed",
+                name: "BlogFeed",
+                component: () => import("@/views/blogs/BlogFeed.vue"),
+                meta: {
+                    restricted: true,
+                    title: "Your Feed",
+                },
+            },
         ],
         meta: {
             restricted: true,
