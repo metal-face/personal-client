@@ -76,7 +76,7 @@
     </v-row>
 </template>
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { reactive, ref, defineEmits } from "vue";
 import { Router, useRouter } from "vue-router";
 import { required, minLength, maxLength } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
@@ -93,6 +93,10 @@ import AccountsServices from "@/services/AccountsServices";
 useScriptTag(
     "https://www.google.com/recaptcha/api.js?render=6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM",
 );
+
+const emit = defineEmits<{
+    (e: "username:update", username: string): void;
+}>();
 
 function onClick(e: Event) {
     e.preventDefault();
@@ -204,6 +208,8 @@ async function loginUser(token: string): Promise<boolean> {
 
             account.account_id = res.data.data.account_id;
             account.created_at = new Date(res.data.data.created_at);
+
+            emit("username:update", state.username);
 
             router.push({ name: "Home" });
             return true;

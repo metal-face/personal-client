@@ -62,7 +62,9 @@
 
         <v-main>
             <v-container id="app" fluid class="fill-height">
-                <router-view @account:change="setAccountData" />
+                <router-view
+                    @account:change="setAccountData"
+                    @username:update="handleUsernameUpdate" />
             </v-container>
         </v-main>
     </v-app>
@@ -162,10 +164,6 @@ const isLoggedIn: ComputedRef<boolean> = computed(() => {
     return accountStore.isLoggedIn;
 });
 
-const sessionId: ComputedRef<string> = computed(() => {
-    return sessStore.getSessionId;
-});
-
 const links: Link[] = [
     { text: "Home", value: "Home", props: { prependIcon: "mdi-home-circle" } },
     { text: "Blogs", value: "BlogPosts", props: { prependIcon: "mdi-post-outline" } },
@@ -181,6 +179,10 @@ function handleRedirection(link: Link): void {
     navDrawer.value = !navDrawer.value;
 
     router.push({ name: link.value });
+}
+
+function handleUsernameUpdate(payload: string): void {
+    account.username = payload;
 }
 
 function setAccountData(payload: Account): void {
