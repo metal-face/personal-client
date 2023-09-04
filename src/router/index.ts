@@ -26,13 +26,19 @@ router.beforeEach(
         const sessStore = sessionStore();
         const isAuthenticated: boolean = await sessStore.isAuthenticated;
 
-        console.log(isAuthenticated);
-
         if (pageTitle) {
             document.title = pageTitle;
         }
 
-        if (to.name !== "Login" && !isAuthenticated) next({ name: "Login" });
+        if (!to.meta.restricted) {
+            next();
+        }
+
+        if (to.meta?.restricted && isAuthenticated) {
+            next();
+        }
+
+        if (to.meta.restricted && !isAuthenticated) next({ name: "Home" });
         else next();
     },
 );
