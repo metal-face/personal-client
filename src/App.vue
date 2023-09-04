@@ -166,7 +166,9 @@ const isLoggedIn: ComputedRef<boolean> = computed(() => {
 
 const links: Link[] = [
     { text: "Home", value: "Home", props: { prependIcon: "mdi-home-circle" } },
-    { text: "Blogs", value: "BlogPosts", props: { prependIcon: "mdi-post-outline" } },
+    // { text: "Uses", value: "Uses", props: { prependIcon: "mdi-slash-forward" } },
+    { text: "Your Blogs", value: "BlogPosts", props: { prependIcon: "mdi-post-outline" } },
+    { text: "Blog Feed", value: "BlogFeed", props: { prependIcon: "mdi-broadcast" } },
 ];
 
 const navDrawer = ref<boolean>(false);
