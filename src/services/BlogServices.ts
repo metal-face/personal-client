@@ -17,10 +17,16 @@ export default {
             },
         });
     },
-    fetchManyBlogs(accountId: string): Promise<AxiosResponse<any, any>> {
+    fetchManyBlogs(accountId?: string): Promise<AxiosResponse<any, any>> {
+        if (accountId) {
+            return ApiClient({
+                method: "GET",
+                url: `/blogs?account_id=${accountId}`,
+            });
+        }
         return ApiClient({
             method: "GET",
-            url: `/blogs?account_id=${accountId}`,
+            url: "/blogs",
         });
     },
     fetchBlogById(blogId: string): Promise<AxiosResponse<any, any>> {
