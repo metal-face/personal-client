@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { useRouter, Router, RouteParamsRaw } from "vue-router";
 import { ConfirmDeleteState } from "@/models/ConfirmDeleteState";
 import BlogServices from "@/services/BlogServices";
-import BlogPostCard from "@/components/blogs/BlogPostCard.vue";
+import BlogPostCard from "@/components/blogs/PersonalBlogCard.vue";
 import ConfirmDelete from "@/components/utils/ConfirmDelete.vue";
 import CircleLoader from "@/components/utils/CircleLoader.vue";
 
