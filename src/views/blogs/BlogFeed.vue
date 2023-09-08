@@ -1,23 +1,25 @@
 <script setup lang="ts">
 import BlogServices from "@/services/BlogServices";
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { Blogs } from "@/models/Blogs";
 import { ThemeInstance, useTheme } from "vuetify";
 import { format } from "date-fns";
 import { useRouter, Router } from "vue-router";
 import GeneralBlogCard from "@/components/blogs/GeneralBlogCard.vue";
+import CircleLoader from "@/components/utils/CircleLoader.vue";
 
 const theme: ThemeInstance = useTheme();
 const router: Router = useRouter();
 
 const blogPosts = ref<Blogs>({ blogs: [] });
 
+const loading = ref<boolean>(false);
+
 const isDark = computed<boolean>(() => {
     return theme.current.value.dark;
 });
 
 function humanReadableDate(rawString: string): string {
-    console.log(rawString);
     const rawDate: Date = new Date(rawString);
     return format(rawDate, "PPPP");
 }
@@ -38,13 +40,16 @@ async function fetchManyBlogs() {
 }
 
 onMounted(async () => {
+    loading.value = true;
     await fetchManyBlogs();
+    loading.value = false;
 });
 </script>
 
 <template>
     <v-row class="fill-height">
         <v-col cols="12">
+            <CircleLoader :loading="loading" circle-color="pink" />
             <v-card
                 class="fill-height"
                 variant="elevated"
@@ -55,7 +60,7 @@ onMounted(async () => {
                 </v-card-title>
                 <v-card-text>
                     <v-row>
-                        <v-col cols="4" v-for="blog in blogPosts.blogs" :key="blog.blog_id">
+                        <v-col cols="6" v-for="blog in blogPosts.blogs" :key="blog.blog_id">
                             <GeneralBlogCard
                                 @click="handleRedirection(blog.blog_id)"
                                 :blogPostTitle="blog.blog_title"
