@@ -1,6 +1,6 @@
 <template>
     <v-app>
-        <v-app-bar color="background" location="top">
+        <v-app-bar color="background" location="top" flat>
             <v-btn
                 @click="navDrawer = !navDrawer"
                 :color="isDark ? 'white' : 'black'"
