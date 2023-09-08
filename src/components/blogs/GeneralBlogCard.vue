@@ -8,10 +8,20 @@ const props = defineProps<Props>();
 </script>
 
 <template>
-    <v-card variant="elevated" elevation="4">
-        <v-card-title>{{ props.blogPostTitle }}</v-card-title>
-        <v-card-subtitle>{{ props.blogCreationDate }}</v-card-subtitle>
+    <v-card variant="elevated" elevation="4" class="blog-card pa-3">
+        <v-card-title class="mb-0 pa-0 text-center">
+            {{ props.blogPostTitle }}
+        </v-card-title>
+        <v-card-subtitle class="pb-0 text-center">
+            {{ props.blogCreationDate }}
+        </v-card-subtitle>
     </v-card>
 </template>
 
-<style scoped></style>
+<style scoped>
+.blog-card:hover {
+    text-decoration: underline !important;
+    transform: scale(1.05);
+    transition: 250ms ease-in-out;
+}
+</style>
