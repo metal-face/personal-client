@@ -21,7 +21,7 @@ const props = defineProps<Props>();
 <style scoped>
 .blog-card:hover {
     text-decoration: underline !important;
-    transform: scale(1.05);
-    transition: 250ms ease-in-out;
+    transform: scale(1.02);
+    transition: 200ms linear;
 }
 </style>
