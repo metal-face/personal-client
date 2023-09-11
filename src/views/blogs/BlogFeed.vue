@@ -49,10 +49,6 @@ function onResize() {
     }
 }
 
-function handleRedirection(blogId: string): void {
-    router.push({ name: "BlogViewer", params: { blogId: blogId, readonly: "true" } });
-}
-
 async function fetchManyBlogs() {
     return BlogServices.fetchManyBlogs()
         .then((res) => {
@@ -83,7 +79,7 @@ onMounted(async () => {
                     <v-row justify="center" align-content="center">
                         <v-col :cols="colCount" v-for="blog in blogPosts.blogs" :key="blog.blog_id">
                             <GeneralBlogCard
-                                @click="handleRedirection(blog.blog_id)"
+                                :blogId="blog.blog_id"
                                 :blogPostTitle="blog.blog_title"
                                 :blogCreationDate="humanReadableDate(blog.created_at)" />
                         </v-col>
