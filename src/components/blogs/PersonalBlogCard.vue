@@ -78,7 +78,7 @@ function handleRedirection(name: string, params: object) {
                         v-bind="props"
                         size="x-large"
                         class="ma-0 pa-0"
-                        variant="flat"
+                        variant="elevated"
                         position="fixed"
                         rounded="1"
                         icon="mdi-trash-can"
