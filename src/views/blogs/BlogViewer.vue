@@ -156,6 +156,4 @@ onMounted(async () => {
 .editor {
     font-family: "Prata", "serif";
 }
-h1 {
-}
 </style>
