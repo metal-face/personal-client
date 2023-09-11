@@ -38,6 +38,10 @@ const accountId = computed<string>(() => {
     return sessStore.accountID;
 });
 
+const sessionId = computed<string>(() => {
+    return sessStore.getSessionId;
+});
+
 function redirectUser(name: string, params?: RouteParamsRaw): void {
     router.push({ name: name, params: params });
 }
@@ -70,6 +74,7 @@ function updateBlogById() {
     BlogServices.updateBlogById(
         props.blogId,
         accountId.value,
+        sessionId.value,
         blogPostTitle.value,
         blogPostBody.value,
     )
