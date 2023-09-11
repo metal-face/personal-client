@@ -66,6 +66,10 @@ const accountId = computed<string>(() => {
     return sessStore.accountID;
 });
 
+const sessionId = computed<string>(() => {
+    return sessStore.getSessionId;
+});
+
 const blogPostBody = ref("# Write your post here.");
 const blogPostTitle = ref<string>("A Good Blog Post Title");
 
@@ -133,7 +137,12 @@ function sanitizeCode(code: string): void {
  */
 async function createBlogPost() {
     sanitizeCode(blogPostBody.value);
-    BlogServices.createBlogPost(blogPostTitle.value, blogPostBody.value, accountId.value)
+    BlogServices.createBlogPost(
+        blogPostTitle.value,
+        blogPostBody.value,
+        accountId.value,
+        sessionId.value,
+    )
         .then(() => {
             window.localStorage.removeItem("blog_content");
             window.localStorage.removeItem("blog_title");
