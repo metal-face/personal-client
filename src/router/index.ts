@@ -30,16 +30,24 @@ router.beforeEach(
             document.title = pageTitle;
         }
 
-        if (!to.meta.restricted) {
+        if (!to.meta?.restricted) {
             next();
+            return;
         }
 
         if (to.meta?.restricted && isAuthenticated) {
             next();
+            return;
         }
 
-        if (to.meta.restricted && !isAuthenticated) next({ name: "Home" });
-        else next();
+        console.log("here 3");
+        if (to.meta.restricted && !isAuthenticated) {
+            next({ name: "Home" });
+            return;
+        } else {
+            next();
+            return;
+        }
     },
 );
 
