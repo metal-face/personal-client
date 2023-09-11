@@ -3,8 +3,9 @@ import { ThemeInstance, useTheme } from "vuetify";
 import { computed, reactive, onMounted, ref, nextTick } from "vue";
 import { Session } from "@/models/Session";
 import { format } from "date-fns";
-import { useRouter, Router, RouteParamsRaw } from "vue-router";
+import { useRouter, Router } from "vue-router";
 import { ConfirmDeleteState } from "@/models/ConfirmDeleteState";
+import { sessionStore } from "@/store/SessionStore";
 import BlogServices from "@/services/BlogServices";
 import BlogPostCard from "@/components/blogs/PersonalBlogCard.vue";
 import ConfirmDelete from "@/components/utils/ConfirmDelete.vue";
@@ -24,6 +25,7 @@ onMounted(() => {
 
 const theme: ThemeInstance = useTheme();
 const router: Router = useRouter();
+const sessStore = sessionStore();
 
 const rawStorageSession = window.localStorage.getItem("session");
 
@@ -31,6 +33,10 @@ const session = JSON.parse(rawStorageSession!) as Session;
 
 const isDark = computed<boolean>(() => {
     return theme.global.current.value.dark;
+});
+
+const sessionId = computed<string>(() => {
+    return sessStore.getSessionId;
 });
 
 const loading = ref<boolean>(false);
@@ -42,7 +48,7 @@ const confirmDeleteState = reactive<ConfirmDeleteState>({
 
 const blogs: Blog[] = reactive([]);
 
-function openConfirmDelete(idToDelete: string | number): void {
+function openConfirmDelete(idToDelete: string): void {
     confirmDeleteState.visible = true;
     confirmDeleteState.idToDelete = idToDelete;
 }
@@ -57,16 +63,12 @@ function humanReadableData(rawString: string): string {
     return format(rawDate, "PPPP");
 }
 
-function handleRedirection(name: string, params: object) {
-    router.push({ name: name, params: params as RouteParamsRaw });
-}
-
 async function deleteBlogPostById(blogId: string) {
     closeConfirmDelete();
 
     await nextTick(() => {
         loading.value = true;
-        BlogServices.deleteBlogById(blogId)
+        BlogServices.deleteBlogById(blogId, sessionId.value)
             .then(() => {
                 loading.value = false;
             })
@@ -111,61 +113,15 @@ async function fetchAllBlogsForUser() {
                 </v-card-title>
                 <v-row justify="center" align-content="center">
                     <v-col cols="6">
-                        <v-card
-                            class="ma-3 pa-0 d-flex justify-space-between align-center"
-                            elevation="4"
-                            variant="elevated"
+                        <BlogPostCard
                             v-for="(blog, i) in blogs"
-                            :key="i">
-                            <BlogPostCard
-                                @click="
-                                    handleRedirection('BlogViewer', {
-                                        blogId: blog.blog_id,
-                                        readonly: 'true',
-                                    })
-                                "
-                                :creation-date="humanReadableData(blog.created_at)"
-                                :blog-post="blog.blog_post"
-                                :blog-title="blog.blog_title">
-                            </BlogPostCard>
-                            <!-- EDIT-->
-                            <v-tooltip location="top">
-                                <template #activator="{ props }">
-                                    <v-btn
-                                        @click="
-                                            handleRedirection('BlogUpdater', {
-                                                blogId: blog.blog_id,
-                                                readonly: 'false',
-                                            })
-                                        "
-                                        v-bind="props"
-                                        size="x-large"
-                                        rounded="0"
-                                        icon="mdi-pencil"
-                                        variant="flat"
-                                        class="ma-0 pa-0"
-                                        color="info">
-                                    </v-btn>
-                                </template>
-                                <span>Edit</span>
-                            </v-tooltip>
-
-                            <!-- DELETE -->
-                            <v-tooltip location="top">
-                                <template #activator="{ props }">
-                                    <v-btn
-                                        @click="openConfirmDelete(blog.blog_id)"
-                                        v-bind="props"
-                                        size="x-large"
-                                        class="ma-0 pa-0"
-                                        variant="flat"
-                                        rounded="0"
-                                        icon="mdi-trash-can"
-                                        color="error" />
-                                </template>
-                                <span>Delete</span>
-                            </v-tooltip>
-                        </v-card>
+                            :key="i"
+                            @delete:confirm="openConfirmDelete"
+                            :blogId="blog.blog_id"
+                            :creation-date="humanReadableData(blog.created_at)"
+                            :blog-post="blog.blog_post"
+                            :blog-title="blog.blog_title">
+                        </BlogPostCard>
                     </v-col>
                 </v-row>
 
