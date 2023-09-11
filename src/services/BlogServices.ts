@@ -6,6 +6,7 @@ export default {
         blogTitle: string,
         blogPost: string,
         accountId: string,
+        sessionId: string,
     ): Promise<AxiosResponse<any, any>> {
         return ApiClient({
             method: "POST",
@@ -14,6 +15,9 @@ export default {
                 blog_post: blogPost,
                 blog_title: blogTitle,
                 account_id: accountId,
+            },
+            headers: {
+                Authorization: `Bearer ${sessionId}`,
             },
         });
     },
@@ -38,6 +42,7 @@ export default {
     updateBlogById(
         blogId: string,
         accountId: string,
+        sessionId: string,
         blogTitle?: string,
         blogPost?: string,
     ): Promise<AxiosResponse<any, any>> {
@@ -49,12 +54,18 @@ export default {
                 blog_post: blogPost,
                 account_id: accountId,
             },
+            headers: {
+                Authorization: `Bearer ${sessionId}`,
+            },
         });
     },
-    deleteBlogById(blogId: string): Promise<AxiosResponse<any, any>> {
+    deleteBlogById(blogId: string, sessionId: string): Promise<AxiosResponse<any, any>> {
         return ApiClient({
             method: "DELETE",
             url: `/blogs/${blogId}`,
+            headers: {
+                Authorization: `Bearer ${sessionId}`,
+            },
         });
     },
 };
