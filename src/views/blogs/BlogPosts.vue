@@ -43,7 +43,7 @@ const loading = ref<boolean>(false);
 
 const confirmDeleteState = reactive<ConfirmDeleteState>({
     visible: ref<boolean>(false),
-    idToDelete: ref<string | number>(""),
+    idToDelete: ref<string>(""),
 });
 
 const blogs: Blog[] = reactive([]);
