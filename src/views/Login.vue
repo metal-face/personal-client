@@ -100,7 +100,9 @@ const emit = defineEmits<{
 
 function onClick(e: Event) {
     e.preventDefault();
+    // eslint-disable-next-line no-undef
     grecaptcha.ready(function () {
+        // eslint-disable-next-line no-undef
         grecaptcha
             .execute("6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM", { action: "submit" })
             .then(async function (token: string) {
