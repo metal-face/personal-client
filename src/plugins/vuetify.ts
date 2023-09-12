@@ -12,6 +12,8 @@ import { md3 } from "vuetify/blueprints";
 // Composables
 import { createVuetify, ThemeDefinition } from "vuetify";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
+
+// @ts-ignore
 import colors from "vuetify/lib/util/colors";
 
 const customDarkTheme: ThemeDefinition = {
@@ -26,8 +28,8 @@ const customDarkTheme: ThemeDefinition = {
         info: colors.blue.accent1,
         success: colors.green.accent2,
         warning: colors.yellow.accent1,
-    }
-}
+    },
+};
 
 const customLightTheme: ThemeDefinition = {
     dark: false,
@@ -41,8 +43,8 @@ const customLightTheme: ThemeDefinition = {
         info: colors.blue.accent1,
         success: colors.green.accent2,
         warning: colors.yellow.accent1,
-    }
-}
+    },
+};
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
     blueprint: md3,
@@ -54,7 +56,7 @@ export default createVuetify({
         },
     },
     theme: {
-        defaultTheme: 'customDarkTheme',
+        defaultTheme: "customDarkTheme",
         themes: {
             customDarkTheme,
             customLightTheme,
