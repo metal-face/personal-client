@@ -6,7 +6,7 @@ interface Props {
 
 const emit = defineEmits<{
     (e: "confirm:cancel"): void;
-    (e: "confirm:delete", value: string | number): void;
+    (e: "confirm:delete", value: string): void;
 }>();
 
 const props = withDefaults(defineProps<Props>(), {
