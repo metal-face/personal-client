@@ -98,6 +98,8 @@ const emit = defineEmits<{
     (e: "username:update", username: string): void;
 }>();
 
+declare var grecaptcha: any;
+
 function onClick(e: Event) {
     e.preventDefault();
     // eslint-disable-next-line no-undef

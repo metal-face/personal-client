@@ -99,6 +99,8 @@ import { sessionStore } from "@/store/SessionStore";
 import type { AxiosResponse } from "axios";
 import { useScriptTag } from "@vueuse/core";
 
+declare var grecaptcha: any;
+
 // Load Google Recaptcha
 useScriptTag(
     "https://www.google.com/recaptcha/api.js?render=6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM",

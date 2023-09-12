@@ -1,7 +1,7 @@
 <script setup lang="ts">
 interface Props {
     visible: boolean;
-    resourceId: string | number;
+    resourceId: string;
 }
 
 const emit = defineEmits<{
