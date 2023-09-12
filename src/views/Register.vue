@@ -106,9 +106,9 @@ useScriptTag(
 
 function onClick(e: Event) {
     e.preventDefault();
-    //@tsignore
+    //@ts-ignore
     grecaptcha.ready(function () {
-        //@tsignore
+        //@ts-ignore
         grecaptcha
             .execute("6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM", { action: "submit" })
             .then(function (token: string) {
