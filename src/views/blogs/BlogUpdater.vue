@@ -100,7 +100,7 @@ onMounted(() => {
                 v-model="snackbar.visible"
                 :timeout="snackbar.timeout"
                 :color="snackbar.color"
-                location="center top"
+                location="top"
                 variant="elevated">
                 <h3 class="text-center">{{ snackbar.text }}</h3>
             </v-snackbar>
