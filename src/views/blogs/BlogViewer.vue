@@ -135,7 +135,7 @@ onMounted(async () => {
         <v-tooltip location="top">
             <template #activator="{ props }">
                 <v-btn
-                    @click="router.push({ name: 'BlogPosts' })"
+                    @click="router.back()"
                     :color="isDark ? 'accent' : 'black'"
                     v-bind="props"
                     position="fixed"
