@@ -14,10 +14,10 @@
                 v-if="isLoggedIn"
                 density="compact"
                 color="primary"
-                class="d-flex justify-center align-center">
+                class="mr-2 d-flex justify-center align-center">
                 <v-btn
                     variant="elevated"
-                    class="white--text mr-2"
+                    class="white--text"
                     :color="isDark ? 'white' : 'black'"
                     rounded="1"
                     prepend-icon="mdi-account-circle">

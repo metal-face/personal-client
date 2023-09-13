@@ -88,7 +88,7 @@
     </v-row>
 </template>
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, defineEmits } from "vue";
 import { Router, useRouter } from "vue-router";
 import { useVuelidate } from "@vuelidate/core";
 import { email, required, minLength, maxLength } from "@vuelidate/validators";
@@ -174,6 +174,10 @@ const loading = ref<boolean>(false);
 
 const disabled = ref<boolean>(false);
 
+const emit = defineEmits<{
+    (e: "username:update", username: string): void;
+}>();
+
 onMounted(() => {
     clearForm();
 });
@@ -210,6 +214,7 @@ async function dispatchRegistration(token: string): Promise<void> {
                 .execute("6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM", { action: "submit" })
                 .then(async function (token: string) {
                     await loginUser(token);
+                    await router.push({ name: "Home" });
                 });
         });
     }
@@ -240,11 +245,10 @@ async function loginUser(token: string): Promise<boolean> {
     return SessionServices.login(state.username, state.password, token)
         .then((res) => {
             session.setSession(res.data.data);
-            router.push({ name: "Home" });
-            return true;
-        })
-        .finally(() => {
+            emit("username:update", state.username);
             loading.value = false;
+
+            return true;
         })
         .catch((err) => {
             alert.text = "Something Went Wrong!";
