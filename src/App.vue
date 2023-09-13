@@ -1,13 +1,19 @@
 <template>
     <v-app>
         <v-app-bar color="background" location="top" flat>
-            <v-btn
-                @click="navDrawer = !navDrawer"
-                :color="isDark ? 'white' : 'black'"
-                icon="mdi-menu"
-                variant="text" />
+            <div class="ml-4">
+                <v-btn
+                    @click="navDrawer = !navDrawer"
+                    :color="isDark ? 'white' : 'black'"
+                    icon="mdi-menu"
+                    variant="text" />
+                <v-btn
+                    @click="toggleTheme"
+                    :color="isDark ? 'yellow' : 'purple'"
+                    :icon="isDark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'"
+                    variant="text" />
+            </div>
             <v-spacer />
-
             <v-card
                 v-if="isLoggedIn"
                 density="compact"
@@ -37,11 +43,6 @@
                     </v-menu>
                 </v-btn>
             </v-card>
-            <v-btn
-                @click="toggleTheme"
-                :color="isDark ? 'yellow' : 'purple'"
-                :icon="isDark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'"
-                variant="text" />
         </v-app-bar>
 
         <v-navigation-drawer
@@ -77,8 +78,8 @@ import { useRouter, Router } from "vue-router";
 import { Account, Role } from "@/models/Account";
 import { useAccountStore } from "@/store/AccountStore";
 import { sessionStore } from "@/store/SessionStore";
-import SessionServices from "@/services/SessionServices";
 import { Session } from "@/models/Session";
+import SessionServices from "@/services/SessionServices";
 import AccountsServices from "@/services/AccountsServices";
 
 onMounted(() => {
@@ -177,6 +178,10 @@ const isDark = computed<boolean>(() => {
     return theme.global.current.value.dark;
 });
 
+const sessionId = computed<string>(() => {
+    return sessStore.getSessionId;
+});
+
 function handleRedirection(link: Link): void {
     navDrawer.value = !navDrawer.value;
 
@@ -210,7 +215,8 @@ function toggleTheme(): void {
 }
 
 function logoutUser() {
-    SessionServices.logout(session.session_id)
+    console.log(sessionId.value);
+    SessionServices.logout(sessionId.value)
         .then(() => {
             sessStore.destroySessionInStorage();
             sessStore.clearSession();

@@ -33,8 +33,7 @@ function toggleLoadingState(state: boolean): void {
             <v-card
                 flat
                 color="transparent"
-                class="d-flex flex-column justify-center align-center"
-                height="90%"
+                class="fill-height d-flex flex-column justify-center align-center"
                 width="100%">
                 <v-card color="transparent" flat class="ma-5">
                     <CircleLoader :loading="loading" circle-color="pink" />
