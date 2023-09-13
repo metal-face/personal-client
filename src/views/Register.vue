@@ -200,28 +200,29 @@ async function dispatchRegistration(token: string): Promise<void> {
     }
 
     // Register user
-    registerUser(token)
-        .then(() => {
-            // Login user if successful registration
-            // TODO: Login now requires a recaptcha token, see if the token you have is good, otherwise, get a new token
-            loginUser(token)
-                .then((res) => {
-                    session.setSession(res.data.data);
-                    router.push({ name: "Home" });
-                })
-                .finally(() => {
-                    loading.value = false;
-                })
-                .catch((err) => {
-                    alert.text = "Something Went Wrong!";
-                    alert.color = ColorTypes.error;
-                    alert.title = "Error!";
-                    alert.type = AlertTypes.error;
-                    alert.visible = true;
-                    console.error(err);
-                    loading.value = false;
-                    return;
+    const regResp = await registerUser(token);
+
+    if (regResp) {
+        // @ts-ignore
+        grecaptcha.ready(function () {
+            //@ts-ignore
+            grecaptcha
+                .execute("6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM", { action: "submit" })
+                .then(async function (token: string) {
+                    await loginUser(token);
                 });
+        });
+    }
+}
+
+async function registerUser(token: string): Promise<boolean> {
+    await v$.value.$validate();
+
+    // TODO: Ensure the password field passes server criteria before sending
+
+    return AccountsServices.createAccount(state.username, state.email, state.password, token)
+        .then(() => {
+            return true;
         })
         .catch((err) => {
             loading.value = false;
@@ -231,26 +232,30 @@ async function dispatchRegistration(token: string): Promise<void> {
             alert.type = AlertTypes.error;
             alert.visible = true;
             console.error(err);
-            return;
+            return false;
         });
 }
 
-async function registerUser(token: string): Promise<AxiosResponse<any, any>> {
-    v$.value.$validate();
-
-    // TODO: Ensure the password field passes server criteria before sending
-
-    return AccountsServices.createAccount(state.username, state.email, state.password, token).then(
-        (res) => {
-            return res;
-        },
-    );
-}
-
-async function loginUser(token: string): Promise<AxiosResponse<any, any>> {
-    return SessionServices.login(state.username, state.password, token).then((res) => {
-        return res;
-    });
+async function loginUser(token: string): Promise<boolean> {
+    return SessionServices.login(state.username, state.password, token)
+        .then((res) => {
+            session.setSession(res.data.data);
+            router.push({ name: "Home" });
+            return true;
+        })
+        .finally(() => {
+            loading.value = false;
+        })
+        .catch((err) => {
+            alert.text = "Something Went Wrong!";
+            alert.color = ColorTypes.error;
+            alert.title = "Error!";
+            alert.type = AlertTypes.error;
+            alert.visible = true;
+            console.error(err);
+            loading.value = false;
+            return false;
+        });
 }
 </script>
 
