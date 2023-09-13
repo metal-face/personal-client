@@ -215,7 +215,6 @@ function toggleTheme(): void {
 }
 
 function logoutUser() {
-    console.log(sessionId.value);
     SessionServices.logout(sessionId.value)
         .then(() => {
             sessStore.destroySessionInStorage();

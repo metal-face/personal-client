@@ -245,7 +245,6 @@ async function fetchBlogById() {
     if (!props.blogId) return;
     BlogServices.fetchBlogById(props.blogId)
         .then((res) => {
-            console.log(res);
             blogPostTitle.value = res.data.data.blog_title;
             blogPostBody.value = res.data.data.blog_post;
         })

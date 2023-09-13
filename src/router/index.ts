@@ -40,8 +40,7 @@ router.beforeEach(
             return;
         }
 
-        console.log("here 3");
-        if (to.meta.restricted && !isAuthenticated) {
+        if (to.meta?.restricted && !isAuthenticated) {
             next({ name: "Home" });
             return;
         } else {
