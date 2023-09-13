@@ -105,12 +105,12 @@ function onClick(e: Event) {
         //@ts-ignore
         grecaptcha
             .execute("6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM", { action: "submit" })
-            .then(async function (token: string) {
-                const loginReq: boolean = await loginUser(token);
-
-                if (loginReq) {
-                    await fetchAccountById();
-                }
+            .then(function (token: string) {
+                loginUser(token).then((res) => {
+                    if (res) {
+                        fetchAccountById();
+                    }
+                });
             });
     });
 }
