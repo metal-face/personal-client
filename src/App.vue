@@ -7,13 +7,9 @@
                     :color="isDark ? 'white' : 'black'"
                     icon="mdi-menu"
                     variant="text" />
-                <v-btn
-                    @click="toggleTheme"
-                    :color="isDark ? 'yellow' : 'purple'"
-                    :icon="isDark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'"
-                    variant="text" />
             </div>
             <v-spacer />
+
             <v-card
                 v-if="isLoggedIn"
                 density="compact"
@@ -21,7 +17,7 @@
                 class="d-flex justify-center align-center">
                 <v-btn
                     variant="elevated"
-                    class="white--text"
+                    class="white--text mr-2"
                     :color="isDark ? 'white' : 'black'"
                     rounded="1"
                     prepend-icon="mdi-account-circle">
@@ -43,6 +39,11 @@
                     </v-menu>
                 </v-btn>
             </v-card>
+            <v-btn
+                @click="toggleTheme"
+                :color="isDark ? 'yellow' : 'purple'"
+                :icon="isDark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'"
+                variant="elevated" />
         </v-app-bar>
 
         <v-navigation-drawer
