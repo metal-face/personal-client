@@ -3,7 +3,6 @@ import { ThemeInstance, useTheme } from "vuetify";
 import { computed, reactive, onMounted, ref, nextTick } from "vue";
 import { Session } from "@/models/Session";
 import { format } from "date-fns";
-import { useRouter, Router } from "vue-router";
 import { ConfirmDeleteState } from "@/models/ConfirmDeleteState";
 import { sessionStore } from "@/store/SessionStore";
 import BlogServices from "@/services/BlogServices";
@@ -24,7 +23,6 @@ onMounted(() => {
 });
 
 const theme: ThemeInstance = useTheme();
-const router: Router = useRouter();
 const sessStore = sessionStore();
 
 const rawStorageSession = window.localStorage.getItem("session");

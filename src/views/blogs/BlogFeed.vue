@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import BlogServices from "@/services/BlogServices";
 import { computed, onMounted, ref } from "vue";
 import { Blogs } from "@/models/Blogs";
 import { DisplayInstance, ThemeInstance, useDisplay, useTheme } from "vuetify";
 import { format } from "date-fns";
-import { useRouter, Router } from "vue-router";
+import BlogServices from "@/services/BlogServices";
 import GeneralBlogCard from "@/components/blogs/GeneralBlogCard.vue";
 import CircleLoader from "@/components/utils/CircleLoader.vue";
 
 const theme: ThemeInstance = useTheme();
-const router: Router = useRouter();
 const display: DisplayInstance = useDisplay();
 
 const blogPosts = ref<Blogs>({ blogs: [] });
