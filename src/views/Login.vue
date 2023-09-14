@@ -21,10 +21,10 @@
                             <v-col cols="12">
                                 <v-text-field
                                     v-model="state.username"
-                                    @input="v$.username.$touch"
-                                    @blur="v$.username.$touch"
+                                    @input="v$['username'].$touch"
+                                    @blur="v$['username'].$touch"
                                     :error-messages="
-                                        v$.username.$errors.map((e) => e.$message.toString())
+                                        v$['username'].$errors.map((e) => e.$message.toString())
                                     "
                                     required
                                     variant="outlined"
@@ -33,10 +33,10 @@
                             <v-col cols="12">
                                 <v-text-field
                                     v-model="state.password"
-                                    @input="v$.password.$touch"
-                                    @blur="v$.password.$touch"
+                                    @input="v$['password'].$touch"
+                                    @blur="v$['password'].$touch"
                                     :error-messages="
-                                        v$.password.$errors.map((e) => e.$message.toString())
+                                        v$['password'].$errors.map((e) => e.$message.toString())
                                     "
                                     :type="visible ? 'text' : 'password'"
                                     required
@@ -76,7 +76,7 @@
     </v-row>
 </template>
 <script setup lang="ts">
-import { reactive, ref, defineEmits, computed } from "vue";
+import { reactive, ref, defineEmits, computed, Ref } from "vue";
 import { Router, useRouter } from "vue-router";
 import { required, minLength, maxLength } from "@vuelidate/validators";
 import { sessionStore } from "@/store/SessionStore";
@@ -90,7 +90,7 @@ import { AlertTypes } from "@/models/AlertTypes";
 import { ColorTypes } from "@/models/ColorTypes";
 import { LoginForm } from "@/models/LoginForm";
 import AccountsServices from "@/services/AccountsServices";
-import useVuelidate from "@vuelidate/core";
+import useVuelidate, { Validation } from "@vuelidate/core";
 import SessionServices from "@/services/SessionServices";
 import CircleLoader from "@/components/utils/CircleLoader.vue";
 
@@ -117,19 +117,17 @@ const alert: Alert = reactive({
 
 const state: LoginForm = reactive({ username: "", password: "" });
 
-const rules = computed<object>(() => {
-    return {
-        username: { required, minLength: minLength(3), maxLength: maxLength(16) },
-        password: { required, minLength: minLength(8), maxLength: maxLength(128) },
-    };
-});
+const rules = computed<object>(() => ({
+    username: { required, minLength: minLength(3), maxLength: maxLength(16) },
+    password: { required, minLength: minLength(8), maxLength: maxLength(128) },
+}));
 
-const v$ = useVuelidate(rules, state);
+const v$: Ref<Validation<object, LoginForm>> = useVuelidate(rules, state);
 
 const loading = ref<boolean>(false);
 const visible = ref<boolean>(false);
 
-let account: Account = reactive({
+const account: Account = reactive({
     account_id: "",
     username: "",
     email: "",
