@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, defineEmits, computed, Ref } from "vue";
 import { Router, useRouter } from "vue-router";
-import { useVuelidate, Validation } from "@vuelidate/core";
+import { ErrorObject, useVuelidate, Validation } from "@vuelidate/core";
 import { email, required, minLength, maxLength } from "@vuelidate/validators";
 import AccountsServices from "@/services/AccountsServices";
 import CircleLoader from "@/components/utils/CircleLoader.vue";
@@ -169,10 +169,10 @@ async function loginUser(token: string): Promise<boolean> {
                             <v-col cols="12">
                                 <v-text-field
                                     v-model="state.email"
-                                    @input="v$.email.$touch"
-                                    @blur="v$.email.$touch"
+                                    @input="v$['email'].$touch"
+                                    @blur="v$['email'].$touch"
                                     :error-messages="
-                                        v$.email.$errors.map((e) => e.$message.toString())
+                                        v$['email'].$errors.map((e: ErrorObject) => e.$message.toString())
                                     "
                                     required
                                     variant="outlined"
@@ -181,10 +181,10 @@ async function loginUser(token: string): Promise<boolean> {
                             <v-col cols="12">
                                 <v-text-field
                                     v-model="state.username"
-                                    @input="v$.username.$touch"
-                                    @blur="v$.username.$touch"
+                                    @input="v$['username'].$touch"
+                                    @blur="v$['username'].$touch"
                                     :error-messages="
-                                        v$.username.$errors.map((e) => e.$message.toString())
+                                        v$['username'].$errors.map((e: ErrorObject) => e.$message.toString())
                                     "
                                     required
                                     label="Username"
@@ -194,10 +194,10 @@ async function loginUser(token: string): Promise<boolean> {
                                 <v-text-field
                                     v-model="state.password"
                                     @click:append-inner="toggleVisibility"
-                                    @input="v$.password.$touch"
-                                    @blur="v$.password.$touch"
+                                    @input="v$['password'].$touch"
+                                    @blur="v$['password'].$touch"
                                     :error-messages="
-                                        v$.password.$errors.map((e) => e.$message.toString())
+                                        v$['password'].$errors.map((e: ErrorObject) => e.$message.toString())
                                     "
                                     :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
                                     :type="visible ? 'text' : 'password'"

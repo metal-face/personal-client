@@ -21,10 +21,10 @@
                             <v-col cols="12">
                                 <v-text-field
                                     v-model="state.username"
-                                    @input="v$.username.$touch"
-                                    @blur="v$.username.$touch"
+                                    @input="v$['username'].$touch"
+                                    @blur="v$['username'].$touch"
                                     :error-messages="
-                                        v$.username.$errors.map((e) => e.$message.toString())
+                                        v$['username'].$errors.map((e: ErrorObject) => e.$message.toString())
                                     "
                                     required
                                     variant="outlined"
@@ -33,10 +33,10 @@
                             <v-col cols="12">
                                 <v-text-field
                                     v-model="state.password"
-                                    @input="v$.password.$touch"
-                                    @blur="v$.password.$touch"
+                                    @input="v$['password'].$touch"
+                                    @blur="v$['password'].$touch"
                                     :error-messages="
-                                        v$.password.$errors.map((e) => e.$message.toString())
+                                        v$['password'].$errors.map((e: ErrorObject) => e.$message.toString())
                                     "
                                     :type="visible ? 'text' : 'password'"
                                     required
@@ -90,7 +90,7 @@ import { AlertTypes } from "@/models/AlertTypes";
 import { ColorTypes } from "@/models/ColorTypes";
 import { LoginForm } from "@/models/LoginForm";
 import AccountsServices from "@/services/AccountsServices";
-import useVuelidate, { Validation } from "@vuelidate/core";
+import useVuelidate, { ErrorObject, Validation } from "@vuelidate/core";
 import SessionServices from "@/services/SessionServices";
 import CircleLoader from "@/components/utils/CircleLoader.vue";
 
