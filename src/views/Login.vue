@@ -76,19 +76,23 @@
     </v-row>
 </template>
 <script setup lang="ts">
-import { reactive, ref, defineEmits } from "vue";
+import { reactive, ref, defineEmits, computed } from "vue";
 import { Router, useRouter } from "vue-router";
 import { required, minLength, maxLength } from "@vuelidate/validators";
-import useVuelidate from "@vuelidate/core";
-import SessionServices from "@/services/SessionServices";
-import CircleLoader from "@/components/utils/CircleLoader.vue";
 import { sessionStore } from "@/store/SessionStore";
 import { useAccountStore } from "@/store/AccountStore";
 import { useScriptTag } from "@vueuse/core";
 import { Account } from "@/models/Account";
 import { Role } from "@/models/Account";
 import { Session } from "@/models/Session";
+import { Alert } from "@/models/Alert";
+import { AlertTypes } from "@/models/AlertTypes";
+import { ColorTypes } from "@/models/ColorTypes";
+import { LoginForm } from "@/models/LoginForm";
 import AccountsServices from "@/services/AccountsServices";
+import useVuelidate from "@vuelidate/core";
+import SessionServices from "@/services/SessionServices";
+import CircleLoader from "@/components/utils/CircleLoader.vue";
 
 useScriptTag(
     "https://www.google.com/recaptcha/api.js?render=6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM",
@@ -97,6 +101,41 @@ useScriptTag(
 const emit = defineEmits<{
     (e: "username:update", username: string): void;
 }>();
+
+const router: Router = useRouter();
+const sessStore = sessionStore();
+const accountStore = useAccountStore();
+
+const alert: Alert = reactive({
+    type: AlertTypes.success,
+    color: ColorTypes.success,
+    title: "",
+    text: "",
+    visible: false,
+    timeout: 0,
+});
+
+const state: LoginForm = reactive({ username: "", password: "" });
+
+const rules = computed<object>(() => {
+    return {
+        username: { required, minLength: minLength(3), maxLength: maxLength(16) },
+        password: { required, minLength: minLength(8), maxLength: maxLength(128) },
+    };
+});
+
+const v$ = useVuelidate(rules, state);
+
+const loading = ref<boolean>(false);
+const visible = ref<boolean>(false);
+
+let account: Account = reactive({
+    account_id: "",
+    username: "",
+    email: "",
+    role: Role.REGULAR,
+    created_at: new Date(),
+});
 
 function onClick(e: Event) {
     e.preventDefault();
@@ -114,67 +153,6 @@ function onClick(e: Event) {
             });
     });
 }
-
-const router: Router = useRouter();
-const sessStore = sessionStore();
-const accountStore = useAccountStore();
-
-interface LoginForm {
-    username: string;
-    password: string;
-}
-
-interface Alert {
-    type: AlertTypes;
-    color: ColorTypes;
-    title: string;
-    text: string;
-    visible: boolean;
-    timeout: number;
-}
-
-enum AlertTypes {
-    success = "success",
-    info = "info",
-    warning = "warning",
-    error = "error",
-}
-
-enum ColorTypes {
-    success = "success",
-    info = "info",
-    warning = "warning",
-    error = "error",
-}
-
-const alert: Alert = reactive({
-    type: AlertTypes.success,
-    color: ColorTypes.success,
-    title: "",
-    text: "",
-    visible: false,
-    timeout: 0,
-});
-
-const state: LoginForm = reactive({ username: "", password: "" });
-
-const rules = {
-    username: { required, minLength: minLength(3), maxLength: maxLength(16) },
-    password: { required, minLength: minLength(8), maxLength: maxLength(128) },
-};
-
-const v$ = useVuelidate(rules, state);
-
-const loading = ref<boolean>(false);
-const visible = ref<boolean>(false);
-
-let account: Account = reactive({
-    account_id: "",
-    username: "",
-    email: "",
-    role: Role.REGULAR,
-    created_at: new Date(),
-});
 
 async function fetchAccountById(): Promise<boolean> {
     if (account.account_id) {
@@ -198,8 +176,10 @@ async function fetchAccountById(): Promise<boolean> {
 async function loginUser(token: string): Promise<boolean> {
     loading.value = true;
 
+    // Perform validation on the form
     let valid = await v$.value.$validate();
     if (!valid) {
+        // If dirty, reset the form and exit the function.
         v$.value.$reset();
         return false;
     }
