@@ -169,10 +169,10 @@ async function loginUser(token: string): Promise<boolean> {
                             <v-col cols="12">
                                 <v-text-field
                                     v-model="state.email"
-                                    @input="v$['email'].$touch"
-                                    @blur="v$['email'].$touch"
+                                    @input="v$.email.$touch"
+                                    @blur="v$.email.$touch"
                                     :error-messages="
-                                        v$['email'].$errors.map((e) => e.$message.toString())
+                                        v$.email.$errors.map((e) => e.$message.toString())
                                     "
                                     required
                                     variant="outlined"
@@ -181,10 +181,10 @@ async function loginUser(token: string): Promise<boolean> {
                             <v-col cols="12">
                                 <v-text-field
                                     v-model="state.username"
-                                    @input="v$['username'].$touch"
-                                    @blur="v$['username'].$touch"
+                                    @input="v$.username.$touch"
+                                    @blur="v$.username.$touch"
                                     :error-messages="
-                                        v$['username'].$errors.map((e) => e.$message.toString())
+                                        v$.username.$errors.map((e) => e.$message.toString())
                                     "
                                     required
                                     label="Username"
@@ -194,10 +194,10 @@ async function loginUser(token: string): Promise<boolean> {
                                 <v-text-field
                                     v-model="state.password"
                                     @click:append-inner="toggleVisibility"
-                                    @input="v$['password'].$touch"
-                                    @blur="v$['password'].$touch"
+                                    @input="v$.password.$touch"
+                                    @blur="v$.password.$touch"
                                     :error-messages="
-                                        v$['password'].$errors.map((e) => e.$message.toString())
+                                        v$.password.$errors.map((e) => e.$message.toString())
                                     "
                                     :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
                                     :type="visible ? 'text' : 'password'"

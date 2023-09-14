@@ -21,10 +21,10 @@
                             <v-col cols="12">
                                 <v-text-field
                                     v-model="state.username"
-                                    @input="v$['username'].$touch"
-                                    @blur="v$['username'].$touch"
+                                    @input="v$.username.$touch"
+                                    @blur="v$.username.$touch"
                                     :error-messages="
-                                        v$['username'].$errors.map((e) => e.$message.toString())
+                                        v$.username.$errors.map((e) => e.$message.toString())
                                     "
                                     required
                                     variant="outlined"
@@ -33,10 +33,10 @@
                             <v-col cols="12">
                                 <v-text-field
                                     v-model="state.password"
-                                    @input="v$['password'].$touch"
-                                    @blur="v$['password'].$touch"
+                                    @input="v$.password.$touch"
+                                    @blur="v$.password.$touch"
                                     :error-messages="
-                                        v$['password'].$errors.map((e) => e.$message.toString())
+                                        v$.password.$errors.map((e) => e.$message.toString())
                                     "
                                     :type="visible ? 'text' : 'password'"
                                     required
