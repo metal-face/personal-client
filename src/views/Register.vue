@@ -228,7 +228,7 @@ async function loginUser(token: string): Promise<boolean> {
                         size="x-large"
                         rounded="false"
                         class="ma-1">
-                        Cancle
+                        Cancel
                     </v-btn>
                 </v-card-actions>
             </v-card>
