@@ -57,17 +57,17 @@ const rules = computed<object>(() => ({
 
 const v$: Ref<Validation<object, RegistrationForm>> = useVuelidate(rules, state);
 
-const visible = ref<boolean>(false);
+const visible: Ref<boolean> = ref<boolean>(false);
 
-const loading = ref<boolean>(false);
+const loading: Ref<boolean> = ref<boolean>(false);
 
-const disabled = ref<boolean>(false);
+const disabled: Ref<boolean> = ref<boolean>(false);
 
 const emit = defineEmits<{
     (e: "username:update", username: string): void;
 }>();
 
-function onClick(e: Event) {
+function onClick(e: Event): void {
     e.preventDefault();
     //@ts-ignore
     // eslint-disable-next-line no-undef
@@ -82,7 +82,7 @@ function onClick(e: Event) {
     });
 }
 
-function toggleVisibility() {
+function toggleVisibility(): void {
     visible.value = !visible.value;
 }
 
@@ -100,13 +100,14 @@ async function dispatchRegistration(token: string): Promise<void> {
     const valid = await v$.value.$validate();
 
     if (!valid) {
+        loading.value = false;
         return;
     }
 
     // Register user
-    const regResp = await registerUser(token);
+    const registrationResult = await registerUser(token);
 
-    if (regResp) {
+    if (registrationResult) {
         // @ts-ignore
         // eslint-disable-next-line no-undef
         grecaptcha.ready(function () {
@@ -115,17 +116,20 @@ async function dispatchRegistration(token: string): Promise<void> {
             grecaptcha
                 .execute("6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM", { action: "submit" })
                 .then(async function (token: string) {
-                    await loginUser(token);
-                    await router.push({ name: "Home" });
+                    const loginResult = await loginUser(token);
+                    if (loginResult) {
+                        await router.push({ name: "Home" });
+                    }
                 });
         });
     }
 }
 
 async function registerUser(token: string): Promise<boolean> {
-    await v$.value.$validate();
-
-    // TODO: Ensure the password field passes server criteria before sending
+    const valid = await v$.value.$validate();
+    if (!valid) {
+        return false;
+    }
 
     return AccountsServices.createAccount(state.username, state.email, state.password, token)
         .then(() => {
