@@ -66,6 +66,7 @@
                         rounded="1"
                         variant="flat"
                         block
+                        color="grey-lighten-2"
                         class="ma-1"
                         size="x-large">
                         Cancel
@@ -78,7 +79,7 @@
 <script setup lang="ts">
 import { reactive, ref, defineEmits, computed, Ref } from "vue";
 import { Router, useRouter } from "vue-router";
-import { required, minLength, maxLength } from "@vuelidate/validators";
+import { required, minLength, maxLength, helpers } from "@vuelidate/validators";
 import { sessionStore } from "@/store/SessionStore";
 import { useAccountStore } from "@/store/AccountStore";
 import { useScriptTag } from "@vueuse/core";
@@ -115,11 +116,25 @@ const alert: Alert = reactive({
     timeout: 0,
 });
 
+const passwordRequirements = (value: string): boolean => {
+    const pattern: RegExp = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@#$%^&+=!])/;
+
+    return pattern.test(value);
+};
+
 const state: LoginForm = reactive({ username: "", password: "" });
 
 const rules = computed<object>(() => ({
     username: { required, minLength: minLength(3), maxLength: maxLength(16) },
-    password: { required, minLength: minLength(8), maxLength: maxLength(128) },
+    password: {
+        required,
+        minLength: minLength(8),
+        maxLength: maxLength(128),
+        passwordRequirements: helpers.withMessage(
+            "Password must contain one uppercase, lowercase, and special character",
+            passwordRequirements,
+        ),
+    },
 }));
 
 const v$: Ref<Validation<object, LoginForm>> = useVuelidate(rules, state);
@@ -138,8 +153,10 @@ const account: Account = reactive({
 function onClick(e: Event) {
     e.preventDefault();
     //@ts-ignore
+    // eslint-disable-next-line no-undef
     grecaptcha.ready(function () {
         //@ts-ignore
+        // eslint-disable-next-line no-undef
         grecaptcha
             .execute("6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM", { action: "submit" })
             .then(function (token: string) {
@@ -179,6 +196,7 @@ async function loginUser(token: string): Promise<boolean> {
     if (!valid) {
         // If dirty, reset the form and exit the function.
         v$.value.$reset();
+        loading.value = false;
         return false;
     }
 

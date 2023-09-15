@@ -2,16 +2,16 @@
 import { ref, reactive, onMounted, defineEmits, computed, Ref } from "vue";
 import { Router, useRouter } from "vue-router";
 import { ErrorObject, useVuelidate, Validation } from "@vuelidate/core";
-import { email, required, minLength, maxLength } from "@vuelidate/validators";
-import AccountsServices from "@/services/AccountsServices";
-import CircleLoader from "@/components/utils/CircleLoader.vue";
-import SessionServices from "@/services/SessionServices";
+import { email, required, minLength, maxLength, helpers } from "@vuelidate/validators";
 import { sessionStore } from "@/store/SessionStore";
 import { useScriptTag } from "@vueuse/core";
 import { Alert } from "@/models/Alert";
 import { AlertTypes } from "@/models/AlertTypes";
 import { ColorTypes } from "@/models/ColorTypes";
 import { RegistrationForm } from "@/models/RegistrationForm";
+import AccountsServices from "@/services/AccountsServices";
+import CircleLoader from "@/components/utils/CircleLoader.vue";
+import SessionServices from "@/services/SessionServices";
 
 onMounted(() => {
     clearForm();
@@ -35,11 +35,24 @@ const alert: Alert = reactive({
 });
 
 const state: RegistrationForm = reactive({ email: "", username: "", password: "" });
+const passwordRequirements = (value: string): boolean => {
+    const pattern: RegExp = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@#$%^&+=!])/;
+
+    return pattern.test(value);
+};
 
 const rules = computed<object>(() => ({
     email: { required, email },
     username: { required, minLength: minLength(3), maxLength: maxLength(16) },
-    password: { required, minLength: minLength(8), maxLength: maxLength(128) },
+    password: {
+        required,
+        minLength: minLength(8),
+        maxLength: maxLength(128),
+        passwordRequirements: helpers.withMessage(
+            "Password must contain one uppercase, lowercase, and special character",
+            passwordRequirements,
+        ),
+    },
 }));
 
 const v$: Ref<Validation<object, RegistrationForm>> = useVuelidate(rules, state);
@@ -57,8 +70,10 @@ const emit = defineEmits<{
 function onClick(e: Event) {
     e.preventDefault();
     //@ts-ignore
+    // eslint-disable-next-line no-undef
     grecaptcha.ready(function () {
         //@ts-ignore
+        // eslint-disable-next-line no-undef
         grecaptcha
             .execute("6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM", { action: "submit" })
             .then(function (token: string) {
@@ -93,8 +108,10 @@ async function dispatchRegistration(token: string): Promise<void> {
 
     if (regResp) {
         // @ts-ignore
+        // eslint-disable-next-line no-undef
         grecaptcha.ready(function () {
             //@ts-ignore
+            // eslint-disable-next-line no-undef
             grecaptcha
                 .execute("6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM", { action: "submit" })
                 .then(async function (token: string) {
@@ -211,11 +228,11 @@ async function loginUser(token: string): Promise<boolean> {
                 <v-card-actions class="d-flex flex-column align-center justify-end">
                     <v-btn
                         @click="onClick"
-                        block
                         :disabled="disabled"
+                        block
                         size="x-large"
                         color="accent"
-                        variant="elevated"
+                        variant="flat"
                         rounded="false"
                         class="ma-1">
                         Register
@@ -224,9 +241,9 @@ async function loginUser(token: string): Promise<boolean> {
                         @click="router.push({ name: 'Home' })"
                         variant="flat"
                         block
-                        color="primary"
+                        color="grey-lighten-2"
                         size="x-large"
-                        rounded="false"
+                        rounded="1"
                         class="ma-1">
                         Cancel
                     </v-btn>
