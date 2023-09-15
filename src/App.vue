@@ -1,7 +1,7 @@
 <template>
     <v-app>
         <v-app-bar color="background" location="top" flat>
-            <div class="ml-4">
+            <div class="ml-4" v-if="isLoggedIn">
                 <v-btn
                     @click="navDrawer = !navDrawer"
                     :color="isDark ? 'white' : 'black'"
@@ -74,7 +74,7 @@
 
 <script setup lang="ts">
 import { ThemeInstance, useTheme } from "vuetify";
-import { computed, ref, reactive, ComputedRef, onMounted } from "vue";
+import { computed, ref, reactive, onMounted, ComputedRef } from "vue";
 import { useRouter, Router } from "vue-router";
 import { Account, Role } from "@/models/Account";
 import { useAccountStore } from "@/store/AccountStore";
