@@ -16,6 +16,7 @@ import "katex/dist/katex.min.css";
 import BlogServices from "@/services/BlogServices";
 
 interface Props {
+    demo?: boolean;
     readonly?: string;
     blogId?: string;
 }
@@ -266,7 +267,7 @@ onMounted(() => {
 <template>
     <v-row justify="center" align-content="center">
         <!-- Actual Title -->
-        <v-col v-if="!titleState" :cols="12">
+        <v-col v-if="!titleState && !props.demo" :cols="12">
             <v-card v-if="readonlyProp === true" flat height="100%" color="transparent">
                 <v-card-title class="text-center page-title">
                     <h1>{{ blogPostTitle }}</h1>
@@ -328,7 +329,7 @@ onMounted(() => {
                 </v-col>
             </v-row>
         </v-col>
-        <v-col :cols="inputWidth">
+        <v-col v-if="!demo" :cols="inputWidth">
             <v-card variant="flat" color="transparent" class="ml-auto">
                 <v-select
                     v-model="previewThemePreference"
