@@ -257,7 +257,13 @@ async function fetchAccountById(): Promise<boolean> {
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display&family=Source+Code+Pro&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Prata&display=swap");
 
-p {
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     word-break: break-word;
 }
 </style>
