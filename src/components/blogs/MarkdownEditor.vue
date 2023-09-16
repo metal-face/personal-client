@@ -57,6 +57,7 @@ const previewTheme = reactive<PreviewTheme[]>([
 /**
  *  Determines 'readonly' state based on either
  *  the readonly prop, or the demo prop, being true.
+ *  || props.demo
  */
 const readonlyProp = computed<boolean>(() => {
     return props.readonly === "true" || props.demo;
