@@ -22,7 +22,7 @@ function handleRedirection(blogId: string): void {
 </script>
 
 <template>
-    <v-card variant="elevated" elevation="4" class="blog-card pa-3">
+    <v-card variant="elevated" elevation="4" class="blog-card pa-3 ma-3">
         <v-card-title @click="handleRedirection(blogId)" class="card-title mb-0 pa-0 text-center">
             {{ props.blogPostTitle }}
         </v-card-title>
