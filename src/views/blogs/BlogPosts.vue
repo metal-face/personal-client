@@ -97,7 +97,7 @@ async function fetchAllBlogsForUser() {
 }
 </script>
 <template>
-    <v-row class="fill-height">
+    <v-row>
         <CircleLoader :loading="loading" circle-color="accent" />
         <ConfirmDelete
             @confirm:delete="deleteBlogPostById"
@@ -105,17 +105,17 @@ async function fetchAllBlogsForUser() {
             :visible="confirmDeleteState.visible"
             :resourceId="confirmDeleteState.idToDelete" />
         <v-col cols="12">
-            <v-card variant="flat" color="primary" rounded="1" class="fill-height">
+            <v-card variant="flat" color="primary" rounded="1">
                 <v-card-title class="page-title text-center ma-3">
                     <h1 class="text-decoration-underline">Blog Posts</h1>
                 </v-card-title>
-                <v-row class="fill-height" justify="center" align-content="center">
+                <v-row justify="center">
                     <v-col cols="6">
                         <EmptyBlogPostIndicator
                             v-if="!blogs.length"
                             class="page-title"
                             text="You have no blogs!" />
-                        <v-card class="fill-height" v-if="blogs.length > 0">
+                        <div v-if="blogs.length > 0">
                             <BlogPostCard
                                 v-for="(blog, i) in blogs"
                                 @delete:confirm="openConfirmDelete"
@@ -124,7 +124,7 @@ async function fetchAllBlogsForUser() {
                                 :creation-date="humanReadableData(blog.created_at)"
                                 :blog-post="blog.blog_post"
                                 :blog-title="blog.blog_title" />
-                        </v-card>
+                        </div>
                     </v-col>
                 </v-row>
 
