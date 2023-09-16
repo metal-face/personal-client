@@ -73,11 +73,13 @@ function onResize(): void {
                     {{ snackbar.text }}
                 </v-snackbar>
             </v-col>
-            <v-col :cols="colCount">
-                <v-card variant="elevated" elevation="8">
-                    <MarkdownEditor :demo="true" />
-                </v-card>
-            </v-col>
+            <v-row justify="center" align-content="center">
+                <v-col :cols="colCount">
+                    <v-card variant="elevated" elevation="8">
+                        <MarkdownEditor :demo="true" />
+                    </v-card>
+                </v-col>
+            </v-row>
         </v-row>
     </v-container>
 </template>
