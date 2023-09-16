@@ -44,7 +44,7 @@ function onResize(): void {
             colCount.value = 8;
             break;
         case "lg":
-            colCount.value = 6;
+            colCount.value = 8;
             break;
         case "xl":
             colCount.value = 6;
@@ -54,7 +54,7 @@ function onResize(): void {
 </script>
 
 <template>
-    <v-container fluid class="pa-0">
+    <v-container fluid class="fill-height pa-0">
         <v-row v-resize="onResize" class="fill-height" justify="center">
             <v-col cols="12">
                 <v-card
