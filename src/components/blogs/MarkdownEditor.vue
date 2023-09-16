@@ -4,6 +4,8 @@ import { computed, reactive, ref, watch, defineEmits, onMounted } from "vue";
 import { DisplayInstance, ThemeInstance, useDisplay, useTheme } from "vuetify";
 import { Badge } from "@/models/Badge";
 import { lineNumbers } from "@codemirror/view";
+import { useBlogStore } from "@/store/BlogStore";
+import BlogServices from "@/services/BlogServices";
 import mermaid from "mermaid";
 import screenfull from "screenfull";
 import highlight from "highlight.js";
@@ -13,7 +15,6 @@ import "highlight.js/styles/github.css";
 import "cropperjs/dist/cropper.css";
 import "md-editor-v3/lib/style.css";
 import "katex/dist/katex.min.css";
-import BlogServices from "@/services/BlogServices";
 
 interface Props {
     demo?: boolean;
@@ -34,6 +35,8 @@ const emit = defineEmits<{
 
 const props = defineProps<Props>();
 
+const blogStore = useBlogStore();
+
 const theme: ThemeInstance = useTheme();
 const display: DisplayInstance = useDisplay();
 
@@ -51,8 +54,12 @@ const previewTheme = reactive<PreviewTheme[]>([
     { text: "Cyanosis", value: "cyanosis" },
 ]);
 
+/**
+ *  Determines 'readonly' state based on either
+ *  the readonly prop, or the demo prop, being true.
+ */
 const readonlyProp = computed<boolean>(() => {
-    return props.readonly === "true";
+    return props.readonly === "true" || props.demo;
 });
 
 const inputWidth = computed<number>(() => {
@@ -254,12 +261,15 @@ async function fetchBlogById() {
         });
 }
 
-onMounted(() => {
+onMounted(async () => {
     if (readonlyProp.value) {
         toolbarItems.splice(0, toolbarItems.length);
     }
+    if (props.demo) {
+        blogPostBody.value = blogStore.fetchDemoBlog;
+    }
     if (props.blogId) {
-        fetchBlogById();
+        await fetchBlogById();
     }
 });
 </script>
@@ -298,6 +308,7 @@ onMounted(() => {
                 </v-badge>
             </v-card>
         </v-col>
+
         <!-- Title Editor -->
         <v-col v-if="titleState" :cols="12">
             <v-row justify="center" align-content="center">
@@ -329,6 +340,8 @@ onMounted(() => {
                 </v-col>
             </v-row>
         </v-col>
+
+        <!-- Preview Theme Selector -->
         <v-col v-if="!demo" :cols="inputWidth">
             <v-card variant="flat" color="transparent" class="ml-auto">
                 <v-select
@@ -346,6 +359,7 @@ onMounted(() => {
             </v-card>
         </v-col>
 
+        <!-- Markdown Editor -->
         <v-col :cols="12">
             <MdEditor
                 v-model="blogPostBody"
