@@ -9,6 +9,7 @@ import BlogServices from "@/services/BlogServices";
 import BlogPostCard from "@/components/blogs/PersonalBlogCard.vue";
 import ConfirmDelete from "@/components/utils/ConfirmDelete.vue";
 import CircleLoader from "@/components/utils/CircleLoader.vue";
+import EmptyBlogPostIndicator from "@/components/blogs/EmptyBlogPostIndicator.vue";
 
 interface Blog {
     blog_title: string;
@@ -105,21 +106,25 @@ async function fetchAllBlogsForUser() {
             :resourceId="confirmDeleteState.idToDelete" />
         <v-col cols="12">
             <v-card variant="flat" color="primary" rounded="1" class="fill-height">
-                <!-- TODO: if there are no blogs, display an indicator to create a blog. -->
                 <v-card-title class="page-title text-center ma-3">
                     <h1 class="text-decoration-underline">Blog Posts</h1>
                 </v-card-title>
-                <v-row justify="center" align-content="center">
+                <v-row class="fill-height" justify="center" align-content="center">
                     <v-col cols="6">
-                        <BlogPostCard
-                            v-for="(blog, i) in blogs"
-                            :key="i"
-                            @delete:confirm="openConfirmDelete"
-                            :blogId="blog.blog_id"
-                            :creation-date="humanReadableData(blog.created_at)"
-                            :blog-post="blog.blog_post"
-                            :blog-title="blog.blog_title">
-                        </BlogPostCard>
+                        <EmptyBlogPostIndicator
+                            v-if="!blogs.length"
+                            class="page-title"
+                            text="You have no blogs!" />
+                        <v-card class="fill-height" v-if="blogs.length > 0">
+                            <BlogPostCard
+                                v-for="(blog, i) in blogs"
+                                @delete:confirm="openConfirmDelete"
+                                :key="i"
+                                :blogId="blog.blog_id"
+                                :creation-date="humanReadableData(blog.created_at)"
+                                :blog-post="blog.blog_post"
+                                :blog-title="blog.blog_title" />
+                        </v-card>
                     </v-col>
                 </v-row>
 
