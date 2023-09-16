@@ -74,7 +74,7 @@ onMounted(async () => {
                 <v-card-title class="text-center page-title text-decoration-underline">
                     <h1 class="my-5">Your Feed</h1>
                 </v-card-title>
-                <v-row class="fill-height" justify="center" align-content="center">
+                <v-row justify="center">
                     <v-col v-if="!blogPosts.blogs.length">
                         <EmptyBlogPostIndicator
                             text="There have been no blogs written by any users." />
