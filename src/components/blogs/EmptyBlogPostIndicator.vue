@@ -19,11 +19,11 @@ const isDark: ComputedRef<boolean> = computed<boolean>(() => {
     <v-card
         variant="elevated"
         elevation="4"
-        class="d-flex justify-center align-center"
-        :color="isDark ? 'black' : 'white'">
-        <v-card-text class="text-center">
+        class="d-flex justify-center align-center ma-3 pa-3"
+        :color="isDark ? 'primary' : 'white'">
+        <v-card-title class="text-center">
             {{ props.text }}
-        </v-card-text>
+        </v-card-title>
     </v-card>
 </template>
 
