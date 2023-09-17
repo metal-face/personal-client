@@ -1,29 +1,23 @@
 <script setup lang="ts">
-import { ThemeInstance, useTheme } from "vuetify";
-import { computed, reactive, onMounted, ref, nextTick } from "vue";
+import { DisplayInstance, ThemeInstance, useDisplay, useTheme } from "vuetify";
+import { computed, reactive, onMounted, ref, nextTick, Ref } from "vue";
 import { Session } from "@/models/Session";
 import { format } from "date-fns";
 import { ConfirmDeleteState } from "@/models/ConfirmDeleteState";
 import { sessionStore } from "@/store/SessionStore";
+import { Blog } from "@/models/Blog";
 import BlogServices from "@/services/BlogServices";
 import BlogPostCard from "@/components/blogs/PersonalBlogCard.vue";
 import ConfirmDelete from "@/components/utils/ConfirmDelete.vue";
 import CircleLoader from "@/components/utils/CircleLoader.vue";
 import EmptyBlogPostIndicator from "@/components/blogs/EmptyBlogPostIndicator.vue";
 
-interface Blog {
-    blog_title: string;
-    blog_post: string;
-    account_id: string;
-    created_at: string;
-    blog_id: string;
-}
-
 onMounted(() => {
     fetchAllBlogsForUser();
 });
 
 const theme: ThemeInstance = useTheme();
+const display: DisplayInstance = useDisplay();
 const sessStore = sessionStore();
 
 const rawStorageSession = window.localStorage.getItem("session");
@@ -46,6 +40,8 @@ const confirmDeleteState = reactive<ConfirmDeleteState>({
 });
 
 const blogs: Blog[] = reactive([]);
+
+const colCount: Ref<number> = ref<number>(6);
 
 function openConfirmDelete(idToDelete: string): void {
     confirmDeleteState.visible = true;
@@ -81,6 +77,29 @@ async function deleteBlogPostById(blogId: string) {
     });
 }
 
+function onResize(): void {
+    switch (display.name.value) {
+        case "xs":
+            colCount.value = 12;
+            break;
+        case "sm":
+            colCount.value = 10;
+            break;
+        case "md":
+            colCount.value = 6;
+            break;
+        case "lg":
+            colCount.value = 4;
+            break;
+        case "xl":
+            colCount.value = 4;
+            break;
+        default:
+            colCount.value = 6;
+            break;
+    }
+}
+
 async function fetchAllBlogsForUser() {
     loading.value = true;
     BlogServices.fetchManyBlogs(session.account_id)
@@ -97,7 +116,7 @@ async function fetchAllBlogsForUser() {
 }
 </script>
 <template>
-    <v-row>
+    <v-row v-resize="onResize">
         <CircleLoader :loading="loading" circle-color="accent" />
         <ConfirmDelete
             @confirm:delete="deleteBlogPostById"
@@ -105,17 +124,16 @@ async function fetchAllBlogsForUser() {
             :visible="confirmDeleteState.visible"
             :resourceId="confirmDeleteState.idToDelete" />
         <v-col cols="12">
-            <v-card variant="flat" color="primary" rounded="1">
+            <v-card variant="flat" :color="isDark ? 'black' : 'white'" rounded="1">
                 <v-card-title class="page-title text-center ma-3">
                     <h1 class="text-decoration-underline">Blog Posts</h1>
                 </v-card-title>
                 <v-row justify="center">
-                    <v-col cols="6">
-                        <EmptyBlogPostIndicator
-                            v-if="!blogs.length"
-                            class="page-title"
-                            text="You have no blogs!" />
-                        <div v-if="blogs.length > 0">
+                    <v-col v-if="!blogs.length" :cols="colCount">
+                        <EmptyBlogPostIndicator class="page-title" text="You have no blogs!" />
+                    </v-col>
+                    <v-col v-if="blogs.length > 0" :cols="colCount">
+                        <div>
                             <BlogPostCard
                                 v-for="(blog, i) in blogs"
                                 @delete:confirm="openConfirmDelete"
@@ -132,7 +150,7 @@ async function fetchAllBlogsForUser() {
                     <template #activator="{ props }">
                         <v-btn
                             :to="{ name: 'BlogCreator' }"
-                            :color="isDark ? 'white' : 'black'"
+                            :color="isDark ? 'accent' : 'black'"
                             v-bind="props"
                             position="fixed"
                             location="bottom right"
