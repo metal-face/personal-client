@@ -27,10 +27,10 @@ function handleRedirection(name: string, params: object) {
 
 <template>
     <v-card
-        class="d-flex justify-space-between align-center my-2 pa-4"
+        class="d-flex align-center my-2 pa-4"
         variant="elevated"
         elevation="4"
-        color="transparent"
+        color="primary"
         height="100%"
         rounded="1"
         width="100%">
@@ -47,7 +47,8 @@ function handleRedirection(name: string, params: object) {
             </v-card-title>
             <v-card-subtitle class="my-0 ml-2 pa-0">{{ props.creationDate }}</v-card-subtitle>
         </div>
-        <div>
+        <v-spacer />
+        <v-card-actions>
             <!-- EDIT-->
             <v-tooltip location="top">
                 <template #activator="{ props }">
@@ -79,14 +80,13 @@ function handleRedirection(name: string, params: object) {
                         size="x-large"
                         class="ma-0 pa-0"
                         variant="elevated"
-                        position="fixed"
                         rounded="1"
                         icon="mdi-trash-can"
                         color="error" />
                 </template>
                 <span>Delete</span>
             </v-tooltip>
-        </div>
+        </v-card-actions>
     </v-card>
 </template>
 
