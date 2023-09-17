@@ -24,6 +24,7 @@ export default defineConfig({
         },
         extensions: [".js", ".json", ".jsx", ".mjs", ".ts", ".tsx", ".vue"],
     },
+    base: "./",
     server: {
         cors: { origin: true },
         port: 3000,
