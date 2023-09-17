@@ -75,7 +75,7 @@ onMounted(async () => {
                     <h1 class="my-5">Your Feed</h1>
                 </v-card-title>
                 <v-row justify="center">
-                    <v-col v-if="!blogPosts.blogs.length">
+                    <v-col v-if="!blogPosts.blogs.length" :cols="colCount">
                         <EmptyBlogPostIndicator
                             text="There have been no blogs written by any users." />
                     </v-col>
