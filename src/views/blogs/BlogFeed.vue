@@ -59,6 +59,10 @@ async function fetchManyBlogs() {
         });
 }
 
+function handleLoadingState(state: boolean) {
+    loading.value = state;
+}
+
 onMounted(async () => {
     loading.value = true;
     await fetchManyBlogs();
@@ -81,8 +85,10 @@ onMounted(async () => {
                     </v-col>
                     <v-col v-if="blogPosts.blogs.length > 0" :cols="colCount" class="fill-height">
                         <GeneralBlogCard
+                            @loading="handleLoadingState"
                             v-for="blog in blogPosts.blogs"
                             :key="blog.blog_id"
+                            :account_id="blog.account_id"
                             :blogId="blog.blog_id"
                             :blogPostTitle="blog.blog_title"
                             :blogCreationDate="humanReadableDate(blog.created_at)" />
