@@ -126,6 +126,7 @@ onMounted(() => {
                         @click="redirectUser('BlogPosts')"
                         variant="elevated"
                         block
+                        color="primary"
                         size="x-large"
                         rounded="1"
                         class="mx-auto">
