@@ -78,9 +78,11 @@ function handleRedirection(blogId: string): void {
 
 <template>
     <v-card variant="elevated" elevation="4" class="blog-card pa-3 ma-3">
-        <v-card-subtitle class="d-flex justify-end align-center">
-            {{ account.username }}
-        </v-card-subtitle>
+        <v-card flat position="absolute" location="top right" class="ma-1">
+            <v-chip prepend-icon="mdi-account" variant="elevated" elevation="1">
+                {{ account.username }}
+            </v-chip>
+        </v-card>
         <v-card-title @click="handleRedirection(blogId)" class="card-title mb-0 pa-0 text-center">
             {{ props.blogPostTitle }}
         </v-card-title>
