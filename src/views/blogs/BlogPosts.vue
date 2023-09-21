@@ -116,7 +116,7 @@ async function fetchAllBlogsForUser() {
 }
 </script>
 <template>
-    <v-row v-resize="onResize">
+    <v-row v-resize="onResize" class="fill-height">
         <CircleLoader :loading="loading" circle-color="accent" />
         <ConfirmDelete
             @confirm:delete="deleteBlogPostById"
@@ -124,7 +124,7 @@ async function fetchAllBlogsForUser() {
             :visible="confirmDeleteState.visible"
             :resourceId="confirmDeleteState.idToDelete" />
         <v-col cols="12">
-            <v-card variant="flat" :color="isDark ? 'black' : 'white'" rounded="1">
+            <v-card variant="flat" color="transparent" rounded="1" class="fill-height">
                 <v-card-title class="page-title text-center ma-3">
                     <h1 class="text-decoration-underline">Blog Posts</h1>
                 </v-card-title>
@@ -133,7 +133,7 @@ async function fetchAllBlogsForUser() {
                         <EmptyBlogPostIndicator class="page-title" text="You have no blogs!" />
                     </v-col>
                     <v-col v-if="blogs.length > 0" :cols="colCount">
-                        <div>
+                        <div class="bg-transparent">
                             <BlogPostCard
                                 v-for="(blog, i) in blogs"
                                 @delete:confirm="openConfirmDelete"
