@@ -11,7 +11,13 @@ import screenfull from "screenfull";
 import highlight from "highlight.js";
 import katex from "katex";
 import Cropper from "cropperjs";
+// import prettier from "prettier";
+// import parserMarkdown from "prettier/parser-markdown";
+
+// https://at.alicdn.com/t/c/font_2605852_u82y61ve02.js
+// import "./assets/iconfont.js";
 import "highlight.js/styles/github.css";
+import "highlight.js/styles/atom-one-dark.css";
 import "cropperjs/dist/cropper.css";
 import "md-editor-v3/lib/style.css";
 import "katex/dist/katex.min.css";
@@ -123,6 +129,10 @@ const editBadge = reactive<Badge>({
 // MDEditor configuration.
 config({
     editorExtensions: {
+        // prettier: {
+        //     prettierInstance: prettier,
+        //     parserMarkdownInstance: parserMarkdown,
+        // },
         highlight: {
             instance: highlight,
         },
@@ -151,73 +161,6 @@ const mermaidConfig = {
 // Mermaid Initialization
 mermaid.initialize(mermaidConfig);
 
-// Display breakpoint watcher
-watch(
-    display.name,
-    (newVal: any) => {
-        switch (newVal) {
-            case "xs":
-                editorRef.value?.togglePreview(false);
-                if (toolbarItems.indexOf("sub") >= 0) {
-                    toolbarItems.splice(toolbarItems.indexOf("sub"), 1);
-                }
-                if (toolbarItems.indexOf("sup") >= 0) {
-                    toolbarItems.splice(toolbarItems.indexOf("sup"), 1);
-                }
-                if (toolbarItems.indexOf("preview") < 0 && !readonlyProp.value) {
-                    toolbarItems.push("preview");
-                }
-                break;
-            case "sm":
-                editorRef.value?.togglePreview(false);
-                if (toolbarItems.indexOf("sub") >= 0) {
-                    toolbarItems.splice(toolbarItems.indexOf("sub"), 1);
-                }
-                if (toolbarItems.indexOf("sup") >= 0) {
-                    toolbarItems.splice(toolbarItems.indexOf("sup"), 1);
-                }
-                if (toolbarItems.indexOf("preview") < 0 && !readonlyProp.value) {
-                    toolbarItems.push("preview");
-                }
-                break;
-            case "md":
-                editorRef.value?.togglePreview(true);
-                if (toolbarItems.indexOf("sub") < 0 && !readonlyProp.value) {
-                    toolbarItems.push("sub");
-                }
-                if (toolbarItems.indexOf("preview") >= 0) {
-                    toolbarItems.splice(toolbarItems.indexOf("preview"), 1);
-                }
-                break;
-            case "lg":
-                editorRef.value?.togglePreview(true);
-                if (toolbarItems.indexOf("sub") < 0 && !readonlyProp.value) {
-                    toolbarItems.push("sub");
-                }
-                break;
-            case "xl":
-                editorRef.value?.togglePreview(true);
-                if (toolbarItems.indexOf("sub") < 0 && !readonlyProp.value) {
-                    toolbarItems.push("sub");
-                }
-                if (toolbarItems.indexOf("sup") < 0 && !readonlyProp.value) {
-                    toolbarItems.push("sup");
-                }
-                break;
-            case "xxl":
-                editorRef.value?.togglePreview(true);
-                if (toolbarItems.indexOf("sub") < 0 && !readonlyProp.value) {
-                    toolbarItems.push("sub");
-                }
-                break;
-            default:
-                editorRef.value?.togglePreview(true);
-                break;
-        }
-    },
-    { immediate: true },
-);
-
 watch(blogPostTitle, () => {
     emit("title:change", blogPostTitle.value);
 });
@@ -236,6 +179,68 @@ const saveContentToLocalStorage = (saveContent: string) => {
 
     emit("save:local");
 };
+
+function handleResize(): void {
+    switch (display.name.value) {
+        case "xs":
+            editorRef.value?.togglePreview(false);
+            if (toolbarItems.indexOf("sub") >= 0) {
+                toolbarItems.splice(toolbarItems.indexOf("sub"), 1);
+            }
+            if (toolbarItems.indexOf("sup") >= 0) {
+                toolbarItems.splice(toolbarItems.indexOf("sup"), 1);
+            }
+            if (toolbarItems.indexOf("preview") < 0 && !readonlyProp.value) {
+                toolbarItems.push("preview");
+            }
+            break;
+        case "sm":
+            editorRef.value?.togglePreview(false);
+            if (toolbarItems.indexOf("sub") >= 0) {
+                toolbarItems.splice(toolbarItems.indexOf("sub"), 1);
+            }
+            if (toolbarItems.indexOf("sup") >= 0) {
+                toolbarItems.splice(toolbarItems.indexOf("sup"), 1);
+            }
+            if (toolbarItems.indexOf("preview") < 0 && !readonlyProp.value) {
+                toolbarItems.push("preview");
+            }
+            break;
+        case "md":
+            editorRef.value?.togglePreview(true);
+            if (toolbarItems.indexOf("sub") < 0 && !readonlyProp.value) {
+                toolbarItems.push("sub");
+            }
+            if (toolbarItems.indexOf("preview") >= 0) {
+                toolbarItems.splice(toolbarItems.indexOf("preview"), 1);
+            }
+            break;
+        case "lg":
+            editorRef.value?.togglePreview(true);
+            if (toolbarItems.indexOf("sub") < 0 && !readonlyProp.value) {
+                toolbarItems.push("sub");
+            }
+            break;
+        case "xl":
+            editorRef.value?.togglePreview(true);
+            if (toolbarItems.indexOf("sub") < 0 && !readonlyProp.value) {
+                toolbarItems.push("sub");
+            }
+            if (toolbarItems.indexOf("sup") < 0 && !readonlyProp.value) {
+                toolbarItems.push("sup");
+            }
+            break;
+        case "xxl":
+            editorRef.value?.togglePreview(true);
+            if (toolbarItems.indexOf("sub") < 0 && !readonlyProp.value) {
+                toolbarItems.push("sub");
+            }
+            break;
+        default:
+            editorRef.value?.togglePreview(true);
+            break;
+    }
+}
 
 /**
  * Handles the keydown event, specifically
@@ -276,7 +281,7 @@ onMounted(async () => {
 </script>
 
 <template>
-    <v-row justify="center" align-content="center">
+    <v-row v-resize="handleResize" justify="center" align-content="center">
         <!-- Actual Title -->
         <v-col v-if="!titleState && !props.demo" :cols="12">
             <v-card v-if="readonlyProp === true" flat height="100%" color="transparent">
@@ -373,7 +378,6 @@ onMounted(async () => {
                 :read-only="readonlyProp"
                 ref="editorRef"
                 language="en-US"
-                no-prettier
                 no-upload-img
                 show-code-row-number
                 class="page-title">
