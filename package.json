@@ -34,7 +34,6 @@
     "@types/lodash-es": "^4.17.8",
     "@types/marked": "^5.0.1",
     "@types/node": "^18.11.9",
-    "@types/prettier": "^3.0.0",
     "@types/sanitize-html": "^2.9.0",
     "@types/webfontloader": "^1.6.35",
     "@vitejs/plugin-vue": "^3.0.3",
