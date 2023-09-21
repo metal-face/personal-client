@@ -74,7 +74,7 @@ onMounted(async () => {
     <v-row class="fill-height" v-resize="onResize">
         <v-col :cols="12">
             <CircleLoader :loading="loading" circle-color="pink" />
-            <v-card class="fill-height" variant="flat" :color="isDark ? 'black' : 'white'">
+            <v-card class="fill-height" variant="flat" color="transparent">
                 <v-card-title class="text-center page-title text-decoration-underline">
                     <h1 class="my-5">Your Feed</h1>
                 </v-card-title>
