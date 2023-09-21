@@ -19,7 +19,7 @@ import colors from "vuetify/lib/util/colors";
 const customDarkTheme: ThemeDefinition = {
     dark: true,
     colors: {
-        primary: colors.grey.darken4,
+        primary: colors.grey.darken3,
         secondary: colors.grey.darken3,
         accent: colors.indigo.darken1,
         background: colors.shades.black,
