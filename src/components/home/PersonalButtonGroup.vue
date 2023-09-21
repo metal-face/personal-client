@@ -3,8 +3,8 @@
         color="transparent"
         flat
         rounded="0"
-        class="d-flex flex-wrap align-center justify-space-between">
-        <div class="ma-2">
+        class="d-flex flex-wrap align-center justify-space-between ma-3">
+        <div class="ma-1">
             <v-tooltip text="metal-face" location="bottom">
                 <template #activator="{ props }">
                     <v-btn
@@ -13,14 +13,14 @@
                         href="https://www.github.com/metal-face"
                         target="_blank"
                         variant="elevated"
-                        elevation="4"
+                        elevation="2"
                         color="primary">
                         <v-icon size="large" icon="mdi-github" />
                     </v-btn>
                 </template>
             </v-tooltip>
         </div>
-        <div class="ma-2">
+        <div class="ma-1">
             <v-tooltip location="bottom" text="bryanhughes1992">
                 <template #activator="{ props }">
                     <v-btn
@@ -28,14 +28,14 @@
                         rounded="1"
                         href="https://www.linkedin.com/in/bryanhughes1992/"
                         variant="elevated"
-                        elevation="4"
+                        elevation="2"
                         color="primary">
                         <v-icon size="large" color="#0077B5" icon="mdi-linkedin" />
                     </v-btn>
                 </template>
             </v-tooltip>
         </div>
-        <div class="ma-2">
+        <div class="ma-1">
             <v-tooltip text="scrotalmass" location="bottom">
                 <template #activator="{ props }">
                     <v-btn
@@ -43,14 +43,14 @@
                         rounded="1"
                         href="https://twitter.com/scrotalmass"
                         variant="elevated"
-                        elevation="4"
+                        elevation="2"
                         color="primary">
                         <v-icon size="large" icon="mdi-twitter" color="#2598fe" />
                     </v-btn>
                 </template>
             </v-tooltip>
         </div>
-        <div class="ma-2">
+        <div class="ma-1">
             <v-tooltip text="metalfaces" location="bottom">
                 <template #activator="{ props }">
                     <v-btn
@@ -58,7 +58,7 @@
                         href="https://discordapp.com/users/516293689774178316"
                         rounded="1"
                         variant="elevated"
-                        elevation="4"
+                        elevation="2"
                         color="primary">
                         <svg
                             height="1.5rem"
@@ -82,7 +82,7 @@
                 </template>
             </v-tooltip>
         </div>
-        <div class="ma-2">
+        <div class="ma-1">
             <v-tooltip text="Email" location="bottom">
                 <template #activator="{ props }">
                     <v-btn
@@ -90,7 +90,7 @@
                         rounded="1"
                         href="mailto:mail@bryanhughes.net"
                         variant="elevated"
-                        elevation="4"
+                        elevation="2"
                         color="primary">
                         <v-icon size="large" icon="mdi-email" />
                     </v-btn>
