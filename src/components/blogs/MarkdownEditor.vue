@@ -394,14 +394,7 @@ onMounted(async () => {
     font-family: "Prata", "serif";
     font-size: x-large;
 }
-.default-theme h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    margin: 0 !important;
-}
+
 .page-title {
     font-family: "Prata", "serif";
 }
