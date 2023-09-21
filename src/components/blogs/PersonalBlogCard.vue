@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouteParamsRaw, Router, useRouter } from "vue-router";
 import { computed } from "vue";
+import { ThemeInstance, useTheme } from "vuetify";
 
 interface Props {
     blogTitle: string;
@@ -8,6 +9,12 @@ interface Props {
     blogId: string;
     creationDate: string;
 }
+
+const theme: ThemeInstance = useTheme();
+
+const isDark = computed<boolean>(() => {
+    return theme.current.value.dark;
+});
 
 const router: Router = useRouter();
 const props = defineProps<Props>();
@@ -30,7 +37,7 @@ function handleRedirection(name: string, params: object) {
         class="d-flex align-center my-2 pa-4"
         variant="elevated"
         elevation="4"
-        color="primary"
+        :color="isDark ? 'secondary' : 'primary'"
         height="100%"
         rounded="1"
         width="100%">
