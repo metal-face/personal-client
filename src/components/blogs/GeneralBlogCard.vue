@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive } from "vue";
+import { computed, onMounted, reactive, ref, Ref } from "vue";
 import { Router, useRouter } from "vue-router";
 import { Account, Role } from "@/models/Account";
 import AccountsServices from "@/services/AccountsServices";
+import { DisplayInstance, useDisplay } from "vuetify";
 
 onMounted(async () => {
     emit("loading", true);
@@ -23,6 +24,8 @@ const emit = defineEmits<{
 
 const router: Router = useRouter();
 
+const display: DisplayInstance = useDisplay();
+
 const props = defineProps<Props>();
 
 const account = reactive<Account>({
@@ -40,6 +43,21 @@ const blogId = computed<string>(() => {
 const accountId = computed<string>(() => {
     return props.account_id;
 });
+
+const isMobile: Ref<boolean> = ref<boolean>(false);
+
+function handleResize(): void {
+    switch (display.name.value) {
+        case "xs":
+            isMobile.value = true;
+            break;
+        case "sm":
+            isMobile.value = false;
+            break;
+        default:
+            isMobile.value = false;
+    }
+}
 
 async function fetchAccountById(): Promise<boolean> {
     const res = await AccountsServices.fetchAccountById(accountId.value);
@@ -77,11 +95,26 @@ function handleRedirection(blogId: string): void {
 </script>
 
 <template>
-    <v-card variant="elevated" elevation="4" class="blog-card pa-3 ma-3">
-        <v-card flat position="absolute" location="top right" class="mr-2 mt-2">
+    <v-card v-resize="handleResize" variant="elevated" elevation="4" class="blog-card pa-3 ma-3">
+        <v-card
+            v-if="!isMobile"
+            density="compact"
+            flat
+            position="absolute"
+            location="top right"
+            class="mr-2 mt-2">
             <v-chip color="grey" prepend-icon="mdi-account" variant="elevated" elevation="1">
                 {{ account.username }}
             </v-chip>
+        </v-card>
+        <v-card
+            v-if="isMobile"
+            rounded
+            flat
+            location="top right"
+            density="compact"
+            class="d-flex justify-end pa-1">
+            {{ account.username }}
         </v-card>
         <v-card-title @click="handleRedirection(blogId)" class="card-title mb-0 pa-0 text-center">
             {{ props.blogPostTitle }}
