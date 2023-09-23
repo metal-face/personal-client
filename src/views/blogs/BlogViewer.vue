@@ -65,6 +65,8 @@ const editorWidth = computed<number>(() => {
 const scrollElement = document.documentElement;
 const id: string = "mdEditor";
 
+const isMobile: Ref<boolean> = ref<boolean>(false);
+
 async function fetchBlogById() {
     BlogServices.fetchBlogById(props.blogId)
         .then((res) => {
@@ -74,6 +76,20 @@ async function fetchBlogById() {
         .catch((err) => {
             console.error(err);
         });
+}
+
+function handleResize(): void {
+    switch (display.name.value) {
+        case "xs":
+            isMobile.value = true;
+            break;
+        case "sm":
+            isMobile.value = false;
+            break;
+        default:
+            isMobile.value = false;
+            break;
+    }
 }
 
 // MDEditor configuration.
@@ -107,13 +123,14 @@ onMounted(async () => {
 </script>
 
 <template>
-    <v-row justify="center">
+    <v-row v-resize="handleResize" justify="center">
         <v-col :cols="editorWidth">
             <v-card color="transparent" variant="elevated" elevation="8" width="100%" height="100%">
                 <v-card-title class="ma-2 editor text-center">
-                    <h1 class="ma-2">
+                    <h1 v-if="!isMobile" class="ma-2">
                         {{ blog.blogPostTitle }}
                     </h1>
+                    <h3 v-if="isMobile" class="ma-2">{{ blog.blogPostTitle }}</h3>
                 </v-card-title>
                 <MdPreview
                     :modelValue="blog.blogPostBody"
