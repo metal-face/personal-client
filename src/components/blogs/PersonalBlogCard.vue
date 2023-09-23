@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouteParamsRaw, Router, useRouter } from "vue-router";
-import { computed } from "vue";
-import { ThemeInstance, useTheme } from "vuetify";
+import { computed, ComputedRef, ref, Ref } from "vue";
+import { DisplayInstance, ThemeInstance, useDisplay, useTheme } from "vuetify";
 
 interface Props {
     blogTitle: string;
@@ -11,6 +11,8 @@ interface Props {
 }
 
 const theme: ThemeInstance = useTheme();
+
+const display: DisplayInstance = useDisplay();
 
 const isDark = computed<boolean>(() => {
     return theme.current.value.dark;
@@ -27,6 +29,24 @@ const blogId = computed<string>(() => {
     return props.blogId;
 });
 
+const mobileBreakpoint: ComputedRef<boolean> = computed<boolean>(() => {
+    return display.mobile.value;
+});
+const isMobile: Ref<boolean> = ref<boolean>(false);
+
+function handleResize(): void {
+    switch (display.name.value) {
+        case "xs":
+            if (mobileBreakpoint.value) {
+                isMobile.value = true;
+            }
+            break;
+        case "sm":
+            isMobile.value = false;
+            break;
+    }
+}
+
 function handleRedirection(name: string, params: object) {
     router.push({ name: name, params: params as RouteParamsRaw });
 }
@@ -34,6 +54,7 @@ function handleRedirection(name: string, params: object) {
 
 <template>
     <v-card
+        v-resize="handleResize"
         class="d-flex align-center my-2 pa-4"
         variant="elevated"
         elevation="4"
@@ -67,11 +88,11 @@ function handleRedirection(name: string, params: object) {
                             })
                         "
                         v-bind="props"
-                        size="x-large"
+                        :size="isMobile ? 'small' : 'x-large'"
                         rounded="1"
                         icon="mdi-pencil"
                         variant="elevated"
-                        class="ma-0 mr-1 pa-0"
+                        class="ma-0 mr-2 pa-0"
                         color="info">
                     </v-btn>
                 </template>
@@ -84,7 +105,7 @@ function handleRedirection(name: string, params: object) {
                     <v-btn
                         @click="emit('delete:confirm', blogId)"
                         v-bind="props"
-                        size="x-large"
+                        :size="isMobile ? 'small' : 'x-large'"
                         class="ma-0 pa-0"
                         variant="elevated"
                         rounded="1"
