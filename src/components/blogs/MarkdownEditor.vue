@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { config, ExposeParam, MdEditor, ToolbarNames, NormalToolbar } from "md-editor-v3";
-import { computed, reactive, ref, watch, defineEmits, onMounted } from "vue";
+import { computed, reactive, ref, watch, defineEmits, onMounted, Ref } from "vue";
 import { DisplayInstance, ThemeInstance, useDisplay, useTheme } from "vuetify";
 import { Badge } from "@/models/Badge";
 import { lineNumbers } from "@codemirror/view";
@@ -46,11 +46,11 @@ const blogStore = useBlogStore();
 const theme: ThemeInstance = useTheme();
 const display: DisplayInstance = useDisplay();
 
-const blogPostBody = ref("# Write your post here.");
-const blogPostTitle = ref<string>("A Good Blog Post Title");
+const blogPostBody: Ref<string> = ref<string>("# Write your post here.");
+const blogPostTitle: Ref<string> = ref<string>("A Good Blog Post Title");
 
-const previewThemePreference = ref<string>("default");
-const tableShape = reactive<number[]>([8, 4]);
+const previewThemePreference: Ref<string> = ref<string>("default");
+const tableShape: number[] = reactive<number[]>([8, 4]);
 const editorRef = ref<ExposeParam>();
 
 const previewTheme = reactive<PreviewTheme[]>([
@@ -180,55 +180,73 @@ const saveContentToLocalStorage = (saveContent: string) => {
     emit("save:local");
 };
 
+const isMobile: Ref<boolean> = ref<boolean>(false);
+
 function handleResize(): void {
     switch (display.name.value) {
         case "xs":
             editorRef.value?.togglePreview(false);
+            isMobile.value = true;
+
             if (toolbarItems.indexOf("sub") >= 0) {
                 toolbarItems.splice(toolbarItems.indexOf("sub"), 1);
             }
+
             if (toolbarItems.indexOf("sup") >= 0) {
                 toolbarItems.splice(toolbarItems.indexOf("sup"), 1);
             }
+
             if (toolbarItems.indexOf("preview") < 0 && !readonlyProp.value) {
                 toolbarItems.push("preview");
             }
             break;
         case "sm":
             editorRef.value?.togglePreview(false);
+            isMobile.value = false;
+
             if (toolbarItems.indexOf("sub") >= 0) {
                 toolbarItems.splice(toolbarItems.indexOf("sub"), 1);
             }
+
             if (toolbarItems.indexOf("sup") >= 0) {
                 toolbarItems.splice(toolbarItems.indexOf("sup"), 1);
             }
+
             if (toolbarItems.indexOf("preview") < 0 && !readonlyProp.value) {
                 toolbarItems.push("preview");
             }
+
             break;
         case "md":
             editorRef.value?.togglePreview(true);
+
             if (toolbarItems.indexOf("sub") < 0 && !readonlyProp.value) {
                 toolbarItems.push("sub");
             }
+
             if (toolbarItems.indexOf("preview") >= 0) {
                 toolbarItems.splice(toolbarItems.indexOf("preview"), 1);
             }
+
             break;
         case "lg":
             editorRef.value?.togglePreview(true);
+
             if (toolbarItems.indexOf("sub") < 0 && !readonlyProp.value) {
                 toolbarItems.push("sub");
             }
             break;
         case "xl":
             editorRef.value?.togglePreview(true);
+
             if (toolbarItems.indexOf("sub") < 0 && !readonlyProp.value) {
                 toolbarItems.push("sub");
             }
+
             if (toolbarItems.indexOf("sup") < 0 && !readonlyProp.value) {
                 toolbarItems.push("sup");
             }
+
             break;
         case "xxl":
             editorRef.value?.togglePreview(true);
@@ -237,6 +255,7 @@ function handleResize(): void {
             }
             break;
         default:
+            isMobile.value = false;
             editorRef.value?.togglePreview(true);
             break;
     }
@@ -309,7 +328,8 @@ onMounted(async () => {
                         </v-icon>
                     </template>
                     <v-card-title class="ma-3 pa-3">
-                        <h1 class="page-title">{{ blogPostTitle }}</h1>
+                        <h1 v-if="!isMobile" class="page-title">{{ blogPostTitle }}</h1>
+                        <h3 v-if="isMobile" class="page-title">{{ blogPostTitle }}</h3>
                     </v-card-title>
                 </v-badge>
             </v-card>
