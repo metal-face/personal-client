@@ -17,10 +17,6 @@ const loading = ref<boolean>(false);
 
 const colCount = ref<number>(6);
 
-const isDark = computed<boolean>(() => {
-    return theme.current.value.dark;
-});
-
 function humanReadableDate(rawString: string): string {
     const rawDate: Date = new Date(rawString);
     return format(rawDate, "PPPP");
@@ -32,13 +28,13 @@ function onResize() {
             colCount.value = 12;
             break;
         case "sm":
-            colCount.value = 8;
+            colCount.value = 10;
             break;
         case "md":
-            colCount.value = 6;
+            colCount.value = 8;
             break;
         case "lg":
-            colCount.value = 4;
+            colCount.value = 6;
             break;
         case "xl":
             colCount.value = 3;
