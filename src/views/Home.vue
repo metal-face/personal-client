@@ -60,9 +60,9 @@ function onResize(): void {
                 <v-card
                     flat
                     color="transparent"
-                    class="d-flex flex-column justify-start align-center"
+                    class="d-flex flex-column justify-start align-center ma-0 pa-0"
                     width="100%">
-                    <v-card color="transparent" flat class="ma-0">
+                    <v-card color="transparent" flat class="ma-0 pa-0">
                         <CircleLoader :loading="loading" circle-color="accent" />
                         <PersonalInfoCard @loading="toggleLoadingState" />
                         <AuthenticationButtons v-if="!loggedIn" class="ma-1" />
@@ -73,7 +73,7 @@ function onResize(): void {
                     {{ snackbar.text }}
                 </v-snackbar>
             </v-col>
-            <v-row justify="center" align-content="center">
+            <v-row justify="center" align-content="center" dense no-gutters>
                 <v-col :cols="colCount">
                     <v-card variant="elevated" elevation="8">
                         <MarkdownEditor :demo="true" />
