@@ -63,7 +63,7 @@
         </v-navigation-drawer>
 
         <v-main>
-            <v-container id="app" fluid class="fill-height">
+            <v-container id="app" fluid>
                 <router-view
                     @account:change="setAccountData"
                     @username:update="handleUsernameUpdate" />
@@ -212,7 +212,7 @@ function toggleDark(event: MouseEvent) {
                 clipPath: isDark.value ? [...clipPath].reverse() : clipPath,
             },
             {
-                duration: 400,
+                duration: 600,
                 easing: "ease-in-out",
                 pseudoElement: isDark.value
                     ? "::view-transition-old(root)"
