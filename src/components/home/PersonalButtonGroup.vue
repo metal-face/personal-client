@@ -82,7 +82,7 @@
                 </template>
             </v-tooltip>
         </div>
-        <div class="ma-1">
+        <div v-if="!isMobile" class="ma-1">
             <v-tooltip text="Email" location="bottom">
                 <template #activator="{ props }">
                     <v-btn
@@ -99,4 +99,13 @@
         </div>
     </v-card>
 </template>
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { DisplayInstance, useDisplay } from "vuetify";
+import { computed } from "vue";
+
+const display: DisplayInstance = useDisplay();
+
+const isMobile = computed<boolean>(() => {
+    return display.mobile.value;
+});
+</script>
