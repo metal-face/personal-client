@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { DisplayInstance, ThemeInstance, useDisplay, useTheme } from "vuetify";
-import { computed, reactive, onMounted, ref, nextTick, Ref } from "vue";
+import { computed, reactive, onMounted, ref, nextTick, Ref, ComputedRef } from "vue";
 import { Session } from "@/models/Session";
 import { format } from "date-fns";
 import { ConfirmDeleteState } from "@/models/ConfirmDeleteState";
 import { sessionStore } from "@/store/SessionStore";
 import { Blog } from "@/models/Blog";
 import BlogServices from "@/services/BlogServices";
-import BlogPostCard from "@/components/blogs/PersonalBlogCard.vue";
 import ConfirmDelete from "@/components/utils/ConfirmDelete.vue";
 import CircleLoader from "@/components/utils/CircleLoader.vue";
 import EmptyBlogPostIndicator from "@/components/blogs/EmptyBlogPostIndicator.vue";
+import PersonalBlogCard from "@/components/blogs/PersonalBlogCard.vue";
 
 onMounted(() => {
     fetchAllBlogsForUser();
@@ -117,13 +117,13 @@ async function fetchAllBlogsForUser() {
 </script>
 <template>
     <v-row v-resize="onResize" class="fill-height">
-        <CircleLoader :loading="loading" circle-color="accent" />
-        <ConfirmDelete
-            @confirm:delete="deleteBlogPostById"
-            @confirm:cancel="closeConfirmDelete"
-            :visible="confirmDeleteState.visible"
-            :resourceId="confirmDeleteState.idToDelete" />
         <v-col cols="12">
+            <CircleLoader :loading="loading" circle-color="accent" />
+            <ConfirmDelete
+                @confirm:delete="deleteBlogPostById"
+                @confirm:cancel="closeConfirmDelete"
+                :visible="confirmDeleteState.visible"
+                :resourceId="confirmDeleteState.idToDelete" />
             <v-card variant="flat" color="transparent" rounded="1" class="fill-height">
                 <v-card-title class="page-title text-center ma-3">
                     <h1 class="text-decoration-underline">Blog Posts</h1>
@@ -133,10 +133,10 @@ async function fetchAllBlogsForUser() {
                         <EmptyBlogPostIndicator class="page-title" text="You have no blogs!" />
                     </v-col>
                     <v-col v-if="blogs.length > 0" :cols="colCount">
-                        <div class="bg-transparent">
-                            <BlogPostCard
-                                v-for="(blog, i) in blogs"
+                        <div class="bg-transparent pa-2">
+                            <PersonalBlogCard
                                 @delete:confirm="openConfirmDelete"
+                                v-for="(blog, i) in blogs"
                                 :key="i"
                                 :blogId="blog.blog_id"
                                 :creation-date="humanReadableData(blog.created_at)"
@@ -145,24 +145,23 @@ async function fetchAllBlogsForUser() {
                         </div>
                     </v-col>
                 </v-row>
-
-                <v-tooltip text="Create Post" location="left">
-                    <template #activator="{ props }">
-                        <v-btn
-                            :to="{ name: 'BlogCreator' }"
-                            :color="isDark ? 'accent' : 'black'"
-                            v-bind="props"
-                            position="fixed"
-                            location="bottom right"
-                            variant="elevated"
-                            rounded="10"
-                            class="mr-4 mb-4"
-                            icon="mdi-plus"
-                            size="x-large">
-                        </v-btn>
-                    </template>
-                </v-tooltip>
             </v-card>
+            <v-tooltip text="Create Post" location="left">
+                <template #activator="{ props }">
+                    <v-btn
+                        :to="{ name: 'BlogCreator' }"
+                        :color="isDark ? 'accent' : 'black'"
+                        v-bind="props"
+                        position="fixed"
+                        location="bottom right"
+                        variant="elevated"
+                        rounded="10"
+                        class="mr-4 mb-4"
+                        icon="mdi-plus"
+                        size="x-large">
+                    </v-btn>
+                </template>
+            </v-tooltip>
         </v-col>
     </v-row>
 </template>
