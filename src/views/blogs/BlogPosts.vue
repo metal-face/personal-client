@@ -11,6 +11,7 @@ import ConfirmDelete from "@/components/utils/ConfirmDelete.vue";
 import CircleLoader from "@/components/utils/CircleLoader.vue";
 import EmptyBlogPostIndicator from "@/components/blogs/EmptyBlogPostIndicator.vue";
 import PersonalBlogCard from "@/components/blogs/PersonalBlogCard.vue";
+import Pagination from "@/components/utils/Pagination.vue";
 
 onMounted(() => {
     fetchAllBlogsForUser();
@@ -100,7 +101,7 @@ function onResize(): void {
     }
 }
 
-async function fetchAllBlogsForUser() {
+async function fetchAllBlogsForUser(): Promise<void> {
     loading.value = true;
     BlogServices.fetchManyBlogs(session.account_id)
         .then((res) => {
@@ -113,6 +114,13 @@ async function fetchAllBlogsForUser() {
         .catch((err) => {
             console.error(err);
         });
+}
+
+async function fetchPage(page: number): Promise<void> {
+    BlogServices.fetchManyBlogs(session.account_id, page).then((res) => {
+        blogs.splice(0, blogs.length);
+        blogs.push(...(res.data.data as Blog[]));
+    });
 }
 </script>
 <template>
@@ -163,6 +171,9 @@ async function fetchAllBlogsForUser() {
                 </template>
             </v-tooltip>
         </v-col>
+        <v-card flat class="ma-3" position="absolute" color="transparent" location="bottom">
+            <Pagination @prev="fetchPage" @next="fetchPage" :blogs="blogs" />
+        </v-card>
     </v-row>
 </template>
 <style scoped>
