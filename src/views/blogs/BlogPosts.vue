@@ -44,6 +44,8 @@ const blogs: Blog[] = reactive([]);
 
 const colCount: Ref<number> = ref<number>(6);
 
+const isMobile: Ref<boolean> = ref<boolean>(false);
+
 function openConfirmDelete(idToDelete: string): void {
     confirmDeleteState.visible = true;
     confirmDeleteState.idToDelete = idToDelete;
@@ -82,9 +84,17 @@ function onResize(): void {
     switch (display.name.value) {
         case "xs":
             colCount.value = 12;
+            if (isMobile.value) {
+                break;
+            }
+            isMobile.value = true;
             break;
         case "sm":
             colCount.value = 10;
+            if (!isMobile.value) {
+                break;
+            }
+            isMobile.value = false;
             break;
         case "md":
             colCount.value = 6;
@@ -96,6 +106,7 @@ function onResize(): void {
             colCount.value = 4;
             break;
         default:
+            isMobile.value = false;
             colCount.value = 6;
             break;
     }
@@ -117,10 +128,18 @@ async function fetchAllBlogsForUser(): Promise<void> {
 }
 
 async function fetchPage(page: number): Promise<void> {
-    BlogServices.fetchManyBlogs(session.account_id, page).then((res) => {
-        blogs.splice(0, blogs.length);
-        blogs.push(...(res.data.data as Blog[]));
-    });
+    loading.value = true;
+    BlogServices.fetchManyBlogs(session.account_id, page)
+        .then((res) => {
+            blogs.splice(0, blogs.length);
+            blogs.push(...(res.data.data as Blog[]));
+        })
+        .finally(() => {
+            loading.value = false;
+        })
+        .catch((err) => {
+            console.error(err);
+        });
 }
 </script>
 <template>
@@ -136,6 +155,27 @@ async function fetchPage(page: number): Promise<void> {
                 <v-card-title class="page-title text-center ma-3">
                     <h1 class="text-decoration-underline">Blog Posts</h1>
                 </v-card-title>
+                <v-tooltip text="Create Post" location="left">
+                    <template #activator="{ props }">
+                        <v-btn
+                            v-bind="props"
+                            :to="{ name: 'BlogCreator' }"
+                            :color="isDark ? 'accent' : 'black'"
+                            :position="isMobile ? 'relative' : 'fixed'"
+                            :location="isMobile ? 'top center' : 'bottom right'"
+                            :rounded="isMobile ? '1' : '10'"
+                            :icon="isMobile ? false : 'mdi-plus'"
+                            :class="isMobile ? 'ma-0' : 'mr-4 mb-4'"
+                            :density="isMobile ? 'compact' : 'default'"
+                            variant="elevated"
+                            size="x-large">
+                            <template #default>
+                                <div v-if="isMobile">Create</div>
+                                <div v-else><v-icon icon="mdi-plus"></v-icon></div>
+                            </template>
+                        </v-btn>
+                    </template>
+                </v-tooltip>
                 <v-row justify="center">
                     <v-col v-if="!blogs.length" :cols="colCount">
                         <EmptyBlogPostIndicator class="page-title" text="You have no blogs!" />
@@ -154,22 +194,6 @@ async function fetchPage(page: number): Promise<void> {
                     </v-col>
                 </v-row>
             </v-card>
-            <v-tooltip text="Create Post" location="left">
-                <template #activator="{ props }">
-                    <v-btn
-                        :to="{ name: 'BlogCreator' }"
-                        :color="isDark ? 'accent' : 'black'"
-                        v-bind="props"
-                        position="fixed"
-                        location="bottom right"
-                        variant="elevated"
-                        rounded="10"
-                        class="mr-4 mb-4"
-                        icon="mdi-plus"
-                        size="x-large">
-                    </v-btn>
-                </template>
-            </v-tooltip>
         </v-col>
         <v-card flat class="ma-3" position="absolute" color="transparent" location="bottom">
             <Pagination @prev="fetchPage" @next="fetchPage" :blogs="blogs" />
