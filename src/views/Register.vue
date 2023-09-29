@@ -12,6 +12,7 @@ import { RegistrationForm } from "@/models/RegistrationForm";
 import AccountsServices from "@/services/AccountsServices";
 import CircleLoader from "@/components/utils/CircleLoader.vue";
 import SessionServices from "@/services/SessionServices";
+import { useAccountStore } from "@/store/AccountStore";
 
 onMounted(() => {
     clearForm();
@@ -24,6 +25,7 @@ useScriptTag(
 
 const router: Router = useRouter();
 const session = sessionStore();
+const accountStore = useAccountStore();
 
 const alert: Alert = reactive({
     type: AlertTypes.success,
@@ -137,7 +139,7 @@ async function registerUser(token: string): Promise<boolean> {
         })
         .catch((err) => {
             loading.value = false;
-            alert.text = err.response.data.message;
+            alert.text = accountStore.determineFailureReason(err.response.data.error);
             alert.color = ColorTypes.error;
             alert.title = "Error!";
             alert.type = AlertTypes.error;
@@ -156,7 +158,7 @@ async function loginUser(token: string): Promise<boolean> {
             return true;
         })
         .catch((err) => {
-            alert.text = "Something Went Wrong!";
+            alert.text = accountStore.determineFailureReason(err.response.data.error);
             alert.color = ColorTypes.error;
             alert.title = "Error!";
             alert.type = AlertTypes.error;
