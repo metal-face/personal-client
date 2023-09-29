@@ -21,16 +21,20 @@ export default {
             },
         });
     },
-    fetchManyBlogs(accountId?: string): Promise<AxiosResponse<any, any>> {
+    fetchManyBlogs(
+        accountId?: string,
+        page: number = 1,
+        pageSize: number = 10,
+    ): Promise<AxiosResponse<any, any>> {
         if (accountId) {
             return ApiClient({
                 method: "GET",
-                url: `/blogs?account_id=${accountId}`,
+                url: `/blogs?account_id=${accountId}&page=${page}&page_size=${pageSize}`,
             });
         }
         return ApiClient({
             method: "GET",
-            url: "/blogs",
+            url: `/blogs?page=${page}&page_size=${pageSize}`,
         });
     },
     fetchBlogById(blogId: string): Promise<AxiosResponse<any, any>> {
