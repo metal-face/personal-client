@@ -1,6 +1,7 @@
 <template>
     <v-card
         color="transparent"
+        v-resize="handleResize"
         flat
         rounded="0"
         class="d-flex flex-wrap align-center justify-space-between ma-3">
@@ -50,7 +51,7 @@
                 </template>
             </v-tooltip>
         </div>
-        <div class="ma-1">
+        <div class="ma-1" v-if="visible">
             <v-tooltip text="metalfaces" location="bottom">
                 <template #activator="{ props }">
                     <v-btn
@@ -101,11 +102,29 @@
 </template>
 <script setup lang="ts">
 import { DisplayInstance, useDisplay } from "vuetify";
-import { computed } from "vue";
+import { computed, ref, Ref } from "vue";
 
 const display: DisplayInstance = useDisplay();
 
 const isMobile = computed<boolean>(() => {
     return display.mobile.value;
 });
+
+const visible: Ref<boolean> = ref<boolean>(true);
+
+function handleResize(): void {
+    if (display.width.value <= 350) {
+        if (!visible.value) {
+            return;
+        }
+        visible.value = false;
+    }
+
+    if (display.width.value >= 350) {
+        if (visible.value) {
+            return;
+        }
+        visible.value = true;
+    }
+}
 </script>
