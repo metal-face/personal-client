@@ -2,7 +2,7 @@
     <div class="d-flex align-center justify-space-between">
         <v-btn
             @click="router.push({ name: 'Login' })"
-            size="x-large"
+            size="large"
             append-icon="mdi-login"
             width="49%"
             variant="elevated"
@@ -13,7 +13,7 @@
             @click="router.push({ name: 'Register' })"
             width="49%"
             append-icon="mdi-account-plus"
-            size="x-large"
+            size="large"
             variant="elevated"
             rounded="2">
             Register
