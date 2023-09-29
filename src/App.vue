@@ -40,7 +40,7 @@
                 </v-btn>
             </v-card>
             <v-btn
-                @click="toggleDark"
+                @click="toggleTheme"
                 :color="isDark ? 'yellow' : 'purple'"
                 :icon="isDark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'"
                 variant="elevated" />
@@ -182,45 +182,6 @@ const isDark = computed<boolean>(() => {
 const sessionId = computed<string>(() => {
     return sessStore.getSessionId;
 });
-
-function toggleDark(event: MouseEvent) {
-    const isAppearanceTransition =
-        // @ts-expect-error experimental API
-        document.startViewTransition &&
-        !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (!isAppearanceTransition) {
-        toggleTheme();
-        return;
-    }
-
-    const x = event.clientX;
-    const y = event.clientY;
-    const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-    // @ts-expect-error: Transition API
-    const transition = document.startViewTransition(async () => {
-        toggleTheme();
-        await nextTick();
-    });
-    transition.ready.then(() => {
-        const clipPath = [
-            `circle(0px at ${x}px ${y}px)`,
-            `circle(${endRadius}px at ${x}px ${y}px)`,
-        ];
-        document.documentElement.animate(
-            {
-                clipPath: isDark.value ? [...clipPath].reverse() : clipPath,
-            },
-            {
-                duration: 600,
-                easing: "ease-in-out",
-                pseudoElement: isDark.value
-                    ? "::view-transition-old(root)"
-                    : "::view-transition-new(root)",
-            },
-        );
-    });
-}
 
 function handleRedirection(link: Link): void {
     navDrawer.value = !navDrawer.value;
