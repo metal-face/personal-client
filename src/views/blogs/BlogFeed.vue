@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, reactive, Ref, ref } from "vue";
 import { Blogs } from "@/models/Blogs";
 import { DisplayInstance, ThemeInstance, useDisplay, useTheme } from "vuetify";
 import { format } from "date-fns";
@@ -7,11 +7,14 @@ import BlogServices from "@/services/BlogServices";
 import GeneralBlogCard from "@/components/blogs/GeneralBlogCard.vue";
 import CircleLoader from "@/components/utils/CircleLoader.vue";
 import EmptyBlogPostIndicator from "@/components/blogs/EmptyBlogPostIndicator.vue";
+import Pagination from "@/components/utils/Pagination.vue";
+import { Blog } from "@/models/Blog";
 
-const theme: ThemeInstance = useTheme();
 const display: DisplayInstance = useDisplay();
 
-const blogPosts = ref<Blogs>({ blogs: [] });
+const blogPosts: Blog[] = reactive<Blog[]>([]);
+
+const totalServerBlogs: Ref<number> = ref<number>(0);
 
 const loading = ref<boolean>(false);
 
@@ -47,8 +50,9 @@ function onResize() {
 async function fetchManyBlogs() {
     return BlogServices.fetchManyBlogs()
         .then((res) => {
-            blogPosts.value.blogs.splice(0, blogPosts.value.blogs.length);
-            blogPosts.value.blogs.push(...res.data.data);
+            blogPosts.splice(0, blogPosts.length);
+            blogPosts.push(...res.data.data);
+            totalServerBlogs.value = res.data.meta.total;
         })
         .catch((err) => {
             console.error(err);
@@ -57,6 +61,21 @@ async function fetchManyBlogs() {
 
 function handleLoadingState(state: boolean) {
     loading.value = state;
+}
+
+async function fetchPage(page: number): Promise<void> {
+    loading.value = true;
+    BlogServices.fetchManyBlogs(undefined, page)
+        .then((res) => {
+            blogPosts.splice(0, blogPosts.length);
+            blogPosts.push(...(res.data.data as Blog[]));
+        })
+        .finally(() => {
+            loading.value = false;
+        })
+        .catch((err) => {
+            console.error(err);
+        });
 }
 
 onMounted(async () => {
@@ -70,19 +89,19 @@ onMounted(async () => {
     <v-row class="fill-height" v-resize="onResize">
         <v-col :cols="12">
             <CircleLoader :loading="loading" circle-color="pink" />
-            <v-card class="fill-height" variant="flat" color="transparent">
+            <v-card class="fill-height mb-12" variant="flat" color="transparent">
                 <v-card-title class="text-center page-title text-decoration-underline">
                     <h1 class="my-5">Your Feed</h1>
                 </v-card-title>
                 <v-row justify="center">
-                    <v-col v-if="!blogPosts.blogs.length" :cols="colCount">
+                    <v-col v-if="!blogPosts.length" :cols="colCount">
                         <EmptyBlogPostIndicator
                             text="There have been no blogs written by any users." />
                     </v-col>
-                    <v-col v-if="blogPosts.blogs.length > 0" :cols="colCount" class="fill-height">
+                    <v-col v-if="blogPosts.length > 0" :cols="colCount" class="fill-height">
                         <GeneralBlogCard
                             @loading="handleLoadingState"
-                            v-for="blog in blogPosts.blogs"
+                            v-for="blog in blogPosts"
                             :key="blog.blog_id"
                             :account_id="blog.account_id"
                             :blogId="blog.blog_id"
@@ -90,6 +109,19 @@ onMounted(async () => {
                             :blogCreationDate="humanReadableDate(blog.created_at)" />
                     </v-col>
                 </v-row>
+            </v-card>
+            <v-card
+                flat
+                position="fixed"
+                location="bottom center"
+                color="transparent"
+                class="pa-2 my-2">
+                <Pagination
+                    @update:change="fetchPage"
+                    @prev="fetchPage"
+                    @click="fetchPage"
+                    :blogs="blogPosts"
+                    :totalCount="totalServerBlogs" />
             </v-card>
         </v-col>
     </v-row>
