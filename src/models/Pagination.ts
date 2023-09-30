@@ -1,7 +1,9 @@
-import { ComputedRef } from "vue";
+import { ComputedRef, Ref } from "vue";
 
 export interface Pagination {
-    page: number;
+    page: Ref<number>;
+    limit: number;
     length: ComputedRef<number>;
-    totalVisible: number;
+    totalPagesVisible: number;
+    totalResourceCount: ComputedRef<number>;
 }
