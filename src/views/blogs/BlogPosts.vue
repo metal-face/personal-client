@@ -46,6 +46,8 @@ const colCount: Ref<number> = ref<number>(6);
 
 const isMobile: Ref<boolean> = ref<boolean>(false);
 
+const totalServerBlogs: Ref<number> = ref<number>(0);
+
 function openConfirmDelete(idToDelete: string): void {
     confirmDeleteState.visible = true;
     confirmDeleteState.idToDelete = idToDelete;
@@ -118,6 +120,7 @@ async function fetchAllBlogsForUser(): Promise<void> {
         .then((res) => {
             blogs.splice(0, blogs.length);
             blogs.push(...res.data.data);
+            totalServerBlogs.value = res.data.meta.total;
         })
         .finally(() => {
             loading.value = false;
@@ -151,7 +154,7 @@ async function fetchPage(page: number): Promise<void> {
                 @confirm:cancel="closeConfirmDelete"
                 :visible="confirmDeleteState.visible"
                 :resourceId="confirmDeleteState.idToDelete" />
-            <v-card variant="flat" color="transparent" rounded="1" class="fill-height">
+            <v-card variant="flat" color="transparent" rounded="1" class="fill-height mb-12">
                 <v-card-title class="page-title text-center ma-3">
                     <h1 class="text-decoration-underline">Blog Posts</h1>
                 </v-card-title>
@@ -181,7 +184,7 @@ async function fetchPage(page: number): Promise<void> {
                         <EmptyBlogPostIndicator class="page-title" text="You have no blogs!" />
                     </v-col>
                     <v-col v-if="blogs.length > 0" :cols="colCount">
-                        <div class="bg-transparent pa-2">
+                        <div class="bg-transparent pa-2 ma-2">
                             <PersonalBlogCard
                                 @delete:confirm="openConfirmDelete"
                                 v-for="(blog, i) in blogs"
@@ -194,10 +197,14 @@ async function fetchPage(page: number): Promise<void> {
                     </v-col>
                 </v-row>
             </v-card>
+            <v-card flat class="mt-12" position="absolute" color="transparent" location="bottom">
+                <Pagination
+                    @update:change="fetchPage"
+                    @prev="fetchPage"
+                    @next="fetchPage"
+                    :totalCount="totalServerBlogs" />
+            </v-card>
         </v-col>
-        <v-card flat class="ma-3" position="absolute" color="transparent" location="bottom">
-            <Pagination @prev="fetchPage" @next="fetchPage" :blogs="blogs" />
-        </v-card>
     </v-row>
 </template>
 <style scoped>

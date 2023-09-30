@@ -40,7 +40,7 @@ function onResize() {
             colCount.value = 6;
             break;
         case "xl":
-            colCount.value = 3;
+            colCount.value = 6;
             break;
         default:
             colCount.value = 6;
@@ -112,10 +112,10 @@ onMounted(async () => {
             </v-card>
             <v-card
                 flat
-                position="fixed"
+                position="absolute"
                 location="bottom center"
                 color="transparent"
-                class="pa-2 my-2">
+                class="pa-2 mt-12">
                 <Pagination
                     @update:change="fetchPage"
                     @prev="fetchPage"
