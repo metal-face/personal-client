@@ -1,39 +1,46 @@
 <script setup lang="ts">
-import { computed, ComputedRef, reactive } from "vue";
+import { computed, ComputedRef, reactive, ref } from "vue";
 import { Pagination } from "@/models/Pagination";
-import { Blog } from "@/models/Blog";
 
 interface Props {
-    blogs: Blog[];
+    totalCount: number;
 }
 
 const emit = defineEmits<{
+    (e: "update:change", page: number): void;
     (e: "prev", page: number): void;
     (e: "next", page: number): void;
 }>();
 
 const props = defineProps<Props>();
 
-const blogsLength: ComputedRef<number> = computed<number>(() => {
-    return props.blogs.length;
+const totalBlogCount: ComputedRef<number> = computed<number>(() => {
+    return props.totalCount;
+});
+
+const totalPages: ComputedRef<number> = computed<number>(() => {
+    return Math.ceil(totalBlogCount.value / pagination.limit);
 });
 
 const pagination = reactive<Pagination>({
-    page: 1,
-    length: blogsLength,
-    totalVisible: 10,
+    page: ref<number>(1),
+    limit: 10,
+    length: totalPages,
+    totalPagesVisible: 5,
+    totalResourceCount: totalPages,
 });
 </script>
 
 <template>
     <v-pagination
         v-model="pagination.page"
-        :length="pagination.length"
-        :total-visible="pagination.totalVisible"
+        :length="pagination.totalResourceCount"
+        :total-visible="pagination.totalPagesVisible"
         :rounded="false"
         color="primary"
         density="comfortable"
         variant="elevated"
+        @update:modelValue="emit('update:change', pagination.page)"
         @prev="emit('prev', pagination.page)"
         @next="emit('next', pagination.page)" />
 </template>
