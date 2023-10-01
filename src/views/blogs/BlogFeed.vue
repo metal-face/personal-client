@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, Ref, ref } from "vue";
-import { Blogs } from "@/models/Blogs";
-import { DisplayInstance, ThemeInstance, useDisplay, useTheme } from "vuetify";
+import { onMounted, reactive, Ref, ref } from "vue";
+import { DisplayInstance, useDisplay } from "vuetify";
 import { format } from "date-fns";
+import { Blog } from "@/models/Blog";
 import BlogServices from "@/services/BlogServices";
 import GeneralBlogCard from "@/components/blogs/GeneralBlogCard.vue";
 import CircleLoader from "@/components/utils/CircleLoader.vue";
 import EmptyBlogPostIndicator from "@/components/blogs/EmptyBlogPostIndicator.vue";
 import Pagination from "@/components/utils/Pagination.vue";
-import { Blog } from "@/models/Blog";
 
 const display: DisplayInstance = useDisplay();
 

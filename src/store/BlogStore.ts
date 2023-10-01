@@ -28,7 +28,6 @@ export const useBlogStore = defineStore("blog", () => {
             "- [ ] Saturday\n" +
             "- [x] Sunday\n" +
             "\n" +
-            "![Picture](https://imzbf.github.io/md-editor-rt/imgs/mark_emoji.gif)\n" +
             "\n" +
             "## 🤗 Code Highlighting & Prettier\n" +
             "\n" +
