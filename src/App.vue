@@ -1,5 +1,6 @@
 <template>
     <v-app>
+        <CircleLoader :loading="loading" circle-color="accent" />
         <v-app-bar color="background" location="top" flat>
             <div class="ml-4" v-if="isLoggedIn">
                 <v-btn
@@ -74,7 +75,7 @@
 
 <script setup lang="ts">
 import { ThemeInstance, useTheme } from "vuetify";
-import { computed, ref, reactive, onMounted, ComputedRef, nextTick } from "vue";
+import { computed, ref, reactive, onMounted, ComputedRef, Ref } from "vue";
 import { useRouter, Router } from "vue-router";
 import { Account, Role } from "@/models/Account";
 import { useAccountStore } from "@/store/AccountStore";
@@ -82,6 +83,7 @@ import { sessionStore } from "@/store/SessionStore";
 import { Session } from "@/models/Session";
 import SessionServices from "@/services/SessionServices";
 import AccountsServices from "@/services/AccountsServices";
+import CircleLoader from "@/components/utils/CircleLoader.vue";
 
 onMounted(() => {
     const viewModePreference: string | null = window.localStorage.getItem("viewModePreference");
@@ -95,6 +97,7 @@ onMounted(() => {
 });
 
 onMounted(async () => {
+    loading.value = true;
     const resp = window.localStorage.getItem("session");
 
     if (resp) {
@@ -110,6 +113,7 @@ onMounted(async () => {
                     accountStore.clearAccount();
                     sessStore.clearSession();
                     sessStore.destroySessionInStorage();
+                    loading.value = false;
                     return;
                 }
             }
@@ -121,7 +125,9 @@ onMounted(async () => {
                 // clear the contents of the session store.
                 sessStore.clearSession();
                 // clear the session in the server
-                logoutUser();
+                await logoutUser();
+                // turn off the loader
+                loading.value = false;
                 // exit the function.
                 return;
             }
@@ -133,6 +139,7 @@ onMounted(async () => {
             }
         }
     }
+    loading.value = false;
 });
 
 interface Link {
@@ -161,6 +168,8 @@ const account: Account = reactive({
     role: Role.REGULAR,
     created_at: new Date(),
 });
+
+const loading: Ref<boolean> = ref<boolean>(false);
 
 const isLoggedIn: ComputedRef<boolean> = computed(() => {
     return accountStore.isLoggedIn;
@@ -215,7 +224,7 @@ function toggleTheme(): void {
         : window.localStorage.setItem("viewModePreference", "light");
 }
 
-function logoutUser() {
+async function logoutUser() {
     SessionServices.logout(sessionId.value)
         .then(() => {
             sessStore.destroySessionInStorage();
@@ -254,9 +263,7 @@ async function fetchAccountById(): Promise<boolean> {
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display&family=Source+Code+Pro&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Prata&display=swap");
-
+@import url("https://fonts.googleapis.com/css2?family=Prata&family=Source+Code+Pro&display=swap");
 p,
 h1 {
     margin: 0 !important;
