@@ -24,7 +24,7 @@ const snackbar: Snackbar = reactive({
     timeout: 3000,
 });
 
-const loading = ref<boolean>(true);
+const loading = ref<boolean>(false);
 
 const colCount = ref<number>(0);
 
@@ -64,7 +64,7 @@ function onResize(): void {
                     width="100%">
                     <v-card color="transparent" flat class="ma-0 pa-0">
                         <CircleLoader :loading="loading" circle-color="accent" />
-                        <PersonalInfoCard @loading="toggleLoadingState" />
+                        <PersonalInfoCard />
                         <AuthenticationButtons v-if="!loggedIn" class="ma-1" />
                         <PersonalButtonGroup v-if="loggedIn" />
                     </v-card>
