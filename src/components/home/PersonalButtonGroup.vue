@@ -28,25 +28,11 @@
                         v-bind="props"
                         rounded="1"
                         href="https://www.linkedin.com/in/bryanhughes1992/"
+                        target="_blank"
                         variant="elevated"
                         elevation="2"
                         color="primary">
                         <v-icon size="large" color="#0077B5" icon="mdi-linkedin" />
-                    </v-btn>
-                </template>
-            </v-tooltip>
-        </div>
-        <div class="ma-1">
-            <v-tooltip text="scrotalmass" location="bottom">
-                <template #activator="{ props }">
-                    <v-btn
-                        v-bind="props"
-                        rounded="1"
-                        href="https://twitter.com/scrotalmass"
-                        variant="elevated"
-                        elevation="2"
-                        color="primary">
-                        <v-icon size="large" icon="mdi-twitter" color="#2598fe" />
                     </v-btn>
                 </template>
             </v-tooltip>
@@ -58,6 +44,7 @@
                         v-bind="props"
                         href="https://discordapp.com/users/516293689774178316"
                         rounded="1"
+                        target="_blank"
                         variant="elevated"
                         elevation="2"
                         color="primary">
@@ -83,7 +70,7 @@
                 </template>
             </v-tooltip>
         </div>
-        <div v-if="!isMobile" class="ma-1">
+        <div class="ma-1">
             <v-tooltip text="Email" location="bottom">
                 <template #activator="{ props }">
                     <v-btn
@@ -102,13 +89,9 @@
 </template>
 <script setup lang="ts">
 import { DisplayInstance, useDisplay } from "vuetify";
-import { computed, ref, Ref } from "vue";
+import { ref, Ref } from "vue";
 
 const display: DisplayInstance = useDisplay();
-
-const isMobile = computed<boolean>(() => {
-    return display.mobile.value;
-});
 
 const visible: Ref<boolean> = ref<boolean>(true);
 
