@@ -13,7 +13,7 @@ const routes = [...userRouter, ...blogsRouter];
 
 const router: Router = createRouter({
     history: createWebHistory(process.env.BASE_URL),
-    routes,
+    routes: routes,
 });
 
 router.beforeEach(
