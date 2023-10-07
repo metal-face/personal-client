@@ -125,7 +125,7 @@ onMounted(async () => {
 <template>
     <v-row v-resize="handleResize" justify="center">
         <v-col :cols="editorWidth">
-            <v-card color="transparent" variant="elevated" elevation="8" width="100%" height="100%">
+            <v-card color="transparent" variant="elevated" elevation="4" width="100%" height="100%">
                 <v-card-title class="ma-2 editor text-center">
                     <h1 v-if="!isMobile" class="ma-2">
                         {{ blog.blogPostTitle }}
