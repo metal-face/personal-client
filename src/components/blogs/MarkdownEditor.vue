@@ -399,6 +399,8 @@ onMounted(async () => {
                 ref="editorRef"
                 language="en-US"
                 no-upload-img
+                no-prettier
+                :scroll-auto="false"
                 show-code-row-number
                 class="page-title">
                 <template #defToolbars>
