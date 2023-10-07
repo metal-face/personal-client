@@ -24,7 +24,7 @@ router.beforeEach(
     ): Promise<void> => {
         const pageTitle: string = String(to.meta.title);
         const sessStore = sessionStore();
-        const isAuthenticated: boolean = await sessStore.isAuthenticated;
+        const isLoggedIn: boolean = sessStore.isLoggedIn;
 
         if (pageTitle) {
             document.title = pageTitle;
@@ -35,12 +35,12 @@ router.beforeEach(
             return;
         }
 
-        if (to.meta?.restricted && isAuthenticated) {
+        if (to.meta?.restricted && isLoggedIn) {
             next();
             return;
         }
 
-        if (to.meta?.restricted && !isAuthenticated) {
+        if (to.meta?.restricted && !isLoggedIn) {
             next({ name: "Home" });
             return;
         } else {
