@@ -49,7 +49,7 @@
 
         <v-navigation-drawer
             v-model="navDrawer"
-            color="primary"
+            color="secondary"
             temporary
             disable-resize-watcher
             disable-route-watcher>
@@ -75,7 +75,7 @@
 
 <script setup lang="ts">
 import { ThemeInstance, useTheme } from "vuetify";
-import { computed, ref, reactive, onMounted, ComputedRef, Ref } from "vue";
+import { computed, ref, reactive, onMounted, ComputedRef, Ref, nextTick } from "vue";
 import { useRouter, Router } from "vue-router";
 import { Account, Role } from "@/models/Account";
 import { useAccountStore } from "@/store/AccountStore";
@@ -98,6 +98,7 @@ onMounted(() => {
 
 onMounted(async () => {
     loading.value = true;
+
     const resp = window.localStorage.getItem("session");
 
     if (resp) {
@@ -177,7 +178,6 @@ const isLoggedIn: ComputedRef<boolean> = computed(() => {
 
 const links: Link[] = [
     { text: "Home", value: "Home", props: { prependIcon: "mdi-home-circle" } },
-    // { text: "Uses", value: "Uses", props: { prependIcon: "mdi-slash-forward" } },
     { text: "Your Blogs", value: "BlogPosts", props: { prependIcon: "mdi-post-outline" } },
     { text: "Blog Feed", value: "BlogFeed", props: { prependIcon: "mdi-broadcast" } },
 ];
@@ -193,9 +193,11 @@ const sessionId = computed<string>(() => {
 });
 
 function handleRedirection(link: Link): void {
-    navDrawer.value = !navDrawer.value;
+    navDrawer.value = false;
 
-    router.push({ name: link.value });
+    nextTick(() => {
+        router.push({ name: link.value });
+    });
 }
 
 function handleUsernameUpdate(payload: string): void {
