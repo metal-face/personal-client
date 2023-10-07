@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { DisplayInstance, ThemeInstance, useDisplay, useTheme } from "vuetify";
-import { computed, reactive, onMounted, ref, nextTick, Ref, ComputedRef } from "vue";
+import { computed, reactive, onMounted, ref, nextTick, Ref } from "vue";
 import { Session } from "@/models/Session";
 import { format } from "date-fns";
 import { ConfirmDeleteState } from "@/models/ConfirmDeleteState";
@@ -154,7 +154,7 @@ async function fetchPage(page: number): Promise<void> {
                 @confirm:cancel="closeConfirmDelete"
                 :visible="confirmDeleteState.visible"
                 :resourceId="confirmDeleteState.idToDelete" />
-            <v-card variant="flat" color="transparent" rounded="1" class="fill-height mb-12">
+            <v-card variant="flat" color="transparent" rounded="1" height="100%">
                 <v-card-title class="page-title text-center ma-3">
                     <h1 class="text-decoration-underline">Blog Posts</h1>
                 </v-card-title>
@@ -179,31 +179,37 @@ async function fetchPage(page: number): Promise<void> {
                         </v-btn>
                     </template>
                 </v-tooltip>
-                <v-row justify="center">
-                    <v-col v-if="!blogs.length" :cols="colCount">
-                        <EmptyBlogPostIndicator class="page-title" text="You have no blogs!" />
-                    </v-col>
-                    <v-col v-if="blogs.length > 0" :cols="colCount">
-                        <div class="bg-transparent pa-2 ma-2">
-                            <PersonalBlogCard
-                                @delete:confirm="openConfirmDelete"
-                                v-for="(blog, i) in blogs"
-                                :key="i"
-                                :blogId="blog.blog_id"
-                                :creation-date="humanReadableData(blog.created_at)"
-                                :blog-post="blog.blog_post"
-                                :blog-title="blog.blog_title" />
-                        </div>
-                    </v-col>
-                </v-row>
+                <v-card variant="flat" color="transparent" height="100%">
+                    <v-row justify="center">
+                        <v-col v-if="!blogs.length" :cols="colCount">
+                            <EmptyBlogPostIndicator class="page-title" text="You have no blogs!" />
+                        </v-col>
+                        <v-col v-if="blogs.length > 0" :cols="colCount">
+                            <div class="bg-transparent pa-2 ma-2">
+                                <PersonalBlogCard
+                                    @delete:confirm="openConfirmDelete"
+                                    v-for="(blog, i) in blogs"
+                                    :key="i"
+                                    :blogId="blog.blog_id"
+                                    :creation-date="humanReadableData(blog.created_at)"
+                                    :blog-post="blog.blog_post"
+                                    :blog-title="blog.blog_title" />
+                            </div>
+                        </v-col>
+                    </v-row>
+                </v-card>
             </v-card>
-            <v-card flat class="mt-12" position="absolute" color="transparent" location="bottom">
-                <Pagination
-                    @update:change="fetchPage"
-                    @prev="fetchPage"
-                    @next="fetchPage"
-                    :totalCount="totalServerBlogs" />
-            </v-card>
+            <v-row dense no-gutters>
+                <v-col cols="12">
+                    <v-card flat class="pa-2" color="transparent" location="bottom center">
+                        <Pagination
+                            @update:change="fetchPage"
+                            @prev="fetchPage"
+                            @next="fetchPage"
+                            :totalCount="totalServerBlogs" />
+                    </v-card>
+                </v-col>
+            </v-row>
         </v-col>
     </v-row>
 </template>
