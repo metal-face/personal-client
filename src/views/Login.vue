@@ -202,6 +202,7 @@ async function loginUser(token: string): Promise<boolean> {
 
     return SessionServices.login(state.username, state.password, token)
         .then((res) => {
+            sessStore.clearSession();
             sessStore.setSession(res.data.data as Session);
 
             account.account_id = res.data.data.account_id;
