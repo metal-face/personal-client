@@ -85,44 +85,45 @@ onMounted(async () => {
 </script>
 
 <template>
-    <v-row class="fill-height" v-resize="onResize">
+    <v-row v-resize="onResize" class="fill-height">
         <v-col :cols="12">
-            <CircleLoader :loading="loading" circle-color="pink" />
-            <v-card class="fill-height mb-12" variant="flat" color="transparent">
+            <CircleLoader :loading="loading" circle-color="accent" />
+            <v-card variant="flat" color="transparent">
                 <v-card-title class="text-center page-title text-decoration-underline">
                     <h1 class="my-5">Your Feed</h1>
                 </v-card-title>
-                <v-row justify="center">
-                    <v-col v-if="!blogPosts.length" :cols="colCount">
-                        <EmptyBlogPostIndicator
-                            text="There have been no blogs written by any users." />
-                    </v-col>
-                    <v-col v-if="blogPosts.length > 0" :cols="colCount" class="fill-height">
-                        <GeneralBlogCard
-                            @loading="handleLoadingState"
-                            v-for="blog in blogPosts"
-                            :key="blog.blog_id"
-                            :account_id="blog.account_id"
-                            :blogId="blog.blog_id"
-                            :blogPostTitle="blog.blog_title"
-                            :blogCreationDate="humanReadableDate(blog.created_at)" />
-                    </v-col>
-                </v-row>
-            </v-card>
-            <v-card
-                flat
-                position="absolute"
-                location="bottom center"
-                color="transparent"
-                class="pa-2 mt-12">
-                <Pagination
-                    @update:change="fetchPage"
-                    @prev="fetchPage"
-                    @click="fetchPage"
-                    :blogs="blogPosts"
-                    :totalCount="totalServerBlogs" />
+                <v-card flat color="transparent" height="100%">
+                    <v-row justify="center" align-content="center">
+                        <v-col v-if="!blogPosts.length" :cols="colCount">
+                            <EmptyBlogPostIndicator
+                                text="There have been no blogs written by any users." />
+                        </v-col>
+                        <v-col v-if="blogPosts.length > 0" :cols="colCount">
+                            <GeneralBlogCard
+                                @loading="handleLoadingState"
+                                v-for="blog in blogPosts"
+                                :key="blog.blog_id"
+                                :account_id="blog.account_id"
+                                :blogId="blog.blog_id"
+                                :blogPostTitle="blog.blog_title"
+                                :blogCreationDate="humanReadableDate(blog.created_at)" />
+                        </v-col>
+                    </v-row>
+                </v-card>
             </v-card>
         </v-col>
+        <v-row dense no-gutters>
+            <v-col cols="12">
+                <v-card flat location="bottom center" color="transparent" class="pa-2 mt-12">
+                    <Pagination
+                        @update:change="fetchPage"
+                        @prev="fetchPage"
+                        @click="fetchPage"
+                        :blogs="blogPosts"
+                        :totalCount="totalServerBlogs" />
+                </v-card>
+            </v-col>
+        </v-row>
     </v-row>
 </template>
 
