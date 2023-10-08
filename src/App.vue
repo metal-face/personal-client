@@ -271,4 +271,8 @@ h1 {
     margin: 0 !important;
     word-break: break-word !important;
 }
+
+.grecaptcha-badge {
+    display: none;
+}
 </style>
