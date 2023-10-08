@@ -27,11 +27,6 @@ const snackbar: Snackbar = reactive({
 const loading = ref<boolean>(false);
 
 const colCount = ref<number>(0);
-
-function toggleLoadingState(state: boolean): void {
-    loading.value = state;
-}
-
 function onResize(): void {
     switch (display.name.value) {
         case "xs":
