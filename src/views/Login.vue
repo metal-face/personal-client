@@ -158,7 +158,7 @@ function onClick(e: Event) {
         //@ts-ignore
         // eslint-disable-next-line no-undef
         grecaptcha
-            .execute(import.meta.env.VITE_RECAPTCHA_SECRET_KEY, { action: "submit" })
+            .execute("6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM", { action: "submit" })
             .then(function (token: string) {
                 loginUser(token).then((res) => {
                     if (res) {
