@@ -77,7 +77,7 @@ function onClick(e: Event): void {
         //@ts-ignore
         // eslint-disable-next-line no-undef
         grecaptcha
-            .execute("6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM", { action: "submit" })
+            .execute(import.meta.env.VITE_RECAPTCHA_SECRET_KEY, { action: "submit" })
             .then(function (token: string) {
                 dispatchRegistration(token);
             });
@@ -116,7 +116,7 @@ async function dispatchRegistration(token: string): Promise<void> {
             //@ts-ignore
             // eslint-disable-next-line no-undef
             grecaptcha
-                .execute("6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM", { action: "submit" })
+                .execute(import.meta.env.VITE_RECAPTCHA_SECRET_KEY, { action: "submit" })
                 .then(async function (token: string) {
                     const loginResult = await loginUser(token);
                     if (loginResult) {
