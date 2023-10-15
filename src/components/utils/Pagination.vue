@@ -38,10 +38,10 @@ const pagination = reactive<Pagination>({
         :total-visible="pagination.totalPagesVisible"
         :rounded="false"
         show-first-last-page
-        color="primary"
         class="pa-3"
         density="comfortable"
-        variant="elevated"
+        variant="text"
+        elevation="4"
         @update:modelValue="emit('update:change', pagination.page)"
         @prev="emit('prev', pagination.page)"
         @next="emit('next', pagination.page)" />
