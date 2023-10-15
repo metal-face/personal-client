@@ -6,12 +6,16 @@
                 :variant="isDark ? 'flat' : 'elevated'"
                 class="fill-height"
                 color="background">
-                <MarkdownEditor @body:change="handleBodyChange" @title:change="handleTitleChange" />
+                <MarkdownEditor
+                    @save:local="handleLocalSave"
+                    @body:change="handleBodyChange"
+                    @title:change="handleTitleChange" />
 
                 <!-- SAVE/CANCEL -->
                 <v-card-actions class="d-flex flex-column ma-0 pa-0">
                     <v-btn
                         @click="createBlogPost"
+                        :disabled="dirty"
                         :color="isDark ? 'accent' : 'black'"
                         class="ma-0 pa-0"
                         rounded="0"
@@ -47,7 +51,7 @@
 </template>
 <script setup lang="ts">
 import { useRouter, Router } from "vue-router";
-import { ref, computed, reactive, onMounted } from "vue";
+import { ref, computed, reactive, onMounted, Ref, ComputedRef } from "vue";
 import { ThemeInstance, useTheme, useDisplay, DisplayInstance } from "vuetify";
 import { sessionStore } from "@/store/SessionStore";
 import { Snackbar } from "@/models/Snackbar";
@@ -66,12 +70,21 @@ const accountId = computed<string>(() => {
     return sessStore.accountID;
 });
 
+const dirty: ComputedRef<boolean> = computed<boolean>(() => {
+    return (
+        blogPostBody.value.length < 100 ||
+        blogPostBody.value.length > 200000 ||
+        blogPostTitle.value.length < 5 ||
+        blogPostTitle.value.length > 100
+    );
+});
+
 const sessionId = computed<string>(() => {
     return sessStore.getSessionId;
 });
 
-const blogPostBody = ref("# Write your post here.");
-const blogPostTitle = ref<string>("A Good Blog Post Title");
+const blogPostBody: Ref<string> = ref<string>("# Write your post here.");
+const blogPostTitle: Ref<string> = ref<string>("A Good Blog Post Title");
 
 const snackbar = reactive<Snackbar>({
     color: "success",
@@ -94,12 +107,21 @@ const editorWidth = computed<number>(() => {
             return 10;
     }
 });
+
 const darkState = computed<string>(() => {
     return theme.global.name.value;
 });
+
 const isDark = computed<boolean>(() => {
     return darkState.value === "customDarkTheme";
 });
+
+function handleLocalSave(): void {
+    snackbar.visible = true;
+    snackbar.text = "Saved locally 💾";
+    snackbar.color = "success";
+    snackbar.timeout = 3000;
+}
 
 /**
  * When the body:change event is heard,
@@ -136,6 +158,13 @@ function sanitizeCode(code: string): void {
  * Sanitizes the data before sending it to the server.
  */
 async function createBlogPost() {
+    if (blogPostBody.value.length < 100 || blogPostBody.value.length > 200000) {
+        return;
+    }
+
+    if (blogPostTitle.value.length < 5 || blogPostTitle.value.length > 100) {
+        return;
+    }
     sanitizeCode(blogPostBody.value);
     BlogServices.createBlogPost(
         blogPostTitle.value,
