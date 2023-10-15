@@ -13,8 +13,10 @@ import EmptyBlogPostIndicator from "@/components/blogs/EmptyBlogPostIndicator.vu
 import PersonalBlogCard from "@/components/blogs/PersonalBlogCard.vue";
 import Pagination from "@/components/utils/Pagination.vue";
 
-onMounted(() => {
-    fetchAllBlogsForUser();
+onMounted(async () => {
+    loading.value = true;
+    await fetchAllBlogsForUser();
+    loading.value = false;
 });
 
 const theme: ThemeInstance = useTheme();
@@ -115,15 +117,11 @@ function onResize(): void {
 }
 
 async function fetchAllBlogsForUser(): Promise<void> {
-    loading.value = true;
-    BlogServices.fetchManyBlogs(session.account_id)
+    return BlogServices.fetchManyBlogs(session.account_id)
         .then((res) => {
             blogs.splice(0, blogs.length);
             blogs.push(...res.data.data);
             totalServerBlogs.value = res.data.meta.total;
-        })
-        .finally(() => {
-            loading.value = false;
         })
         .catch((err) => {
             console.error(err);
@@ -158,27 +156,18 @@ async function fetchPage(page: number): Promise<void> {
                 <v-card-title class="page-title text-center ma-3">
                     <h1 class="text-decoration-underline">Blog Posts</h1>
                 </v-card-title>
-                <v-tooltip text="Create Post" location="left">
-                    <template #activator="{ props }">
-                        <v-btn
-                            v-bind="props"
-                            :to="{ name: 'BlogCreator' }"
-                            :color="isDark ? 'accent' : 'black'"
-                            :position="isMobile ? 'relative' : 'fixed'"
-                            :location="isMobile ? 'top center' : 'bottom right'"
-                            :rounded="isMobile ? '1' : '10'"
-                            :icon="isMobile ? false : 'mdi-plus'"
-                            :class="isMobile ? 'ma-0' : 'mr-4 mb-4'"
-                            :density="isMobile ? 'compact' : 'default'"
-                            variant="elevated"
-                            size="x-large">
-                            <template #default>
-                                <div v-if="isMobile">Create</div>
-                                <div v-else><v-icon icon="mdi-plus"></v-icon></div>
-                            </template>
-                        </v-btn>
-                    </template>
-                </v-tooltip>
+                <v-btn
+                    :to="{ name: 'BlogCreator' }"
+                    :color="isDark ? 'accent' : 'black'"
+                    :density="isMobile ? 'compact' : 'default'"
+                    position="relative"
+                    location="top center"
+                    rounded="1"
+                    class="ma-0"
+                    variant="elevated"
+                    size="large">
+                    Create
+                </v-btn>
                 <v-card variant="flat" color="transparent" height="100%">
                     <v-row justify="center">
                         <v-col v-if="!blogs.length" :cols="colCount">
