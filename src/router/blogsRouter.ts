@@ -38,7 +38,7 @@ const blogsRouter = [
                 props: true,
                 component: () => import("@/views/blogs/BlogViewer.vue"),
                 meta: {
-                    restricted: true,
+                    restricted: false,
                     title: "Blog Post Title",
                 },
             },
