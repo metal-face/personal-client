@@ -55,10 +55,10 @@ function handleRedirection(name: string, params: object) {
 <template>
     <v-card
         v-resize="handleResize"
+        :color="isDark ? 'secondary' : 'primary'"
         class="d-flex align-center my-2 pa-4"
         variant="elevated"
         elevation="4"
-        :color="isDark ? 'secondary' : 'primary'"
         height="100%"
         rounded="1"
         width="100%">
@@ -88,7 +88,7 @@ function handleRedirection(name: string, params: object) {
                             })
                         "
                         v-bind="props"
-                        :size="isMobile ? 'small' : 'x-large'"
+                        :size="isMobile ? 'default' : 'x-large'"
                         rounded="1"
                         icon="mdi-pencil"
                         variant="elevated"
@@ -105,7 +105,7 @@ function handleRedirection(name: string, params: object) {
                     <v-btn
                         @click="emit('delete:confirm', blogId)"
                         v-bind="props"
-                        :size="isMobile ? 'small' : 'x-large'"
+                        :size="isMobile ? 'default' : 'x-large'"
                         class="ma-0 pa-0"
                         variant="elevated"
                         rounded="1"
