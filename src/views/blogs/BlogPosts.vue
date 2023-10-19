@@ -104,10 +104,10 @@ function onResize(): void {
             colCount.value = 6;
             break;
         case "lg":
-            colCount.value = 4;
+            colCount.value = 6;
             break;
         case "xl":
-            colCount.value = 4;
+            colCount.value = 6;
             break;
         default:
             isMobile.value = false;
@@ -159,14 +159,19 @@ async function fetchPage(page: number): Promise<void> {
                 <v-btn
                     :to="{ name: 'BlogCreator' }"
                     :color="isDark ? 'accent' : 'black'"
-                    :density="isMobile ? 'compact' : 'default'"
+                    :density="isMobile ? 'comfortable' : 'default'"
                     position="relative"
                     location="top center"
                     rounded="1"
                     class="ma-0"
                     variant="elevated"
                     size="large">
-                    Create
+                    <template #default>
+                        <p>Create Blog</p>
+                    </template>
+                    <template #append>
+                        <v-icon size="large" icon="mdi-plus" />
+                    </template>
                 </v-btn>
                 <v-card variant="flat" color="transparent" height="100%">
                     <v-row justify="center">
