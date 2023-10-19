@@ -13,6 +13,8 @@ import { useAccountStore } from "@/store/AccountStore";
 import AccountsServices from "@/services/AccountsServices";
 import CircleLoader from "@/components/utils/CircleLoader.vue";
 import SessionServices from "@/services/SessionServices";
+import { Session } from "@/models/Session";
+import { Account } from "@/models/Account";
 
 onMounted(() => {
     clearForm();
@@ -119,6 +121,7 @@ async function dispatchRegistration(token: string): Promise<void> {
                 .execute(import.meta.env.VITE_RECAPTCHA_SECRET_KEY, { action: "submit" })
                 .then(async function (token: string) {
                     const loginResult = await loginUser(token);
+                    console.log(loginResult);
                     if (loginResult) {
                         await router.push({ name: "Home" });
                     }
@@ -134,7 +137,8 @@ async function registerUser(token: string): Promise<boolean> {
     }
 
     return AccountsServices.createAccount(state.username, state.email, state.password, token)
-        .then(() => {
+        .then((res) => {
+            accountStore.setAccount(res.data.data as Account);
             return true;
         })
         .catch((err) => {
@@ -152,7 +156,7 @@ async function registerUser(token: string): Promise<boolean> {
 async function loginUser(token: string): Promise<boolean> {
     return SessionServices.login(state.username, state.password, token)
         .then((res) => {
-            session.setSession(res.data.data);
+            session.setSession(res.data.data as Session);
             emit("username:update", state.username);
             loading.value = false;
             return true;
@@ -163,8 +167,8 @@ async function loginUser(token: string): Promise<boolean> {
             alert.title = "Error!";
             alert.type = AlertTypes.error;
             alert.visible = true;
-            console.error(err);
             loading.value = false;
+            console.error(err);
             return false;
         });
 }
