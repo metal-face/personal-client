@@ -2,12 +2,12 @@
 import { ref, reactive, computed, ComputedRef } from "vue";
 import { useAccountStore } from "@/store/AccountStore";
 import { Snackbar } from "@/models/Snackbar";
+import { DisplayInstance, useDisplay } from "vuetify";
 import PersonalButtonGroup from "@/components/home/PersonalButtonGroup.vue";
 import AuthenticationButtons from "@/components/home/AuthenticationButtons.vue";
 import PersonalInfoCard from "@/components/home/PersonalInfoCard.vue";
 import CircleLoader from "@/components/utils/CircleLoader.vue";
 import MarkdownEditor from "@/components/blogs/MarkdownEditor.vue";
-import { DisplayInstance, useDisplay } from "vuetify";
 
 const accountStore = useAccountStore();
 

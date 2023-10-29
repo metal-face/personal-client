@@ -121,7 +121,6 @@ async function dispatchRegistration(token: string): Promise<void> {
                 .execute(import.meta.env.VITE_RECAPTCHA_SECRET_KEY, { action: "submit" })
                 .then(async function (token: string) {
                     const loginResult = await loginUser(token);
-                    console.log(loginResult);
                     if (loginResult) {
                         await router.push({ name: "Home" });
                     }
