@@ -7,20 +7,12 @@ import { lineNumbers } from "@codemirror/view";
 import { useBlogStore } from "@/store/BlogStore";
 import BlogServices from "@/services/BlogServices";
 import mermaid from "mermaid";
-import screenfull from "screenfull";
 import highlight from "highlight.js";
-import katex from "katex";
 import Cropper from "cropperjs";
-// import prettier from "prettier";
-// import parserMarkdown from "prettier/parser-markdown";
-
-// https://at.alicdn.com/t/c/font_2605852_u82y61ve02.js
-// import "./assets/iconfont.js";
 import "highlight.js/styles/github.css";
 import "highlight.js/styles/atom-one-dark.css";
 import "cropperjs/dist/cropper.css";
 import "md-editor-v3/lib/style.css";
-import "katex/dist/katex.min.css";
 
 interface Props {
     demo?: boolean;
@@ -116,7 +108,6 @@ const toolbarItems = reactive<ToolbarNames[]>([
     "image",
     "table",
     "mermaid",
-    "katex",
 ]);
 
 const titleState = ref<boolean>(false);
@@ -129,21 +120,11 @@ const editBadge = reactive<Badge>({
 // MDEditor configuration.
 config({
     editorExtensions: {
-        // prettier: {
-        //     prettierInstance: prettier,
-        //     parserMarkdownInstance: parserMarkdown,
-        // },
         highlight: {
             instance: highlight,
         },
         mermaid: {
             instance: mermaid,
-        },
-        screenfull: {
-            instance: screenfull,
-        },
-        katex: {
-            instance: katex,
         },
         cropper: {
             instance: Cropper,
@@ -399,6 +380,7 @@ onMounted(async () => {
                 ref="editorRef"
                 language="en-US"
                 no-upload-img
+                no-katex
                 no-prettier
                 :scroll-auto="false"
                 show-code-row-number
