@@ -6,14 +6,11 @@ import { useTheme, ThemeInstance, useDisplay, DisplayInstance } from "vuetify";
 import { MdPreview, MdCatalog, config } from "md-editor-v3";
 import { lineNumbers } from "@codemirror/view";
 import mermaid from "mermaid";
-import screenfull from "screenfull";
 import highlight from "highlight.js";
-import katex from "katex";
 import Cropper from "cropperjs";
 import "highlight.js/styles/github.css";
 import "cropperjs/dist/cropper.css";
 import "md-editor-v3/lib/style.css";
-import "katex/dist/katex.min.css";
 
 const router: Router = useRouter();
 const theme: ThemeInstance = useTheme();
@@ -100,12 +97,6 @@ config({
         },
         mermaid: {
             instance: mermaid,
-        },
-        screenfull: {
-            instance: screenfull,
-        },
-        katex: {
-            instance: katex,
         },
         cropper: {
             instance: Cropper,
