@@ -56,23 +56,6 @@ export const useBlogStore = defineStore("blog", () => {
             "| MetalFace | 577 | July 6th, 1446 |\n" +
             "| cmyui | N/A | N/A |\n" +
             "\n" +
-            "## 📏 Katex.js Math Formulas\n" +
-            "\n" +
-            "[katex.js](https://katex.org/docs/supported) support was added to the builder. This allows you to write both inline stuff like this: $x+y^{2x}$, and block stuff like this:\n" +
-            "\n" +
-            "$$\n" +
-            "( \\big( \\Big( \\bigg( \\Bigg(\n" +
-            "$$\n" +
-            "\n" +
-            "$$\n" +
-            "\\def\\arraystretch{1.5}\n" +
-            "   \\begin{array}{c:c:c}\n" +
-            "   a & b & c \\\\ \\hline\n" +
-            "   d & e & f \\\\\n" +
-            "   \\hdashline\n" +
-            "   g & h & i\n" +
-            "\\end{array}\n" +
-            "$$\n" +
             "\n" +
             "\n" +
             "## 🧬 Mermaid.js Diagrams\n" +
