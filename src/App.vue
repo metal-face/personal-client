@@ -6,8 +6,12 @@
                 <v-btn
                     @click="navDrawer = !navDrawer"
                     :color="isDark ? 'white' : 'black'"
-                    icon="mdi-menu"
-                    variant="text" />
+                    icon
+                    variant="text">
+                    <template #default>
+                        <MenuIcon />
+                    </template>
+                </v-btn>
             </div>
             <v-spacer />
 
@@ -54,12 +58,16 @@
             disable-resize-watcher
             disable-route-watcher>
             <v-list nav>
-                <v-list-item v-for="(link, i) in links" :key="i" @click="handleRedirection(link)">
-                    <template #prepend>
-                        <v-icon :icon="link.props.prependIcon" />
-                    </template>
-                    <v-list-item-title>{{ link.text }}</v-list-item-title>
-                </v-list-item>
+                <div v-for="(link, i) in links" :key="i">
+                    <v-list-item
+                        v-if="currentRoute !== link.value"
+                        @click="handleRedirection(link)">
+                        <template #prepend>
+                            <v-icon :icon="link.props.prependIcon" />
+                        </template>
+                        <v-list-item-title>{{ link.text }}</v-list-item-title>
+                    </v-list-item>
+                </div>
             </v-list>
         </v-navigation-drawer>
 
@@ -84,6 +92,7 @@ import { Session } from "@/models/Session";
 import SessionServices from "@/services/SessionServices";
 import AccountsServices from "@/services/AccountsServices";
 import CircleLoader from "@/components/utils/CircleLoader.vue";
+import MenuIcon from "@/components/icons/MenuIcon.vue";
 
 onMounted(() => {
     const viewModePreference: string | null = window.localStorage.getItem("viewModePreference");
@@ -174,6 +183,10 @@ const loading: Ref<boolean> = ref<boolean>(false);
 
 const isLoggedIn: ComputedRef<boolean> = computed(() => {
     return accountStore.isLoggedIn;
+});
+
+const currentRoute: ComputedRef<string> = computed<string>(() => {
+    return router.currentRoute.value.name ? (router.currentRoute.value.name as string) : "Home";
 });
 
 const links: Link[] = [
