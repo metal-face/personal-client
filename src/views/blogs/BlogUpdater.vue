@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, defineAsyncComponent, onMounted, reactive, ref } from "vue";
 import { useTheme, ThemeInstance } from "vuetify";
 import { RouteParamsRaw, Router, useRouter } from "vue-router";
 import { Snackbar } from "@/models/Snackbar";
 import { sessionStore } from "@/store/SessionStore";
-import MarkdownEditor from "@/components/blogs/MarkdownEditor.vue";
 import BlogServices from "@/services/BlogServices";
+
+const MarkdownEditor = defineAsyncComponent(() => import("@/components/blogs/MarkdownEditor.vue"));
 
 interface Props {
     blogId: string;
