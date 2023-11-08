@@ -1,17 +1,22 @@
 <script setup lang="ts">
 import { DisplayInstance, ThemeInstance, useDisplay, useTheme } from "vuetify";
-import { computed, reactive, onMounted, ref, nextTick, Ref } from "vue";
+import { computed, reactive, onMounted, ref, nextTick, Ref, defineAsyncComponent } from "vue";
 import { Session } from "@/models/Session";
 import { format } from "date-fns";
 import { ConfirmDeleteState } from "@/models/ConfirmDeleteState";
 import { sessionStore } from "@/store/SessionStore";
 import { Blog } from "@/models/Blog";
 import BlogServices from "@/services/BlogServices";
-import ConfirmDelete from "@/components/utils/ConfirmDelete.vue";
-import CircleLoader from "@/components/utils/CircleLoader.vue";
-import EmptyBlogPostIndicator from "@/components/blogs/EmptyBlogPostIndicator.vue";
-import PersonalBlogCard from "@/components/blogs/PersonalBlogCard.vue";
-import Pagination from "@/components/utils/Pagination.vue";
+
+const Pagination = defineAsyncComponent(() => import("@/components/utils/Pagination.vue"));
+const PersonalBlogCard = defineAsyncComponent(
+    () => import("@/components/blogs/PersonalBlogCard.vue"),
+);
+const EmptyBlogPostIndicator = defineAsyncComponent(
+    () => import("@/components/blogs/EmptyBlogPostIndicator.vue"),
+);
+const CircleLoader = defineAsyncComponent(() => import("@/components/utils/CircleLoader.vue"));
+const ConfirmDelete = defineAsyncComponent(() => import("@/components/utils/ConfirmDelete.vue"));
 
 onMounted(async () => {
     loading.value = true;
