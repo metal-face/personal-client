@@ -36,9 +36,7 @@
                         <v-list density="compact" bg-color="primary" class="ma-1 pa-0">
                             <v-list-item @click="logoutUser" density="compact" active-color="red">
                                 <v-list-item-title> Logout </v-list-item-title>
-                                <template #append>
-                                    <v-icon color="red" size="large">mdi-power</v-icon>
-                                </template>
+                                <template #append> <PowerSymbol /> </template>
                             </v-list-item>
                         </v-list>
                     </v-menu>
@@ -93,6 +91,7 @@ import SessionServices from "@/services/SessionServices";
 import AccountsServices from "@/services/AccountsServices";
 import CircleLoader from "@/components/utils/CircleLoader.vue";
 import MenuIcon from "@/components/icons/MenuIcon.vue";
+import PowerSymbol from "@/components/icons/PowerSymbol.vue";
 
 onMounted(() => {
     const viewModePreference: string | null = window.localStorage.getItem("viewModePreference");
