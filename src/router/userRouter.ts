@@ -1,3 +1,7 @@
+const Home = () => import("@/views/Home.vue");
+const Login = () => import("@/views/Login.vue");
+const Register = () => import("@/views/Register.vue");
+
 const userRouter = [
     {
         path: "/",
@@ -5,7 +9,7 @@ const userRouter = [
             {
                 path: "",
                 name: "Home",
-                component: () => import("@/views/Home.vue"),
+                component: Home,
                 meta: {
                     title: "Home",
                     restricted: false,
@@ -15,7 +19,7 @@ const userRouter = [
                 path: "login",
                 name: "Login",
                 props: true,
-                component: () => import("@/views/Login.vue"),
+                component: Login,
                 meta: {
                     title: "Login",
                     restricted: false,
@@ -25,7 +29,7 @@ const userRouter = [
                 path: "register",
                 name: "Register",
                 props: true,
-                component: () => import("@/views/Register.vue"),
+                component: Register,
                 meta: {
                     title: "Register",
                     restricted: false,
