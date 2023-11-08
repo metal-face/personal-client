@@ -1,13 +1,21 @@
 <script setup lang="ts">
-import { onMounted, reactive, Ref, ref } from "vue";
+import { defineAsyncComponent, onMounted, reactive, Ref, ref } from "vue";
 import { DisplayInstance, useDisplay } from "vuetify";
 import { format } from "date-fns";
 import { Blog } from "@/models/Blog";
 import BlogServices from "@/services/BlogServices";
-import GeneralBlogCard from "@/components/blogs/GeneralBlogCard.vue";
-import CircleLoader from "@/components/utils/CircleLoader.vue";
-import EmptyBlogPostIndicator from "@/components/blogs/EmptyBlogPostIndicator.vue";
-import Pagination from "@/components/utils/Pagination.vue";
+
+const Pagination = defineAsyncComponent(() => import("@/components/utils/Pagination.vue"));
+
+const EmptyBlogPostIndicator = defineAsyncComponent(
+    () => import("@/components/blogs/EmptyBlogPostIndicator.vue"),
+);
+
+const CircleLoader = defineAsyncComponent(() => import("@/components/utils/CircleLoader.vue"));
+
+const GeneralBlogCard = defineAsyncComponent(
+    () => import("@/components/blogs/GeneralBlogCard.vue"),
+);
 
 const display: DisplayInstance = useDisplay();
 
