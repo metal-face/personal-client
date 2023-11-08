@@ -77,7 +77,7 @@
     </v-row>
 </template>
 <script setup lang="ts">
-import { reactive, ref, defineEmits, computed, Ref } from "vue";
+import { reactive, ref, defineEmits, computed, Ref, defineAsyncComponent } from "vue";
 import { Router, useRouter } from "vue-router";
 import { required, minLength, maxLength, helpers } from "@vuelidate/validators";
 import { sessionStore } from "@/store/SessionStore";
@@ -93,7 +93,8 @@ import { LoginForm } from "@/models/LoginForm";
 import AccountsServices from "@/services/AccountsServices";
 import useVuelidate, { ErrorObject, Validation } from "@vuelidate/core";
 import SessionServices from "@/services/SessionServices";
-import CircleLoader from "@/components/utils/CircleLoader.vue";
+
+const CircleLoader = defineAsyncComponent(() => import("@/components/utils/CircleLoader.vue"));
 
 useScriptTag(
     "https://www.google.com/recaptcha/api.js?render=6Ldz_0snAAAAAEDnmEgNJgFAB2zWkOod_QJijLMM",
