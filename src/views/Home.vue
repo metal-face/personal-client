@@ -1,13 +1,24 @@
 <script setup lang="ts">
-import { ref, reactive, computed, ComputedRef } from "vue";
+import { ref, reactive, computed, ComputedRef, defineAsyncComponent } from "vue";
 import { useAccountStore } from "@/store/AccountStore";
 import { Snackbar } from "@/models/Snackbar";
 import { DisplayInstance, useDisplay } from "vuetify";
-import PersonalButtonGroup from "@/components/home/PersonalButtonGroup.vue";
-import AuthenticationButtons from "@/components/home/AuthenticationButtons.vue";
-import PersonalInfoCard from "@/components/home/PersonalInfoCard.vue";
-import CircleLoader from "@/components/utils/CircleLoader.vue";
-import MarkdownEditor from "@/components/blogs/MarkdownEditor.vue";
+
+const MarkdownEditor = defineAsyncComponent(() => import("@/components/blogs/MarkdownEditor.vue"));
+
+const CircleLoader = defineAsyncComponent(() => import("@/components/utils/CircleLoader.vue"));
+
+const PersonalInfoCard = defineAsyncComponent(
+    () => import("@/components/home/PersonalInfoCard.vue"),
+);
+
+const PersonalButtonGroup = defineAsyncComponent(
+    () => import("@/components/home/PersonalButtonGroup.vue"),
+);
+
+const AuthenticationButtons = defineAsyncComponent(
+    () => import("@/components/home/AuthenticationButtons.vue"),
+);
 
 const accountStore = useAccountStore();
 
