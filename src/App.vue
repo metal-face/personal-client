@@ -81,7 +81,16 @@
 
 <script setup lang="ts">
 import { ThemeInstance, useTheme } from "vuetify";
-import { computed, ref, reactive, onMounted, ComputedRef, Ref, nextTick } from "vue";
+import {
+    computed,
+    ref,
+    reactive,
+    onMounted,
+    ComputedRef,
+    Ref,
+    nextTick,
+    defineAsyncComponent,
+} from "vue";
 import { useRouter, Router } from "vue-router";
 import { Account, Role } from "@/models/Account";
 import { useAccountStore } from "@/store/AccountStore";
@@ -89,9 +98,10 @@ import { sessionStore } from "@/store/SessionStore";
 import { Session } from "@/models/Session";
 import SessionServices from "@/services/SessionServices";
 import AccountsServices from "@/services/AccountsServices";
-import CircleLoader from "@/components/utils/CircleLoader.vue";
-import MenuIcon from "@/components/icons/MenuIcon.vue";
-import PowerSymbol from "@/components/icons/PowerSymbol.vue";
+
+const CircleLoader = defineAsyncComponent(() => import("@/components/utils/CircleLoader.vue"));
+const MenuIcon = defineAsyncComponent(() => import("@/components/icons/MenuIcon.vue"));
+const PowerSymbol = defineAsyncComponent(() => import("@/components/icons/PowerSymbol.vue"));
 
 onMounted(() => {
     const viewModePreference: string | null = window.localStorage.getItem("viewModePreference");
