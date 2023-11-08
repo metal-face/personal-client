@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, defineEmits, computed, Ref } from "vue";
+import { ref, reactive, onMounted, defineEmits, computed, Ref, defineAsyncComponent } from "vue";
 import { Router, useRouter } from "vue-router";
 import { ErrorObject, useVuelidate, Validation } from "@vuelidate/core";
 import { email, required, minLength, maxLength, helpers } from "@vuelidate/validators";
@@ -10,11 +10,12 @@ import { AlertTypes } from "@/models/AlertTypes";
 import { ColorTypes } from "@/models/ColorTypes";
 import { RegistrationForm } from "@/models/RegistrationForm";
 import { useAccountStore } from "@/store/AccountStore";
-import AccountsServices from "@/services/AccountsServices";
-import CircleLoader from "@/components/utils/CircleLoader.vue";
-import SessionServices from "@/services/SessionServices";
 import { Session } from "@/models/Session";
 import { Account } from "@/models/Account";
+import AccountsServices from "@/services/AccountsServices";
+import SessionServices from "@/services/SessionServices";
+
+const CircleLoader = defineAsyncComponent(() => import("@/components/utils/CircleLoader.vue"));
 
 onMounted(() => {
     clearForm();
