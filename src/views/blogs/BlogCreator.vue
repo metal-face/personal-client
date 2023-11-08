@@ -51,13 +51,14 @@
 </template>
 <script setup lang="ts">
 import { useRouter, Router } from "vue-router";
-import { ref, computed, reactive, onMounted, Ref, ComputedRef } from "vue";
+import { ref, computed, reactive, onMounted, Ref, ComputedRef, defineAsyncComponent } from "vue";
 import { ThemeInstance, useTheme, useDisplay, DisplayInstance } from "vuetify";
 import { sessionStore } from "@/store/SessionStore";
 import { Snackbar } from "@/models/Snackbar";
 import sanitizeHtml from "sanitize-html";
 import BlogServices from "@/services/BlogServices";
-import MarkdownEditor from "@/components/blogs/MarkdownEditor.vue";
+
+const MarkdownEditor = defineAsyncComponent(() => import("@/components/blogs/MarkdownEditor.vue"));
 
 const sanitize = (html: string): string => sanitizeHtml(html);
 
